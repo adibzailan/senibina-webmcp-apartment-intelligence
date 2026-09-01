@@ -9,8 +9,10 @@ agent resolves the bundled public context, the resident confirms the
 target unit and windows in a visible 3D scene, and deterministic analysis
 produces sunpath, shadow, solar-access, and radiation evidence.
 
-Status: implementation in progress. No validated analysis, public deployment,
-or submitted challenge entry is claimed until the release gates pass.
+Status: local implementation and automated analysis tests pass. The WebMCP
+confirmation-refusal path has been exercised in Chrome. Windows acceptance,
+public deployment, full artifact acceptance, and challenge submission remain
+open gates.
 
 ## Product boundary
 
@@ -18,8 +20,8 @@ or submitted challenge entry is claimed until the release gates pass.
   statutory compliance service.
 - Public records provide contextual building information. Exact unit facade,
   window position, balcony geometry, and internal layout remain human-confirmed.
-- Three.js is the proposed browser renderer. Ladybug's Python libraries are the
-  proposed solar-analysis engine. `rhino3dm.py` is the proposed `.3dm` exporter.
+- Three.js renders the browser scene. Ladybug Core and Geometry compute the
+  bounded solar studies. `rhino3dm.py` writes the layered `.3dm` export.
 - The MVP uses a frozen, attributed Dawson fixture; it has no runtime listing
   scraper, floorplan upload, OneMap dependency, database, account, or LLM.
 - Rhino.Compute is excluded from the MVP unless an approved requirement cannot
@@ -38,6 +40,33 @@ are not backed up by Git.
 
 ## Local development
 
-Build instructions will be added with the first tested implementation. The
-public target is `https://apartment.senibina.com.sg`; this is a target, not a
-current deployment claim.
+Prerequisites are Node 22.22.3 and CPython 3.13.2. Install only from the
+committed locks after reviewing the recorded dependency decision:
+
+```sh
+python3.13 -m venv .venv
+.venv/bin/python -m pip install --require-hashes -r server/requirements.txt
+npm --prefix web ci --ignore-scripts
+npm --prefix web run build
+```
+
+Run the single-process local build at `http://localhost:8000`:
+
+```sh
+COOKIE_SECURE=false EXPECTED_ORIGIN=http://localhost:8000 PYTHONPATH=server \
+  .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+Run verification with:
+
+```sh
+PYTHONPATH=server .venv/bin/python -m pytest server/tests
+npm --prefix web test -- --run
+npm --prefix web run build
+```
+
+To test WebMCP in Chrome, enable `chrome://flags/#enable-webmcp-testing`, visit
+the localhost URL, and inspect `document.modelContext.getTools()` in DevTools.
+The public target is `https://apartment.senibina.com.sg`; it is not yet a live
+deployment claim. Windows deployment is documented in
+[`WINDOWS_DEPLOYMENT.md`](WINDOWS_DEPLOYMENT.md).

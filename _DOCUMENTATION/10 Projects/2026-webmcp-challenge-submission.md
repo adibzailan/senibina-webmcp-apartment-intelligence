@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: active
 deadline: 2026-09-03T13:00:00-07:00
-next_action: Pass the WebMCP, Windows rhino3dm, and public-tunnel platform gates before feature implementation.
+next_action: Pass the Windows rhino3dm and public-tunnel gates, then complete deployed end-to-end artifact verification.
 ---
 
 # WebMCP Challenge submission
@@ -23,10 +23,14 @@ the submitted URLs are read back successfully.
 
 ## Current state
 
-- The working product direction and proposed architecture are documented.
+- The public baseline, dependency locks, Dawson fixture, application, analysis
+  engine, export pipeline, and six WebMCP tools are implemented locally.
 - Apartment Intelligence is the founder-approved product title.
-- Implementation is authorized. No validated study, public deployment,
-  submission package, or practitioner acceptance exists yet.
+- Automated backend and frontend tests pass. A real Chrome WebMCP invocation
+  created a study and correctly returned `CONFIRMATION_REQUIRED` before human
+  confirmation.
+- Windows acceptance, public deployment, full artifact acceptance, video, and
+  challenge submission do not yet exist.
 - JourneyProof remains a separate earlier concept and repository.
 
 ## Accepted v1 direction
@@ -44,7 +48,8 @@ the submitted URLs are read back successfully.
 ## Milestones
 
 1. Lock the product contract, product title, and public/private boundary.
-2. Pass dependency intake and the WebMCP, VM, and `.3dm` platform gates.
+2. Pass dependency intake and the WebMCP, VM, and `.3dm` platform gates. WebMCP
+   is proven locally; the Windows and public-tunnel portions remain open.
 3. Prove one HDB data-to-massing fixture with visible source and confidence.
 4. Prove human unit confirmation and the four deterministic analyses.
 5. Implement the WebMCP tools and verify human-agent/UI state parity.
