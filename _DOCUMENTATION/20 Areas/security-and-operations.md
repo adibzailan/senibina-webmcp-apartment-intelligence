@@ -111,6 +111,7 @@ installation must use wheels only; source builds are a stop condition.
 | --- | --- | --- |
 | Browser | React/React DOM 19.2.8, Three.js 0.185.1, pdf-lib 1.17.1, fflate 0.8.3 | Meta/React (MIT), mrdoob/Three.js (MIT), Hopding/pdf-lib (MIT), 101arrowz/fflate (MIT) |
 | Web build/test | Vite 8.2.2, plugin-react 6.1.1, TypeScript 7.0.2, Vitest 4.1.11 | Vite/Vitest maintainers (MIT), Microsoft (Apache-2.0) |
+| Browser acceptance | `@playwright/cli` 0.1.18 | Microsoft/playwright-cli (Apache-2.0) |
 | Server | FastAPI 0.141.1, Uvicorn 0.52.4, HTTPX 0.28.1 | fastapi/fastapi (MIT), Kludex/uvicorn (BSD-3-Clause), encode/httpx (BSD-3-Clause) |
 | Analysis/export | ladybug-core 0.44.58, ladybug-geometry 1.35.4, rhino3dm 8.32.1 | Ladybug Tools (AGPL-3.0), McNeel (MIT) |
 | Python test/lock | pytest 9.1.1, pip-tools 7.6.1 | pytest-dev (MIT), jazzband/pip-tools (BSD-3-Clause) |
@@ -125,3 +126,15 @@ binds only to loopback; analysis has no runtime network access. Before full
 installation, generate metadata-only locks with scripts disabled, inspect every
 transitive package and install hook, run registry audits, and stop on a changed
 integrity, unresolved advisory, source build, or unexpected lifecycle hook.
+
+Metadata lock result: npm resolved 101 transitive packages with zero registry
+audit findings. Its only lifecycle hook is optional macOS watcher `fsevents`
+2.3.3 (MIT, official `fsevents/fsevents`, no OSV advisory); installs must use
+`--ignore-scripts`, allowing Vite's polling fallback. Python resolved 24 wheels
+for both macOS ARM64 and Windows x86-64 with no OSV advisory; the committed lock
+pins every selected artifact hash and forbids source distributions.
+
+The later browser-acceptance intake checked `@playwright/cli` 0.1.18 from the
+official Microsoft repository. The exact npm package has Apache-2.0 licensing,
+no lifecycle hook, no OSV advisory, and its registry integrity is pinned by the
+lockfile. It is development-only and is not included in the deployed bundle.
