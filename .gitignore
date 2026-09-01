@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+/private/
+/outputs/
+/dist/
+/build/
+/.cache/
+node_modules/
+__pycache__/
+*.py[cod]
