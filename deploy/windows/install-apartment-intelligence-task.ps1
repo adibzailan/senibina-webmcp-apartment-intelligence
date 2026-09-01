@@ -47,7 +47,9 @@ $Settings = New-ScheduledTaskSettingsSet `
   -RestartCount 999 `
   -RestartInterval (New-TimeSpan -Minutes 1) `
   -ExecutionTimeLimit ([TimeSpan]::Zero) `
-  -MultipleInstances IgnoreNew
+  -MultipleInstances IgnoreNew `
+  -AllowStartIfOnBatteries `
+  -DontStopIfGoingOnBatteries
 
 Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `
   -Settings $Settings -User $Identity -Password $Password -RunLevel Limited `
