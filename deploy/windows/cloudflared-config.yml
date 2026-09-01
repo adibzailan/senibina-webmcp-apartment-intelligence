@@ -8,4 +8,8 @@ ingress:
     service: http://127.0.0.1:8000
     originRequest:
       connectTimeout: 5s
+  - hostname: apartment.senibina.net
+    service: http://127.0.0.1:8000
+    originRequest:
+      connectTimeout: 5s
   - service: http_status:404
