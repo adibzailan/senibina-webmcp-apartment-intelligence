@@ -4,9 +4,16 @@
 !.env.example
 /private/
 /outputs/
+/output/
 /dist/
+/web/dist/
 /build/
 /.cache/
 node_modules/
+.playwright-cli/
+*.tsbuildinfo
+web/vite.config.js
+web/vite.config.d.ts
+.venv/
 __pycache__/
 *.py[cod]
