@@ -10,9 +10,11 @@ if (-not (Test-Path $Runner)) {
   throw "Deployment runner is missing: $Runner"
 }
 
-$Password = [Convert]::ToBase64String(
-  [Security.Cryptography.RandomNumberGenerator]::GetBytes(32)
-) + "aA1!"
+$RandomBytes = New-Object byte[] 32
+$Generator = [Security.Cryptography.RandomNumberGenerator]::Create()
+$Generator.GetBytes($RandomBytes)
+$Generator.Dispose()
+$Password = [Convert]::ToBase64String($RandomBytes) + "aA1!"
 $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
 $Existing = Get-LocalUser -Name $Account -ErrorAction SilentlyContinue
 
