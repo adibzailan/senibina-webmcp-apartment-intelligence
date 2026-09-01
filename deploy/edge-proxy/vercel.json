@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/:path*",
-      "destination": "https://apartment.senibina.net/:path*"
+      "src": "/(.*)",
+      "dest": "https://apartment.senibina.net/$1"
     }
   ]
 }
