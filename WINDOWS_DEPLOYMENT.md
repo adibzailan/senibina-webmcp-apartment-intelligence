@@ -31,6 +31,14 @@ round-trip tests before adding persistence. Configure Task Scheduler to run the
 same command as the dedicated non-admin account at startup, with restart on
 failure. Keep its working directory fixed to the repository checkout.
 
+After placing the accepted source at `C:\ApartmentIntelligence\app`, run
+`deploy\windows\install-apartment-intelligence-task.ps1` once from an elevated
+PowerShell prompt. It creates or rotates a random password for the local
+`ApartmentIntel` service account, grants read/execute access only to the app and
+virtual environment plus modify access to ignored exports, and registers the
+limited `Apartment Intelligence` startup task. The password exists only long
+enough to register the task and is never printed or written to a repository file.
+
 ## Public ingress
 
 Install `cloudflared` from Cloudflare's official signed Windows distribution.
