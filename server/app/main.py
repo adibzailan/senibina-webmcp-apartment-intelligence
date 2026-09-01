@@ -87,7 +87,11 @@ async def request_limit(request: Request, call_next):
         return error("REQUEST_TOO_LARGE", 413, "Reduce the request below 256 KB.")
     origin = request.headers.get("origin")
     expected = os.getenv("EXPECTED_ORIGIN", "https://apartment.senibina.com.sg")
-    development_origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8000"}
+    development_origins = (
+        {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8000"}
+        if os.getenv("ALLOW_DEVELOPMENT_ORIGINS", "false").lower() == "true"
+        else set()
+    )
     if origin and origin not in {expected, *development_origins}:
         return error("ORIGIN_NOT_ALLOWED", 403, "Use the public Apartment Intelligence origin.")
     response = await call_next(request)

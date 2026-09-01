@@ -1,0 +1,11 @@
+tunnel: 1bdf63f5-9175-4f55-8475-b93f8cf0db49
+credentials-file: C:\ProgramData\cloudflared\connector.json
+metrics: 127.0.0.1:20241
+no-autoupdate: true
+
+ingress:
+  - hostname: apartment.senibina.com.sg
+    service: http://127.0.0.1:8000
+    originRequest:
+      connectTimeout: 5s
+  - service: http_status:404

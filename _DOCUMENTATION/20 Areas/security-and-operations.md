@@ -145,3 +145,13 @@ The first Windows installation correctly stopped because Click's Windows-only
 BSD licence, no OSV advisory, and wheel SHA-256
 `4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6`.
 The lock now includes this conditional Windows pin; hash enforcement remains on.
+
+The public tunnel uses Cloudflare `cloudflared` 2026.8.3 from Cloudflare's
+official GitHub release. Windows ARM64 is not published, so the VM uses the
+Authenticode-valid Cloudflare-signed AMD64 executable under Windows ARM
+emulation. Its exact SHA-256 is
+`83e726ed18ea78c5ad5213c4c3a3a27051393950d2bc8ed4de69bec12d14eaae`;
+OSV reported no advisory for `github.com/cloudflare/cloudflared` 2026.8.3.
+The service receives only outbound network access, reads a system-protected
+named-tunnel credential, binds metrics to loopback, and forwards only the
+declared public hostname to the loopback application.
