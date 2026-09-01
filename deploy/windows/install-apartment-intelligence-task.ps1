@@ -50,7 +50,7 @@ $Settings = New-ScheduledTaskSettingsSet `
   -MultipleInstances IgnoreNew
 
 Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `
-  -Settings $Settings -User ".\$Account" -Password $Password -RunLevel Limited `
+  -Settings $Settings -User $Identity -Password $Password -RunLevel Limited `
   -Force | Out-Null
 
 Start-ScheduledTask -TaskName $TaskName
