@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+from pathlib import Path
 
 from app.main import app
 
@@ -63,6 +64,8 @@ def test_fixture_and_storey_errors_are_structured() -> None:
 
 
 def test_confirmed_study_completes_and_exports_3dm() -> None:
+    output_dir = Path(__file__).parents[2] / "outputs"
+    before = set(output_dir.glob("*.3dm")) if output_dir.exists() else set()
     study_id, _ = create_study()
     state = client.get(f"/api/studies/{study_id}").json()
     confirmed = client.post(
@@ -77,3 +80,4 @@ def test_confirmed_study_completes_and_exports_3dm() -> None:
     model = client.get(f"/api/studies/{study_id}/export.3dm")
     assert model.status_code == 200
     assert model.content[:4] == b"3D G"
+    assert (set(output_dir.glob("*.3dm")) if output_dir.exists() else set()) == before

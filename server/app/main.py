@@ -11,6 +11,7 @@ from typing import Literal
 
 from fastapi import Cookie, FastAPI, Header, Request
 from fastapi.responses import FileResponse, JSONResponse
+from starlette.background import BackgroundTask
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -235,7 +236,11 @@ def export_3dm(study_id: str, study_session: str | None = Cookie(default=None)):
     path = export_dir / f"{study_id}.3dm"
     write_study_3dm(path, {"digest": study["result"]["digest"], "result": study["result"], "buildings": FIXTURE["buildings"],
                            "target": {**study["proposal"], "storey": study["storey"], "building": study["building"]}})
-    return FileResponse(path, media_type="application/octet-stream", filename="apartment-intelligence.3dm")
+    if path.stat().st_size > 20 * 1024 * 1024:
+        path.unlink(missing_ok=True)
+        return error("EXPORT_NOT_READY", 413, "The export exceeded the 20 MB release limit.")
+    return FileResponse(path, media_type="application/octet-stream", filename="apartment-intelligence.3dm",
+                        background=BackgroundTask(path.unlink, missing_ok=True))
 
 
 WEB_DIST = ROOT / "web" / "dist"
