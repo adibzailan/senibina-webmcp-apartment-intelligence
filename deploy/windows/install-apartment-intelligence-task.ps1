@@ -26,6 +26,27 @@ if ($Existing) {
 }
 
 $Identity = "$env:COMPUTERNAME\$Account"
+$Sid = (New-Object Security.Principal.NTAccount($Identity)).Translate(
+  [Security.Principal.SecurityIdentifier]
+).Value
+$Policy = Join-Path $env:TEMP "apartment-intelligence-rights.inf"
+$Database = Join-Path $env:TEMP "apartment-intelligence-rights.sdb"
+secedit.exe /export /cfg $Policy /areas USER_RIGHTS | Out-Null
+$PolicyLines = Get-Content $Policy
+$BatchLine = $PolicyLines | Where-Object { $_ -like "SeBatchLogonRight*" }
+if ($BatchLine -notmatch [regex]::Escape($Sid)) {
+  if ($BatchLine) {
+    $Updated = "$BatchLine,*$Sid"
+    $PolicyLines = $PolicyLines | ForEach-Object {
+      if ($_ -eq $BatchLine) { $Updated } else { $_ }
+    }
+  } else {
+    $PolicyLines += "SeBatchLogonRight = *$Sid"
+  }
+  Set-Content -Path $Policy -Value $PolicyLines -Encoding Unicode
+  secedit.exe /configure /db $Database /cfg $Policy /areas USER_RIGHTS | Out-Null
+}
+
 $Outputs = Join-Path $App "outputs"
 New-Item -ItemType Directory -Path $Outputs -Force | Out-Null
 
@@ -55,4 +76,5 @@ Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `
   -Settings $Settings -User $Identity -Password $Password -RunLevel Limited `
   -Force | Out-Null
 
+Remove-Item $Policy, $Database -Force -ErrorAction SilentlyContinue
 Start-ScheduledTask -TaskName $TaskName
