@@ -5,8 +5,9 @@ It contains no tunnel token, private hostname receipt, or administrator secret.
 
 ## Platform gate
 
-Use the fresh VM `SNBA - WebMCP - Apartment Intelligence` with 4 vCPU, 8 GB RAM,
-and a 128 GB expanding disk. Install Node 22.22.3 and CPython 3.13.2 x86-64.
+The verified deployment reuses the founder-approved `SNBA - Dev - SMRT` VM with
+4 vCPU and 16 GB RAM, preserving its existing Rhino.Compute workflow. Install
+Node 22.22.3 ARM64 and CPython 3.13.2 x86-64.
 Before deploying the app, install the hash-pinned Python environment and prove
 that Ladybug imports and rhino3dm 8.32.1 writes and reads a metre-unit file with
 the five required layers. Stop for founder review if emulation, a wheel, or the
@@ -26,7 +27,7 @@ $env:EXPECTED_ORIGIN = "https://apartment.senibina.com.sg"
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Read `http://127.0.0.1:8000/api/health` locally and complete the artifact
+Read `http://127.0.0.1:8000/api/healthz` locally and complete the artifact
 round-trip tests before adding persistence. Configure Task Scheduler to run the
 same command as the dedicated non-admin account at startup, with restart on
 failure. Keep its working directory fixed to the repository checkout.
@@ -42,10 +43,13 @@ enough to register the task and is never printed or written to a repository file
 ## Public ingress
 
 Install `cloudflared` from Cloudflare's official signed Windows distribution.
-Create a remotely managed named tunnel whose only public route maps
-`apartment.senibina.com.sg` to `http://127.0.0.1:8000`. Install the tunnel as the
-official Windows service and store its token only in that service's protected
-configuration. Do not commit, print, or paste the token into repository files.
+Create a named tunnel whose Cloudflare-managed hostname maps to
+`http://127.0.0.1:8000`. Because `senibina.com.sg` uses Vercel DNS, the verified
+deployment uses the versioned `deploy/edge-proxy` route to preserve
+`apartment.senibina.com.sg` while proxying to that tunnel hostname. Install the
+tunnel as a Windows service and store its connector credential only in the
+system-protected service configuration. Do not commit, print, or paste it into
+repository files.
 
 The app remains bound to loopback. Do not add port forwarding, public RDP,
 admin endpoints, shared host disks, clipboard integration, or filesystem

@@ -9,10 +9,10 @@ agent resolves the bundled public context, the resident confirms the
 target unit and windows in a visible 3D scene, and deterministic analysis
 produces sunpath, shadow, solar-access, and radiation evidence.
 
-Status: local implementation and automated analysis tests pass. The WebMCP
-confirmation-refusal path has been exercised in Chrome. Windows acceptance,
-public deployment, full artifact acceptance, and challenge submission remain
-open gates.
+Status: implementation gates 1–5 pass. The Windows VM, named Cloudflare Tunnel,
+public hostname, Chrome WebMCP journey, restart recovery, and complete artifact
+bundle have been exercised. Demo-video preparation and challenge submission
+remain open.
 
 ## Product boundary
 
@@ -67,6 +67,6 @@ npm --prefix web run build
 
 To test WebMCP in Chrome, enable `chrome://flags/#enable-webmcp-testing`, visit
 the localhost URL, and inspect `document.modelContext.getTools()` in DevTools.
-The public target is `https://apartment.senibina.com.sg`; it is not yet a live
-deployment claim. Windows deployment is documented in
+The verified public deployment is <https://apartment.senibina.com.sg>. Windows
+deployment is documented in
 [`WINDOWS_DEPLOYMENT.md`](WINDOWS_DEPLOYMENT.md).

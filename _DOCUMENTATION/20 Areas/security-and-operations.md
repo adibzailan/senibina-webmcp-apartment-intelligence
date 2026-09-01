@@ -1,13 +1,14 @@
 ---
 title: Security and operations
 para: area
-status: design-time
+status: implemented-and-verified
 ---
 
 # Security and operations
 
-This document owns the durable security, privacy, and runtime boundary. It is a
-design contract, not evidence that controls have been implemented or tested.
+This document owns the durable security, privacy, and runtime boundary. The
+controls named in the public deployment receipt below were exercised on
+1 September 2026; unlisted controls remain requirements rather than claims.
 
 ## Security objectives
 
@@ -83,8 +84,8 @@ tunnel control is publicly exposed. Deployment credentials remain VM-local.
 
 ## Release gate
 
-Public deployment remains blocked until the implemented architecture is
-reconciled against this owner and negative tests prove:
+Public release requires the implemented architecture to remain reconciled
+against this owner and negative tests to prove:
 
 - unconfirmed geometry cannot be analysed;
 - unknown fields, unsupported formats, arbitrary URLs, paths, scripts, and
@@ -155,3 +156,22 @@ OSV reported no advisory for `github.com/cloudflare/cloudflared` 2026.8.3.
 The service receives only outbound network access, reads a system-protected
 named-tunnel credential, binds metrics to loopback, and forwards only the
 declared public hostname to the loopback application.
+
+## Public deployment receipt — 1 September 2026
+
+- Windows binds the application only to `127.0.0.1:8000` under the non-admin
+  `ApartmentIntel` account. The scheduled task and `cloudflared` service are
+  automatic and running.
+- The Cloudflare connector is `cloudflared` 2026.8.3 on Windows AMD64 emulation.
+  A Vercel route preserves the required `apartment.senibina.com.sg` hostname
+  while proxying to the Cloudflare-managed tunnel hostname.
+- Public negative checks returned 403 for an unexpected Origin, 422 for an
+  unknown confirmation field, and 404 for a cross-session study handle.
+- A real restart returned the app, tunnel connector, and pre-existing
+  Rhino.Compute process without manual intervention. Parallels autostart and
+  Windows AC sleep prevention are enabled.
+- Public Chrome discovered six WebMCP tools. Analysis was refused before the
+  trusted visible confirmation action, then completed after the human click.
+- Export readback proved five 1600 × 2400 PNGs, a five-page PDF, matching result
+  digest, and a metre-unit `.3dm` with the five required layers and object
+  metadata.

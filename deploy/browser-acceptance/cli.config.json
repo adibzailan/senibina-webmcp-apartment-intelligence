@@ -1,0 +1,15 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "isolated": true,
+    "launchOptions": {
+      "channel": "chrome",
+      "headless": true,
+      "args": ["--enable-features=WebMCP"]
+    },
+    "contextOptions": {
+      "acceptDownloads": true,
+      "viewport": { "width": 1440, "height": 1000 }
+    }
+  }
+}

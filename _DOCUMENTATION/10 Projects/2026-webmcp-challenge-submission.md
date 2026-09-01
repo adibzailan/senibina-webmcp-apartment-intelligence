@@ -2,8 +2,8 @@
 title: WebMCP Challenge submission
 para: project
 status: active
-deadline: 2026-09-03T13:00:00-07:00
-next_action: Pass the Windows rhino3dm and public-tunnel gates, then complete deployed end-to-end artifact verification.
+deadline: 2026-09-04T04:00:00+08:00
+next_action: Adib reviews the verified gates 1–5 and approves preparation of the demo video and final submission materials.
 ---
 
 # WebMCP Challenge submission
@@ -24,13 +24,23 @@ the submitted URLs are read back successfully.
 ## Current state
 
 - The public baseline, dependency locks, Dawson fixture, application, analysis
-  engine, export pipeline, and six WebMCP tools are implemented locally.
+  engine, export pipeline, and six WebMCP tools are implemented and published.
 - Apartment Intelligence is the founder-approved product title.
-- Automated backend and frontend tests pass. A real Chrome WebMCP invocation
-  created a study and correctly returned `CONFIRMATION_REQUIRED` before human
-  confirmation.
-- Windows acceptance, public deployment, full artifact acceptance, video, and
-  challenge submission do not yet exist.
+- Ten backend and five frontend tests pass on macOS; the same backend tests and
+  frontend suite/build also pass in Windows.
+- The reused `SNBA - Dev - SMRT` Windows VM runs the app under the dedicated
+  non-admin `ApartmentIntel` account on loopback. Rhino.Compute remains running
+  for its existing workflows.
+- The named Cloudflare Tunnel and Vercel hostname bridge serve
+  <https://apartment.senibina.com.sg>. Both services, the app, and Rhino.Compute
+  recovered after a real Windows restart.
+- A real public Chrome WebMCP journey discovered all six tools, returned
+  `CONFIRMATION_REQUIRED`, accepted only the visible human confirmation, then
+  analysed and exported successfully.
+- Artifact readback proved five 1600 × 2400 PNGs, a five-page PDF, one manifest,
+  and a metre-unit `.3dm` with five expected layers, 29 objects, and metadata.
+- Demo-video preparation and final challenge submission remain deliberately
+  unstarted.
 - JourneyProof remains a separate earlier concept and repository.
 
 ## Accepted v1 direction
@@ -48,13 +58,15 @@ the submitted URLs are read back successfully.
 ## Milestones
 
 1. Lock the product contract, product title, and public/private boundary.
-2. Pass dependency intake and the WebMCP, VM, and `.3dm` platform gates. WebMCP
-   is proven locally; the Windows and public-tunnel portions remain open.
+2. Pass dependency intake and the WebMCP, VM, and `.3dm` platform gates. Done.
 3. Prove one HDB data-to-massing fixture with visible source and confidence.
 4. Prove human unit confirmation and the four deterministic analyses.
 5. Implement the WebMCP tools and verify human-agent/UI state parity.
 6. Generate the five cards and downloadable PDF, ZIP, and `.3dm` artifacts.
 7. Complete accessibility, abuse, failure, deployment, and submission checks.
+
+Milestones 3–6 are implemented and exercised. Milestone 7 is complete through
+deployment and restart recovery; video and submission checks remain.
 
 ## Principal risks
 
