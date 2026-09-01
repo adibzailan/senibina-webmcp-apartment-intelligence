@@ -138,3 +138,10 @@ The later browser-acceptance intake checked `@playwright/cli` 0.1.18 from the
 official Microsoft repository. The exact npm package has Apache-2.0 licensing,
 no lifecycle hook, no OSV advisory, and its registry integrity is pinned by the
 lockfile. It is development-only and is not included in the deployed bundle.
+
+The first Windows installation correctly stopped because Click's Windows-only
+`colorama` dependency was absent from the macOS-generated hash lock. Colorama
+0.4.6 was checked against PyPI and the official `tartley/colorama` repository:
+BSD licence, no OSV advisory, and wheel SHA-256
+`4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6`.
+The lock now includes this conditional Windows pin; hash enforcement remains on.
