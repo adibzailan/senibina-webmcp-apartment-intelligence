@@ -21,7 +21,9 @@ describe('show_analysis validation', () => {
 
 describe('study state privacy boundary', () => {
   it('keeps the agent proposal deterministic while leaving confirmation to the resident', () => {
-    expect(DEFAULT_PROPOSAL).toMatchObject({ width: 8, depth: 6, window_width: 4, window_height: 1.2, sill_height: .9 })
+    expect(DEFAULT_PROPOSAL).toMatchObject({ mirrored: false, window_width: 4, window_height: 1.2, sill_height: .9 })
+    expect(DEFAULT_PROPOSAL).not.toHaveProperty('width')
+    expect(DEFAULT_PROPOSAL).not.toHaveProperty('depth')
     expect(DEFAULT_PROPOSAL).not.toHaveProperty('confirmed')
   })
 

@@ -13,6 +13,31 @@ metre frame centred on Block 87, records source hashes, and labels the
 `max_floor_level × 3.0 m` height as inferred. A refresh changes evidence and
 must be reviewed before release.
 
+## Typical unit-plan fixture
+
+`fixtures/unit-plans/skyville-dawson-4room-type-a-v1.json` is the accepted
+orthogonal boundary derived from the official SkyVille @ Dawson sales brochure,
+page 5, 4R Type A base option. It is a published typical 4-room reference,
+uniformly scaled to 87 m²; it is not a verified Block 87/storey-30 stack.
+
+The reviewed page raster is intentionally ignored and is not redistributed.
+Given that local page image, regenerate the fixture and receipt with:
+
+```shell
+python3.13 -m venv .compiler-venv
+.compiler-venv/bin/python -m pip install --require-hashes -r data/compiler-requirements.txt
+.compiler-venv/bin/python -m data.scripts.compile_unit_plan \
+  --source /path/to/reviewed-page-5.png \
+  --config data/unit-plans/skyville-dawson-4room-type-a-source.json \
+  --output data/fixtures/unit-plans/skyville-dawson-4room-type-a-v1.json \
+  --receipt data/fixtures/unit-plans/skyville-dawson-4room-type-a-v1.receipt.json \
+  --diagnostics output/research/floorplate-compiler/skyville-dawson-4r-type-a
+```
+
+The compiler verifies the reviewed source hash before reading pixels. NumPy and
+OpenCV are authoring-only dependencies; `.compiler-venv` and all raster
+diagnostics remain ignored and must not be installed on the deployment VM.
+
 ## Weather fixture
 
 `weather/singapore-changi-2011-2025.epw` is the frozen Singapore Changi

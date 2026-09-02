@@ -8,8 +8,8 @@ export const facadeDirection = (facade: string): Vec3 => ({
 export function presetForPresentation(screen: string, analysis: string): ViewPreset {
   if (screen === 'provide' || screen === 'verify') return 'precinct'
   if (screen === 'locate') return 'home'
-  if (analysis === 'solar_access' || analysis === 'radiation') return 'home'
-  return 'tower'
+  if (analysis === 'sunpath') return 'precinct'
+  return 'home'
 }
 
 export function frameBounds(bounds: { min: Vec3, max: Vec3 }, preset: ViewPreset, facade = 'east') {
@@ -18,9 +18,9 @@ export function frameBounds(bounds: { min: Vec3, max: Vec3 }, preset: ViewPreset
   const radius = Math.max(...size)
   const facadeVector = facadeDirection(facade)
   const direction: Vec3 = preset === 'home'
-    ? [facadeVector[0] + (facadeVector[2] ? .32 : 0), .24, facadeVector[2] + (facadeVector[0] ? .32 : 0)]
+    ? [facadeVector[0] * .08, 1, facadeVector[2] * .08]
     : preset === 'tower' ? [0, .55, 1] : [1, .8, 1]
-  const distance = Math.max(preset === 'home' ? 36 : 0, radius * (preset === 'precinct' ? 1.45 : preset === 'tower' ? 1.35 : 2.2))
+  const distance = Math.max(preset === 'home' ? 35 : 0, radius * (preset === 'precinct' ? 1.45 : preset === 'tower' ? 1.35 : 2.5))
   const position: Vec3 = [
     target[0] + direction[0] * distance,
     Math.max(8, target[1] + Math.max(.32, direction[1]) * distance),

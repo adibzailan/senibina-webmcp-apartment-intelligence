@@ -14,7 +14,7 @@ export function exportManifest(digest: string, study?: any) {
 
 export function cardNarrative(name: CardName, result: any) {
   const content = {
-    'site-unit': { method: 'Official HDB footprint, inferred massing, and resident-confirmed approximate apartment floor plate.', limitations: 'The ground-level footprint is reused at the selected storey; the apartment rectangle and opening are approximations.' },
+    'site-unit': { method: 'Official HDB footprint, inferred massing, and resident-confirmed placement of a published typical 4-room reference.', limitations: 'The ground-level footprint is reused at the selected storey; the published typical plan is not a verified Block 87 or storey-30 stack assignment.' },
     sunpath: { method: 'Ladybug solar positions for equinoxes and solstices in Singapore time.', limitations: 'Paths describe the sun; context obstruction is shown in the other studies.' },
     shadow: { method: 'Aperture-gated Ladybug Geometry rays across the apartment floor plate at 09:00, 12:00 and 15:00.', limitations: 'Three representative instants on 21 March; open plan with no internal partitions.' },
     'solar-access': { method: 'Direct-sun hours on the apartment floor plate, sampled every 30 minutes on four seasonal dates.', limitations: 'The apartment footprint and one exterior opening are resident-confirmed approximations.' },
@@ -81,7 +81,16 @@ function drawPlateGrid(ctx: CanvasRenderingContext2D, result: any, values: numbe
     const row = Math.floor(index / cols), col = index % cols
     ctx.fillStyle = colour(value, values); ctx.fillRect(x + col * cellWidth, y + (rows - row - 1) * cellHeight, cellWidth - 2, cellHeight - 2)
   })
-  ctx.strokeStyle = '#18211d'; ctx.lineWidth = 3; ctx.strokeRect(x, y, width, height)
+  const origin = result.plate.grid_origin_xyz, u = result.plate.grid_u_vector, v = result.plate.grid_v_vector
+  const u2 = u[0] * u[0] + u[1] * u[1], v2 = v[0] * v[0] + v[1] * v[1]
+  ctx.strokeStyle = '#18211d'; ctx.lineWidth = 3; ctx.beginPath()
+  result.plate.outline_xy.forEach(([px, py]: number[], index: number) => {
+    const dx = px - origin[0], dy = py - origin[1]
+    const col = (dx * u[0] + dy * u[1]) / u2, row = (dx * v[0] + dy * v[1]) / v2
+    const plotX = x + col / cols * width, plotY = y + (1 - row / rows) * height
+    index ? ctx.lineTo(plotX, plotY) : ctx.moveTo(plotX, plotY)
+  })
+  ctx.stroke()
 }
 
 function drawShadow(ctx: CanvasRenderingContext2D, result: any) {

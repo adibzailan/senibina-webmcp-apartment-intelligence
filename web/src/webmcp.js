@@ -7,7 +7,7 @@ const analyses = ['sunpath', 'shadow', 'solar_access', 'radiation']
 const shadowTimes = ['09:00', '12:00', '15:00']
 const solarDates = ['2026-03-21', '2026-06-21', '2026-09-21', '2026-12-21']
 const views = ['precinct', 'tower', 'home']
-export const DEFAULT_PROPOSAL = { width: 8, depth: 6, window_width: 4, window_height: 1.2, sill_height: .9 }
+export const DEFAULT_PROPOSAL = { mirrored: false, window_width: 4, window_height: 1.2, sill_height: .9 }
 
 export function validateShowAnalysis(input) {
   const allowed = ['analysis', 'shadow_time', 'solar_date', 'view']
@@ -52,8 +52,8 @@ export async function registerWebMCP(dispatch, getState, onExport) {
       inputSchema: object({ address: text, storey: { type: 'integer', minimum: 1, maximum: 47 } }),
       execute: execute(async (input, signal) => { const result = await api.create(input, signal); dispatch({ type: 'study-created', payload: result, source: 'webmcp' }); return result }) },
     { name: 'propose_unit_location', description: 'Stage an approximate facade and horizontal unit position for visible resident review. This never confirms geometry.',
-      inputSchema: object({ study_id: text, facade: { type: 'string', enum: ['north', 'east', 'south', 'west'] }, position: { type: 'string', enum: ['left', 'centre', 'right'] } }),
-      execute: execute((input, signal) => api.proposal(input.study_id, { facade: input.facade, position: input.position, ...DEFAULT_PROPOSAL }, signal)) },
+      inputSchema: object({ study_id: text, facade: { type: 'string', enum: ['north', 'east', 'south', 'west'] }, position: { type: 'string', enum: ['left', 'centre', 'right'] }, mirrored: { type: 'boolean' } }, ['study_id', 'facade', 'position']),
+      execute: execute((input, signal) => api.proposal(input.study_id, { facade: input.facade, position: input.position, ...DEFAULT_PROPOSAL, mirrored: input.mirrored ?? false }, signal)) },
     { name: 'get_study_state', description: 'Read concise provenance, state, missing information, and the next human action.', annotations: { readOnlyHint: true },
       inputSchema: object({ study_id: text }), execute: execute(async (input, signal) => {
         const state = await api.state(input.study_id, signal); dispatch({ type: 'study-state', payload: state, source: 'webmcp' }); return conciseStudyState(state)

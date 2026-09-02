@@ -32,5 +32,6 @@
 @media(min-width:641px) and (max-width:1100px){.study-progress li:nth-child(2),.study-progress li:nth-child(4){display:list-item}.study-progress ol{gap:12px}.study-progress button{font-size:10px}}
 
 @media(max-width:640px){.study-progress li:nth-child(2),.study-progress li:nth-child(4){display:list-item}}
+.checkbox-control{display:flex;align-items:center;gap:8px;min-height:44px;border-bottom:1px solid var(--ink);font-size:14px;color:var(--ink)}.checkbox-control input{min-height:auto;width:18px;height:18px}
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}

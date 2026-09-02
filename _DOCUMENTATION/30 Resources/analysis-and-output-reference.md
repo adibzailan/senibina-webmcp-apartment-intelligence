@@ -21,6 +21,10 @@ Every study must record north, location, date or analysis period, time zone,
 weather source, geometry version, sampling settings, legend, units, assumptions,
 uncertainty, and a plain-language finding.
 
+The current deterministic method is `apartment-intelligence-solar-v5`. Its
+digest includes the accepted unit-fixture digest, placement transform,
+handedness, aperture, weather, method assumptions, and computed results.
+
 Radiation is not interchangeable with daylight, glare, indoor temperature,
 cooling load, comfort, or energy consumption. Those require different models
 and remain out of V1.

@@ -1,0 +1,143 @@
+{
+  "schema": "apartment-intelligence.unit-plan.v1",
+  "plan_id": "skyville-dawson-4r-type-a-base",
+  "label": "SkyVille @ Dawson 4R Type A base option",
+  "plan_state": "published_typical_reference",
+  "source": {
+    "title": "SkyVille @ Dawson sales brochure",
+    "url": "https://assets.hdb.gov.sg/residential/buying-a-flat/finding-a-flat/sales-brochure/skyville-dawson.pdf",
+    "page": 5,
+    "retrieved_at": "2026-09-02",
+    "upstream_pdf_sha256": "97a4e7979d6a136b2be10cc83e18f64d68345193fec342a363e0be4382c536dd",
+    "option": "4R Type A base option",
+    "state": "published_typical_reference",
+    "scope_note": "Published typical 4-room reference; not a verified Block 87 or storey-30 stack assignment. Types B and C share the published outer boundary.",
+    "page_image_sha256": "ad73a30927d1c81328f2c98a6e54baab730f1ad73240eff4e7405a4e18256a1a"
+  },
+  "reference_area_m2": 87.0,
+  "reference_area_state": "inferred_cross_checked",
+  "polygon_local_m": [
+    [
+      -6.25457746,
+      -0.0
+    ],
+    [
+      6.25457746,
+      0.0
+    ],
+    [
+      6.25457746,
+      4.28120811
+    ],
+    [
+      5.61908563,
+      4.28120811
+    ],
+    [
+      5.61908563,
+      4.61567749
+    ],
+    [
+      4.41499585,
+      4.61567749
+    ],
+    [
+      4.41499585,
+      6.42181216
+    ],
+    [
+      2.97677751,
+      6.42181216
+    ],
+    [
+      2.97677751,
+      6.08734277
+    ],
+    [
+      2.57541425,
+      6.08734277
+    ],
+    [
+      2.57541425,
+      5.68597951
+    ],
+    [
+      1.90647548,
+      5.68597951
+    ],
+    [
+      1.90647548,
+      6.42181216
+    ],
+    [
+      0.96996121,
+      6.42181216
+    ],
+    [
+      0.96996121,
+      9.23135497
+    ],
+    [
+      0.50170407,
+      9.23135497
+    ],
+    [
+      0.50170407,
+      8.52896927
+    ],
+    [
+      -4.0136326,
+      8.52896927
+    ],
+    [
+      -4.0136326,
+      6.42181216
+    ],
+    [
+      -6.25457746,
+      6.42181216
+    ]
+  ],
+  "frontage": {
+    "edge_index": 0,
+    "length_m": 12.50915492,
+    "derivation": "longest_supported_exterior_edge"
+  },
+  "derivation": {
+    "method_version": "apartment-intelligence-floorplate-compiler-v1",
+    "dominant_rotation_deg": -1.28732884,
+    "scale_m_per_pixel": 0.0334469383,
+    "crop_xywh": [
+      430,
+      280,
+      470,
+      390
+    ],
+    "segmentation_hsv": {
+      "lower": [
+        8,
+        5,
+        120
+      ],
+      "upper": [
+        35,
+        200,
+        255
+      ]
+    },
+    "thresholds": {
+      "minimum_mask_iou": 0.9,
+      "maximum_area_change_fraction": 0.05,
+      "minimum_vertices": 8,
+      "maximum_vertices": 40,
+      "maximum_boundary_rms_deviation_fraction": 0.02
+    }
+  },
+  "quality": {
+    "mask_iou": 0.93898373,
+    "area_change_fraction": 0.01407624,
+    "boundary_rms_deviation_fraction": 0.0140512,
+    "vertex_count": 20
+  },
+  "geometry_digest": "329ab234fd996698d8a2a632b590f07ad1f7a966ec11b7f53f06dbd55338b548"
+}

@@ -145,6 +145,20 @@ official Microsoft repository. The exact npm package has Apache-2.0 licensing,
 no lifecycle hook, no OSV advisory, and its registry integrity is pinned by the
 lockfile. It is development-only and is not included in the deployed bundle.
 
+The 2 September 2026 floor-plate compiler intake accepted NumPy 2.4.6 and
+`opencv-python-headless` 4.13.0.92 from PyPI for an isolated authoring
+environment only. NumPy is published by the NumPy project from
+`numpy/numpy` under BSD-3-Clause with bundled permissive components. The
+OpenCV Python wrapper is published by the OpenCV Team from
+`opencv/opencv-python` under MIT and bundles OpenCV 4.13 under Apache-2.0.
+Both releases are not yanked, expose compatible CPython 3.13 macOS ARM64
+wheels, report no PyPI vulnerabilities, and returned no OSV advisories for the
+exact versions. Installation is restricted to the pinned binary-wheel hashes
+in `data/compiler-requirements.txt`, so package build and setup scripts do not
+execute. The compiler environment is excluded from the server lock and the
+deployed Windows runtime; its input brochure raster and diagnostics remain
+ignored local research material.
+
 The first Windows installation correctly stopped because Click's Windows-only
 `colorama` dependency was absent from the macOS-generated hash lock. Colorama
 0.4.6 was checked against PyPI and the official `tartley/colorama` repository:

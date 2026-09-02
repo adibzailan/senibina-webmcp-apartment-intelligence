@@ -32,9 +32,10 @@ def confirm_study(study_id: str, revision: int):
 def test_analysis_requires_visible_confirmation() -> None:
     study_id, _ = create_study()
     state = client.get(f"/api/studies/{study_id}").json()
-    assert state["proposal"]["depth"] == 6.0
+    assert state["proposal"]["mirrored"] is False
+    assert state["plate_summary"]["plan_id"] == "skyville-dawson-4r-type-a-base"
     assert state["plate_summary"]["sensor_count"] > 0
-    assert set(state["plate_summary"]) == {"usable_area_m2", "sensor_count", "spacing_m", "normal_state"}
+    assert set(state["plate_summary"]) == {"reference_area_m2", "sampled_area_m2", "sensor_count", "spacing_m", "normal_state", "plan_id", "mirrored", "placement_state"}
     response = client.post(f"/api/studies/{study_id}/analysis")
     assert response.status_code == 409
     assert response.json()["error"] == "CONFIRMATION_REQUIRED"
@@ -62,15 +63,15 @@ def test_confirmation_is_bound_to_proposal_revision() -> None:
     study_id, _ = create_study()
     proposal = client.put(
         f"/api/studies/{study_id}/proposal",
-        json={"facade": "east", "position": "centre", "width": 8.0,
-              "depth": 6.0, "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
+        json={"facade": "east", "position": "centre", "mirrored": False,
+              "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
     )
     revision = proposal.json()["proposal_revision"]
     assert confirm_study(study_id, revision).status_code == 200
     client.put(
         f"/api/studies/{study_id}/proposal",
-        json={"facade": "east", "position": "left", "width": 8.0,
-              "depth": 8.0, "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
+        json={"facade": "east", "position": "left", "mirrored": True,
+              "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
     )
     response = client.post(f"/api/studies/{study_id}/analysis")
     assert response.status_code == 409
@@ -83,6 +84,13 @@ def test_unknown_input_fields_are_rejected() -> None:
         json={"address": "87 Dawson Road", "storey": 30, "confirmed": True},
     )
     assert response.status_code == 422
+    study_id, _ = create_study()
+    legacy = client.put(
+        f"/api/studies/{study_id}/proposal",
+        json={"facade": "east", "position": "centre", "mirrored": False, "width": 8,
+              "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
+    )
+    assert legacy.status_code == 422
 
 
 def test_fixture_and_storey_errors_are_structured() -> None:

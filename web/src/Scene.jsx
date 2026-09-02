@@ -11,6 +11,7 @@ export default function Scene({ context, study, result, analysis, screen, shadow
   useEffect(() => {
     if (!host.current) return
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
+    renderer.localClippingEnabled = true
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); host.current.replaceChildren(renderer.domElement)
     const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(38, 1, .1, 3000)
     const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = false; controls.screenSpacePanning = true; controls.minDistance = 3; controls.maxDistance = 900; controls.maxPolarAngle = Math.PI * .49

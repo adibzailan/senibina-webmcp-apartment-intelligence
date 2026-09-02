@@ -1,0 +1,15 @@
+{
+  "schema": "apartment-intelligence.unit-plan-receipt.v1",
+  "plan_id": "skyville-dawson-4r-type-a-base",
+  "compiler_version": "apartment-intelligence-floorplate-compiler-v1",
+  "source_page_image_sha256": "ad73a30927d1c81328f2c98a6e54baab730f1ad73240eff4e7405a4e18256a1a",
+  "source_pdf_sha256": "97a4e7979d6a136b2be10cc83e18f64d68345193fec342a363e0be4382c536dd",
+  "reference_area_m2": 87.0,
+  "quality": {
+    "mask_iou": 0.93898373,
+    "area_change_fraction": 0.01407624,
+    "boundary_rms_deviation_fraction": 0.0140512,
+    "vertex_count": 20
+  },
+  "geometry_digest": "329ab234fd996698d8a2a632b590f07ad1f7a966ec11b7f53f06dbd55338b548"
+}

@@ -22,7 +22,8 @@ describe('architectural camera', () => {
   it('selects stage-aware presets', () => {
     expect(presetForPresentation('provide', 'site')).toBe('precinct')
     expect(presetForPresentation('locate', 'site')).toBe('home')
-    expect(presetForPresentation('analyse', 'sunpath')).toBe('tower')
+    expect(presetForPresentation('analyse', 'sunpath')).toBe('precinct')
+    expect(presetForPresentation('analyse', 'shadow')).toBe('home')
     expect(presetForPresentation('analyse', 'radiation')).toBe('home')
   })
 
@@ -37,6 +38,7 @@ describe('architectural camera', () => {
 
   it('keeps facade evidence far enough from the camera to read as a drawing', () => {
     const frame = frameBounds({ min: [-4, 87, -4], max: [4, 93, 4] }, 'home', 'east')
-    expect(frame.position[0] - frame.target[0]).toBeGreaterThanOrEqual(36)
+    expect(frame.position[0] - frame.target[0]).toBeGreaterThanOrEqual(2.5)
+    expect(frame.position[1] - frame.target[1]).toBeGreaterThanOrEqual(35)
   })
 })

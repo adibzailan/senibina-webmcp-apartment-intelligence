@@ -43,8 +43,7 @@ class StudyInput(ClosedModel):
 class ProposalInput(ClosedModel):
     facade: Literal["north", "east", "south", "west"]
     position: Literal["left", "centre", "right"]
-    width: float = Field(ge=2, le=20)
-    depth: float = Field(ge=2, le=12)
+    mirrored: bool = False
     window_width: float = Field(ge=0.5, le=12)
     window_height: float = Field(ge=0.5, le=3)
     sill_height: float = Field(ge=0, le=2)
@@ -77,7 +76,16 @@ def study_target(study: dict, proposal: dict | None = None) -> dict:
 
 def plate_summary(study: dict) -> dict:
     plate = derive_plate(study_target(study))
-    return {key: plate[key] for key in ("usable_area_m2", "sensor_count", "spacing_m", "normal_state")}
+    return {
+        "plan_id": plate["plan"]["plan_id"],
+        "reference_area_m2": plate["reference_area_m2"],
+        "sampled_area_m2": plate["sampled_area_m2"],
+        "sensor_count": plate["sensor_count"],
+        "spacing_m": plate["spacing_m"],
+        "normal_state": plate["normal_state"],
+        "mirrored": plate["placement"]["mirrored"],
+        "placement_state": plate["placement"]["state"],
+    }
 
 
 def _analysis_worker(scene: dict, queue) -> None:
@@ -156,8 +164,8 @@ def create_study(payload: StudyInput, study_session: str | None = Cookie(default
         "address": building["address"],
         "storey": payload.storey,
         "building": building,
-        "proposal": {"facade": "east", "position": "centre", "width": 8.0,
-                     "depth": 6.0, "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
+        "proposal": {"facade": "east", "position": "centre", "mirrored": False,
+                     "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
         "proposal_revision": 1,
         "confirmed_revision": None,
         "confirmation_challenges": {},
@@ -195,7 +203,7 @@ def propose(study_id: str, payload: ProposalInput, study_session: str | None = C
         derive_plate(study_target(study, proposal))
     except ValueError as failure:
         code = str(failure)
-        next_action = "Choose a facade and position with usable floor area." if code == "PROPOSAL_OUTSIDE_FOOTPRINT" else "Reduce the opening or choose another facade position."
+        next_action = "Choose a facade and position where the complete reference plan fits." if code == "PLAN_PLACEMENT_OUTSIDE_FOOTPRINT" else "Reduce the opening or choose another facade position."
         return error(code, 422, next_action)
     study["proposal"] = proposal
     study["proposal_revision"] += 1

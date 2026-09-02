@@ -22,7 +22,7 @@ def test_duplicate_inputs_produce_identical_digest() -> None:
 def test_plate_snaps_to_a_real_rotated_facade_and_stays_horizontal() -> None:
     target = _scene([])["target"]
     target["building"]["footprint"] = [
-        [-7.071, 0], [0, -7.071], [7.071, 0], [0, 7.071], [-7.071, 0]
+        [-20, 0], [0, -20], [20, 0], [0, 20], [-20, 0]
     ]
 
     plate = analysis.derive_plate(target)
@@ -44,57 +44,52 @@ def test_dawson_fixture_never_resolves_a_successful_proposal_to_the_wrong_facade
                 try:
                     plate = analysis.derive_plate(target)
                 except ValueError as exc:
-                    assert str(exc) in {"PROPOSAL_OUTSIDE_FOOTPRINT", "APERTURE_DOES_NOT_FIT"}
+                    assert str(exc) in {"PLAN_PLACEMENT_OUTSIDE_FOOTPRINT", "APERTURE_DOES_NOT_FIT"}
                     continue
-                assert plate["normal"][0] * cardinal[0] + plate["normal"][1] * cardinal[1] >= math.cos(math.pi / 4)
+                assert plate["normal"][0] * cardinal[0] + plate["normal"][1] * cardinal[1] >= .5
 
 
-def test_plate_masks_cells_outside_an_l_shaped_footprint() -> None:
+def test_plan_is_never_clipped_into_a_fragment() -> None:
     target = _scene([])["target"]
-    target["width"] = 10
-    target["depth"] = 8
     target["building"]["footprint"] = [
         [-5, -5], [5, -5], [5, 0], [0, 0], [0, 5], [-5, 5], [-5, -5]
     ]
 
-    plate = analysis.derive_plate(target)
-
-    assert 0 < sum(plate["mask"]) < len(plate["mask"])
-    assert plate["sensor_count"] == sum(plate["mask"])
-    assert plate["usable_area_m2"] < target["width"] * target["depth"]
-
-
-def test_depth_changes_the_canonical_result_digest() -> None:
-    shallow = _scene([])
-    deep = _scene([])
-    deep["target"]["depth"] = 8
-
-    assert analyse_scene(shallow)["digest"] != analyse_scene(deep)["digest"]
+    try:
+        analysis.derive_plate(target)
+    except ValueError as exc:
+        assert str(exc) == "PLAN_PLACEMENT_OUTSIDE_FOOTPRINT"
+    else:
+        raise AssertionError("the fixed plan must be rejected instead of clipped")
 
 
-def test_masked_cells_do_not_dilute_radiation_summary() -> None:
-    scene = _scene([])
-    scene["target"]["width"] = 10
-    scene["target"]["depth"] = 8
-    scene["target"]["building"]["footprint"] = [
-        [-5, -5], [5, -5], [5, 0], [0, 0], [0, 5], [-5, 5], [-5, -5]
-    ]
+def test_mirroring_changes_the_canonical_result_digest() -> None:
+    regular = _scene([])
+    mirrored = _scene([])
+    mirrored["target"]["mirrored"] = True
 
-    result = analyse_scene(scene)
-    values = [value for value, mask in zip(result["radiation"]["sensor_values_kwh_m2"], result["plate"]["mask"]) if mask]
+    assert analyse_scene(regular)["digest"] != analyse_scene(mirrored)["digest"]
 
-    assert result["radiation"]["average_kwh_m2"] == round(sum(values) / len(values), 2)
-    assert result["radiation"]["minimum_kwh_m2"] == min(values)
+
+def test_compiled_plan_is_orthogonal_and_has_exact_reference_area() -> None:
+    plate = analysis.derive_plate(_scene([])["target"])
+    assert plate["plan"]["plan_id"] == "skyville-dawson-4r-type-a-base"
+    assert plate["plan"]["source_state"] == "published_typical_reference"
+    assert plate["reference_area_m2"] == 87.0
+    assert math.isclose(plate["sampled_area_m2"], 87.0, abs_tol=2.0)
+    assert len(plate["outline_xy"]) > 5
+    assert plate["placement"]["containment_fraction"] >= .95
 
 
 def test_direct_sun_penetration_is_limited_by_the_window_head() -> None:
     target = _scene([])["target"]
     target["storey"] = 1
     plate = analysis.derive_plate(target)
-    direction = Vector3D(math.cos(math.pi / 4), 0, math.sin(math.pi / 4))
-
-    within_head = Point3D(3.0, 0, plate["elevation_m"])
-    beyond_head = Point3D(2.7, 0, plate["elevation_m"])
+    normal = plate["normal"]
+    direction = Vector3D(normal[0] * math.cos(math.pi / 4), normal[1] * math.cos(math.pi / 4), math.sin(math.pi / 4))
+    anchor = plate["anchor_xy"]
+    within_head = Point3D(anchor[0] - normal[0] * 2.0, anchor[1] - normal[1] * 2.0, plate["elevation_m"])
+    beyond_head = Point3D(anchor[0] - normal[0] * 2.2, anchor[1] - normal[1] * 2.2, plate["elevation_m"])
 
     assert analysis._aperture_hit(within_head, direction, plate) is not None
     assert analysis._aperture_hit(beyond_head, direction, plate) is None
@@ -105,8 +100,10 @@ def test_diffuse_aperture_factor_decreases_with_floor_depth() -> None:
     target["storey"] = 1
     plate = analysis.derive_plate(target)
 
-    near = analysis._diffuse_view_factor(Point3D(4.5, 0, plate["elevation_m"]), plate, [])
-    far = analysis._diffuse_view_factor(Point3D(0.0, 0, plate["elevation_m"]), plate, [])
+    normal = plate["normal"]
+    anchor = plate["anchor_xy"]
+    near = analysis._diffuse_view_factor(Point3D(anchor[0] - normal[0], anchor[1] - normal[1], plate["elevation_m"]), plate, [])
+    far = analysis._diffuse_view_factor(Point3D(anchor[0] - normal[0] * 5, anchor[1] - normal[1] * 5, plate["elevation_m"]), plate, [])
 
     assert 0 < far < near < 1
 
@@ -130,7 +127,8 @@ def test_eastern_obstruction_only_removes_morning_access() -> None:
 def test_analysis_returns_computed_shadow_access_and_radiation_values() -> None:
     result = analyse_scene(_scene([]))
 
-    assert result["method_version"] == "apartment-intelligence-solar-v4"
+    assert result["method_version"] == "apartment-intelligence-solar-v5"
+    assert len(result["plate"]["plan"]["fixture_digest"]) == 64
     cells = result["plate"]["grid"][0] * result["plate"]["grid"][1]
     assert cells <= 256
     assert result["plate"]["sensor_count"] == sum(result["plate"]["mask"])
@@ -158,14 +156,13 @@ def _scene(buildings: list[dict]) -> dict:
             "facade": "east",
             "storey": 30,
             "position": "centre",
-            "width": 8,
-            "depth": 6,
+            "mirrored": False,
             "window_width": 4,
             "window_height": 1.2,
             "sill_height": 0.9,
             "building": {
                 "id": "target",
-                "footprint": [[-5, -5], [5, -5], [5, 5], [-5, 5], [-5, -5]],
+                "footprint": [[-12, -12], [12, -12], [12, 12], [-12, 12], [-12, -12]],
                 "height_m": 120,
             },
         },

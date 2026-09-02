@@ -54,7 +54,7 @@ export default function App() {
   const propose = async event => {
     event.preventDefault(); const form = new FormData(event.currentTarget)
     try {
-      const payload = { facade: form.get('facade'), position: form.get('position'), width: Number(form.get('width')), depth: Number(form.get('depth')), window_width: Number(form.get('window_width')), window_height: Number(form.get('window_height')), sill_height: Number(form.get('sill_height')) }
+      const payload = { facade: form.get('facade'), position: form.get('position'), mirrored: form.get('mirrored') === 'on', window_width: Number(form.get('window_width')), window_height: Number(form.get('window_height')), sill_height: Number(form.get('sill_height')) }
       const response = await api.proposal(state.studyId, payload); dispatch({ type: 'study-state', payload: response, source: 'ui' }); setStudy(await api.state(state.studyId)); setMessage(response.next_action)
     } catch (error) { setMessage(error.body?.next_action || error.message) }
   }
@@ -90,25 +90,25 @@ export default function App() {
 
         {state.screen === 'verify' && <section>
           <ChapterHeader number="02" title="Separate records from assumptions."><p>The public record establishes the building. It cannot identify a private unit or its windows.</p></ChapterHeader>
-          <dl className="fact-list"><div><dt>Sourced</dt><dd>HDB footprint and maximum floor level.</dd></div><div><dt>Inferred</dt><dd>141 m height from 47 floors × 3.0 m.</dd></div><div><dt>Needs you</dt><dd>Exact facade, unit zone and openings.</dd></div></dl>
+          <dl className="fact-list"><div><dt>Sourced</dt><dd>HDB footprint and maximum floor level.</dd></div><div><dt>Inferred</dt><dd>141 m height from 47 floors × 3.0 m.</dd></div><div><dt>Needs you</dt><dd>Typical-plan placement, handedness and openings.</dd></div></dl>
           <button className="primary" onClick={() => dispatch({ type: 'show-screen', screen: 'locate' })}>Locate the home in 3D</button>
         </section>}
 
         {state.screen === 'locate' && study && <section>
-          <ChapterHeader number="03" title="Place the apartment you recognise."><p>Adjust the approximate floor plate and its exterior opening. Red appears only after you confirm this is the home you mean.</p></ChapterHeader>
+          <ChapterHeader number="03" title="Place the apartment you recognise."><p>Place and mirror a published typical 4-room reference, then adjust its exterior opening. Red appears only after you confirm this is the home you mean.</p></ChapterHeader>
           <form className="proposal" onSubmit={propose}>
+            <label>Typical plan<select name="plan" value="skyville-dawson-4r-type-a-base" disabled><option value="skyville-dawson-4r-type-a-base">4R Type A base · 87 m²</option></select></label>
             <label>Facade<select name="facade" defaultValue={study.proposal.facade}><option>north</option><option>east</option><option>south</option><option>west</option></select></label>
             <label>Position<select name="position" defaultValue={study.proposal.position}><option>left</option><option>centre</option><option>right</option></select></label>
-            <label>Unit zone (m)<input name="width" type="number" min="2" max="20" step=".5" defaultValue={study.proposal.width}/></label>
-            <label>Apartment depth (m)<input name="depth" type="number" min="2" max="12" step=".5" defaultValue={study.proposal.depth}/></label>
+            <label>Plan handedness<span className="checkbox-control"><input name="mirrored" type="checkbox" defaultChecked={study.proposal.mirrored}/> Mirror typical plan</span></label>
             <label>Window width (m)<input name="window_width" type="number" min=".5" max="12" step=".1" defaultValue={study.proposal.window_width}/></label>
             <label>Window height (m)<input name="window_height" type="number" min=".5" max="3" step=".1" defaultValue={study.proposal.window_height}/></label>
             <label>Sill height (m)<input name="sill_height" type="number" min="0" max="2" step=".1" defaultValue={study.proposal.sill_height}/></label>
             <button className="secondary">Update the visible proposal</button>
           </form>
-          <p className="proposal-summary"><span>{study.proposal.facade} facade · {study.proposal.position} zone · {study.proposal.width} × {study.proposal.depth} m</span><span>{study.plate_summary?.usable_area_m2} m² usable grid · {study.plate_summary?.spacing_m} m sensors · {study.plate_summary?.normal_state?.replaceAll('_', ' ')}</span><span>storey {study.storey} · {study.proposal.window_width} × {study.proposal.window_height} m window</span></p>
+          <p className="proposal-summary"><span>4R Type A base · {study.proposal.facade} facade · {study.proposal.position} · {study.proposal.mirrored ? 'mirrored' : 'standard'}</span><span>{study.plate_summary?.reference_area_m2} m² published reference · {study.plate_summary?.sampled_area_m2} m² sampled · {study.plate_summary?.spacing_m} m sensors</span><span>storey {study.storey} · {study.proposal.window_width} × {study.proposal.window_height} m window · {study.plate_summary?.normal_state?.replaceAll('_', ' ')}</span></p>
           <button className="primary confirmation" onClick={confirm}>Confirm this home</button>
-          <p className="human-boundary">Confirm in this visible interface. Confirmation is not exposed as a WebMCP tool; it is an interaction boundary, not identity proof.</p>
+          <p className="human-boundary">Published typical 4-room reference, uniformly scaled to 87 m²; not a verified Block 87/storey-30 stack. Confirm plan, placement, handedness and opening in this visible interface.</p>
         </section>}
 
         {state.screen === 'analyse' && <section>

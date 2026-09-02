@@ -43,7 +43,7 @@ Guaranteed input:
 2. **Research and verify:** review candidate address, building, height basis,
    surroundings, weather source, missing facts, and confidence.
 3. **Locate the home:** inspect translucent approximate massing and confirm the
-   target facade, storey, adjustable floor-plate width and depth, and window.
+   published typical plan, target facade, placement, handedness, and window.
 4. **Explore the sun:** view sunpath, shadow, solar-access, and radiation studies
    in the same scene with plain-language findings.
 5. **Keep the evidence:** export five graphics, a PDF, a ZIP, and a layered
@@ -56,8 +56,8 @@ Guaranteed input:
 | Sourced | Directly returned by a named public source | HDB footprint polygon |
 | Inferred | Calculated from sourced facts and a disclosed assumption | Height from storeys × floor-to-floor value |
 | Generated | Produced deterministically by the application | Extruded massing or radiation mesh |
-| Human-confirmed | Explicitly checked by the resident | Target facade and window positions |
-| Missing | Not established and not safe to infer | Exact unit layout without a floorplan |
+| Human-confirmed | Explicitly checked by the resident | Typical plan placement, handedness, and window positions |
+| Missing | Not established and not safe to infer | Verified Block 87/storey-30 stack geometry |
 
 ## Proposed system
 
@@ -66,7 +66,7 @@ Guaranteed input:
    weather file; it does not scrape listings or call a runtime upstream API.
 3. A canonical scene record stores footprint rings, coordinate reference,
    north, base elevation, height basis, source, confidence, and the derived,
-   resident-confirmed approximate floor plate and aperture.
+   compiler-derived typical floor plate, its resident-confirmed placement, and aperture.
 4. Three.js extrudes and renders the same verified scene record in the browser.
 5. The resident corrects and confirms the target unit geometry through a visible
    first-party action.
@@ -86,7 +86,7 @@ geometry, and `rhino3dm.py` cover the complete v1 runtime.
 | Tool | Purpose | State effect |
 | --- | --- | --- |
 | `create_apartment_study` | Resolve a bundled Dawson address and storey and open Research and Verify | Creates `needs_confirmation` |
-| `propose_unit_location` | Stage facade, storey, unit-zone, and opening candidates in the visible scene | Remains `needs_confirmation` |
+| `propose_unit_location` | Stage facade, left/centre/right placement, optional mirroring, and default opening in the visible scene | Remains `needs_confirmation` |
 | `get_study_state` | Read provenance, missing information, state, and the next human action | Read-only |
 | `run_solar_analysis` | Run selected deterministic studies over a confirmed scene and period | `ready` to `analysing` to `complete` |
 | `show_analysis` | Focus the visible interface on one completed study and date/time | Changes presentation, not evidence |
@@ -107,6 +107,13 @@ server challenge. Replays and static activation headers cannot confirm a study.
 Tool results stay concise and never return full geometry. Confirmation binds the
 visible proposal revision and canonical scene digest; stale confirmation is
 rejected.
+
+The tracked unit fixture is compiled offline from the published SkyVille @
+Dawson brochure page 5, 4R Type A base option. Types B and C share the published
+outer boundary. It is a published typical reference uniformly scaled to 87 m²,
+not a verified Block 87 or storey-30 stack assignment. The source raster and
+diagnostic overlays remain untracked; the accepted polygon, source hash,
+transformation metrics, and geometry digest are reproducible public evidence.
 
 ## End-state artifacts
 

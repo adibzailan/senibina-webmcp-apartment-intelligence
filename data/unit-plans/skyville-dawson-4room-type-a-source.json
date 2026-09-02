@@ -1,0 +1,19 @@
+{
+  "plan_id": "skyville-dawson-4r-type-a-base",
+  "label": "SkyVille @ Dawson 4R Type A base option",
+  "source_sha256": "ad73a30927d1c81328f2c98a6e54baab730f1ad73240eff4e7405a4e18256a1a",
+  "crop": [430, 280, 470, 390],
+  "hsv_lower": [8, 5, 120],
+  "hsv_upper": [35, 200, 255],
+  "reference_area_m2": 87.0,
+  "source": {
+    "title": "SkyVille @ Dawson sales brochure",
+    "url": "https://assets.hdb.gov.sg/residential/buying-a-flat/finding-a-flat/sales-brochure/skyville-dawson.pdf",
+    "page": 5,
+    "retrieved_at": "2026-09-02",
+    "upstream_pdf_sha256": "97a4e7979d6a136b2be10cc83e18f64d68345193fec342a363e0be4382c536dd",
+    "option": "4R Type A base option",
+    "state": "published_typical_reference",
+    "scope_note": "Published typical 4-room reference; not a verified Block 87 or storey-30 stack assignment. Types B and C share the published outer boundary."
+  }
+}

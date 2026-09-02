@@ -16,6 +16,8 @@ from ladybug_geometry.geometry3d import Face3D, Point3D, Ray3D, Vector3D
 
 ROOT = Path(__file__).parents[2]
 WEATHER_PATH = ROOT / "data" / "weather" / "singapore-changi-2011-2025.epw"
+UNIT_PLAN_PATH = ROOT / "data" / "fixtures" / "unit-plans" / "skyville-dawson-4room-type-a-v1.json"
+UNIT_PLAN = json.loads(UNIT_PLAN_PATH.read_text(encoding="utf-8"))
 WEATHER_SHA256 = "9293635032609058428c34809b0c2fa90178cb73d2aaf857f0918b46893bf60c"
 LATITUDE = 1.295815
 LONGITUDE = 103.809873
@@ -104,93 +106,76 @@ def derive_plate(target: dict) -> dict:
     else:
         along = min(xs) + (max(xs) - min(xs)) * factor
         origin = Point3D(along, (max(ys) + 1 if cardinal[1] > 0 else min(ys) - 1), 0)
-    inward = Vector3D(-cardinal[0], -cardinal[1], 0)
-    hits = []
-    for index, (a, b) in enumerate(zip(footprint, footprint[1:])):
-        if math.hypot(b[0] - a[0], b[1] - a[1]) < 1e-9:
-            continue
-        _, edge_normal = _edge_frame(a, b, footprint)
-        alignment = edge_normal[0] * cardinal[0] + edge_normal[1] * cardinal[1]
-        if alignment < math.cos(math.pi / 4):
-            continue
-        distance = _ray_segment_distance(origin, inward, a, b)
-        if distance is not None:
-            hits.append((distance, -alignment, index, (origin.x + inward.x * distance, origin.y + inward.y * distance)))
-    if not hits:
-        raise ValueError("PROPOSAL_OUTSIDE_FOOTPRINT")
-    _, _, edge_index, hit = min(hits)
-    a, b = footprint[edge_index], footprint[edge_index + 1]
-    edge_length = math.hypot(b[0] - a[0], b[1] - a[1])
-    normal_state = "sourced_edge"
-    required_frontage = max(1.5, float(target["window_width"]))
-    if edge_length < required_frontage:
-        candidates = []
-        for index, (candidate_a, candidate_b) in enumerate(zip(footprint, footprint[1:])):
-            length = math.hypot(candidate_b[0] - candidate_a[0], candidate_b[1] - candidate_a[1])
-            maximum_distance = 3 if edge_length < 1.5 else float("inf")
-            if length < required_frontage or _distance_to_segment(hit, candidate_a, candidate_b) > maximum_distance:
-                continue
-            _, candidate_normal = _edge_frame(candidate_a, candidate_b, footprint)
-            if candidate_normal[0] * cardinal[0] + candidate_normal[1] * cardinal[1] >= math.cos(math.pi / 4):
-                candidates.append((-_distance_to_segment(hit, candidate_a, candidate_b), length, index))
-        if candidates:
-            _, _, edge_index = max(candidates)
-            a, b = footprint[edge_index], footprint[edge_index + 1]
-            hit = _project_to_segment(hit, a, b)
-            edge_length = math.hypot(b[0] - a[0], b[1] - a[1])
-            normal_state = "locally_inferred_edge"
-        else:
-            normal_state = "cardinal_fallback"
-    tangent, normal = _edge_frame(a, b, footprint)
-    if normal_state == "cardinal_fallback":
-        normal = cardinal
-        tangent = (-normal[1], normal[0])
-    elif normal[0] * cardinal[0] + normal[1] * cardinal[1] < 0:
-        normal = (-normal[0], -normal[1])
-        tangent = (-tangent[0], -tangent[1])
-
-    width = float(target["width"])
+    plan_points = UNIT_PLAN["polygon_local_m"]
+    frontage_length = float(UNIT_PLAN["frontage"]["length_m"])
     window_width = float(target["window_width"])
-    if edge_length + 1e-9 < window_width:
+    if window_width > frontage_length + 1e-9:
         raise ValueError("APERTURE_DOES_NOT_FIT")
-    edge_dx, edge_dy = b[0] - a[0], b[1] - a[1]
-    edge_amount = ((hit[0] - a[0]) * edge_dx + (hit[1] - a[1]) * edge_dy) / (edge_length * edge_length)
-    aperture_margin = window_width / (2 * edge_length)
-    edge_amount = max(aperture_margin, min(1 - aperture_margin, edge_amount))
-    hit = (a[0] + edge_amount * edge_dx, a[1] + edge_amount * edge_dy)
-    distance_to_a = math.hypot(hit[0] - a[0], hit[1] - a[1])
-    distance_to_b = math.hypot(hit[0] - b[0], hit[1] - b[1])
-    available_frontage = 2 * min(distance_to_a, distance_to_b)
-    if window_width > width or window_width > available_frontage:
-        raise ValueError("APERTURE_DOES_NOT_FIT")
-    depth = float(target.get("depth", 6.0))
+    candidates = []
+    for index, (a, b) in enumerate(zip(footprint, footprint[1:])):
+        edge_length = math.hypot(b[0] - a[0], b[1] - a[1])
+        if edge_length + 1e-9 < frontage_length:
+            continue
+        tangent, normal = _edge_frame(a, b, footprint)
+        alignment = normal[0] * cardinal[0] + normal[1] * cardinal[1]
+        if alignment < .5:
+            continue
+        midpoint = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+        candidates.append((math.hypot(midpoint[0] - origin.x, midpoint[1] - origin.y), -alignment, -edge_length, index))
+    if not candidates:
+        raise ValueError("PLAN_PLACEMENT_OUTSIDE_FOOTPRINT")
+    _, _, _, edge_index = min(candidates)
+    a, b = footprint[edge_index], footprint[edge_index + 1]
+    tangent, normal = _edge_frame(a, b, footprint)
+    edge_length = math.hypot(b[0] - a[0], b[1] - a[1])
+    factor = {"left": .25, "centre": .5, "right": .75}[target["position"]]
+    margin = frontage_length / (2 * edge_length)
+    amount = max(margin, min(1 - margin, factor))
+    hit = (a[0] + (b[0] - a[0]) * amount, a[1] + (b[1] - a[1]) * amount)
+    inward_xy = (-normal[0], -normal[1])
+    mirror_factor = -1 if target.get("mirrored", False) else 1
+    transformed = [
+        (hit[0] + tangent[0] * x * mirror_factor + inward_xy[0] * y,
+         hit[1] + tangent[1] * x * mirror_factor + inward_xy[1] * y)
+        for x, y in plan_points
+    ]
+    sample_total = sample_inside = 0
+    min_x, max_x = min(point[0] for point in plan_points), max(point[0] for point in plan_points)
+    min_y, max_y = min(point[1] for point in plan_points), max(point[1] for point in plan_points)
+    for local_y in _sample_range(min_y, max_y, .25):
+        for local_x in _sample_range(min_x, max_x, .25):
+            if not _inside_polygon((local_x, local_y), [*plan_points, plan_points[0]]):
+                continue
+            sample_total += 1
+            world = (hit[0] + tangent[0] * local_x * mirror_factor + inward_xy[0] * local_y,
+                     hit[1] + tangent[1] * local_x * mirror_factor + inward_xy[1] * local_y)
+            sample_inside += int(_inside_polygon(world, footprint))
+    containment = sample_inside / sample_total if sample_total else 0
+    if containment < .95:
+        raise ValueError("PLAN_PLACEMENT_OUTSIDE_FOOTPRINT")
+
     floor_z = (float(target["storey"]) - 1) * 3.0
     elevation = floor_z + 0.02
-    inward_xy = (-normal[0], -normal[1])
-    wall_left = (hit[0] - tangent[0] * width / 2, hit[1] - tangent[1] * width / 2)
-    wall_right = (hit[0] + tangent[0] * width / 2, hit[1] + tangent[1] * width / 2)
-    inner_right = (wall_right[0] + inward_xy[0] * depth, wall_right[1] + inward_xy[1] * depth)
-    inner_left = (wall_left[0] + inward_xy[0] * depth, wall_left[1] + inward_xy[1] * depth)
-    outline_xy = [wall_left, wall_right, inner_right, inner_left, wall_left]
-
     spacing = 0.5
-    columns, rows = math.ceil(width / spacing), math.ceil(depth / spacing)
+    columns, rows = math.ceil((max_x - min_x) / spacing), math.ceil((max_y - min_y) / spacing)
     if columns * rows > 256:
         spacing = 1.0
-        columns, rows = math.ceil(width / spacing), math.ceil(depth / spacing)
+        columns, rows = math.ceil((max_x - min_x) / spacing), math.ceil((max_y - min_y) / spacing)
+    cell_width = (max_x - min_x) / columns
+    cell_depth = (max_y - min_y) / rows
     sensors = []
     mask = []
     for row in range(rows):
-        v = depth * (row + 0.5) / rows
+        v = min_y + cell_depth * (row + 0.5)
         for column in range(columns):
-            u = -width / 2 + width * (column + 0.5) / columns
-            x = hit[0] + tangent[0] * u + inward_xy[0] * v
-            y = hit[1] + tangent[1] * u + inward_xy[1] * v
+            u = min_x + cell_width * (column + 0.5)
+            x = hit[0] + tangent[0] * u * mirror_factor + inward_xy[0] * v
+            y = hit[1] + tangent[1] * u * mirror_factor + inward_xy[1] * v
             sensors.append([x, y, elevation])
-            mask.append(1 if _inside_polygon((x, y), footprint) else 0)
+            mask.append(1 if _inside_polygon((u, v), [*plan_points, plan_points[0]]) else 0)
     if not any(mask):
-        raise ValueError("PROPOSAL_OUTSIDE_FOOTPRINT")
-    cell_area = width / columns * depth / rows
+        raise ValueError("PLAN_PLACEMENT_OUTSIDE_FOOTPRINT")
+    cell_area = cell_width * cell_depth
     aperture = {
         "centre_xyz": [hit[0], hit[1], floor_z + float(target["sill_height"]) + float(target["window_height"]) / 2],
         "width_m": window_width,
@@ -201,16 +186,29 @@ def derive_plate(target: dict) -> dict:
         "plane": "finished_floor",
         "plane_offset_m": 0.02,
         "elevation_m": elevation,
-        "outline_xy": [[round(x, 6), round(y, 6)] for x, y in outline_xy],
-        "outline_xyz": [[round(x, 6), round(y, 6), elevation] for x, y in outline_xy],
+        "outline_xy": [[round(x, 6), round(y, 6)] for x, y in [*transformed, transformed[0]]],
+        "outline_xyz": [[round(x, 6), round(y, 6), elevation] for x, y in [*transformed, transformed[0]]],
         "anchor_xy": [round(hit[0], 6), round(hit[1], 6)],
         "wall_direction": [round(tangent[0], 8), round(tangent[1], 8)],
         "normal": [round(normal[0], 8), round(normal[1], 8)],
-        "normal_state": normal_state,
-        "width_m": width,
-        "depth_m": depth,
+        "normal_state": "sourced_edge",
+        "plan": {
+            "plan_id": UNIT_PLAN["plan_id"],
+            "label": UNIT_PLAN["label"],
+            "source_state": UNIT_PLAN["plan_state"],
+            "fixture_digest": UNIT_PLAN["geometry_digest"],
+            "source": UNIT_PLAN["source"],
+        },
+        "reference_area_m2": UNIT_PLAN["reference_area_m2"],
+        "sampled_area_m2": round(sum(mask) * cell_area, 3),
+        "placement": {"state": "inferred_transformed_reference", "mirrored": bool(target.get("mirrored", False)),
+                      "containment_fraction": round(containment, 6), "edge_index": edge_index},
         "grid": [columns, rows],
         "spacing_m": spacing,
+        "grid_origin_xyz": [round(hit[0] + tangent[0] * min_x * mirror_factor + inward_xy[0] * min_y, 6),
+                            round(hit[1] + tangent[1] * min_x * mirror_factor + inward_xy[1] * min_y, 6), elevation],
+        "grid_u_vector": [round(tangent[0] * cell_width * mirror_factor, 8), round(tangent[1] * cell_width * mirror_factor, 8), 0.0],
+        "grid_v_vector": [round(inward_xy[0] * cell_depth, 8), round(inward_xy[1] * cell_depth, 8), 0.0],
         "mask": mask,
         "sensor_xyz": [[round(value, 6) for value in sensor] for sensor in sensors],
         "sensor_count": sum(mask),
@@ -218,12 +216,19 @@ def derive_plate(target: dict) -> dict:
         "cell_area_m2": cell_area,
         "aperture": aperture,
         "assumptions": [
+            "published typical 4-room reference; not a verified Block 87 or storey-30 stack",
+            "reference boundary uniformly scaled to 87 m²",
             "ground-level footprint reused at the selected storey",
             "open plan with no internal partitions",
             "one confirmed exterior window band",
             "no balcony slab or overhang",
         ],
     }
+
+
+def _sample_range(start: float, stop: float, spacing: float) -> list[float]:
+    count = max(1, math.ceil((stop - start) / spacing))
+    return [start + (stop - start) * (index + .5) / count for index in range(count)]
 
 
 def _ray_segment_distance(origin: Point3D, direction: Vector3D, a: list[float], b: list[float]) -> float | None:
@@ -440,7 +445,7 @@ def analyse_scene(scene: dict) -> dict:
 
     _, weather_source = _weather()
     result = {
-        "method_version": "apartment-intelligence-solar-v4",
+        "method_version": "apartment-intelligence-solar-v5",
         "weather": weather_source,
         "plate": plate,
         "sunpath": sunpath,

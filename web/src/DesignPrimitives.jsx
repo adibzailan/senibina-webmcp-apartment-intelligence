@@ -46,7 +46,7 @@ export function ProvenanceDisclosure({ context, result }) {
     <div className="provenance-grid">
       <p><b>Sourced context</b> HDB Existing Building and HDB Property Information fixture, {context?.fixture_version || 'loading'}.</p>
       <p><b>Inferred massing</b> Maximum floor level × 3.0 m floor-to-floor height.</p>
-      <p><b>Human-confirmed geometry</b> Approximate floor-plate width and depth, facade position, and window dimensions.</p>
+      <p><b>Human-confirmed geometry</b> Published typical plan reference, facade placement, handedness, and window dimensions.</p>
       <p><b>Calculated evidence</b> {result ? `${result.method_version}; result ${result.digest.slice(0, 12)}…` : 'Ladybug solar geometry; analysis awaiting confirmation.'}</p>
     </div>
   </details>

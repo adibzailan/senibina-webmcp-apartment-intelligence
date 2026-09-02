@@ -46,21 +46,23 @@ def write_study_3dm(path: Path, scene: dict) -> None:
     if target:
         plate = scene.get("result", {}).get("plate")
         if not plate:
-            raise ValueError("Floor plate result is required for the v4 export")
+            raise ValueError("Floor plate result is required for the v5 export")
         confirmed = rhino3dm.ObjectAttributes(); confirmed.LayerIndex = 2
-        confirmed.Name = "Human-confirmed usable apartment floor plate cell"
+        confirmed.Name = "Human-confirmed typical apartment floor plate outline"
         confirmed.SetUserString("state", "human-confirmed")
         confirmed.SetUserString("method", "visible first-party confirmation")
-        confirmed.SetUserString("assumption", "rectangular proposal clipped by sourced footprint sensor mask")
+        confirmed.SetUserString("assumption", "published typical 4-room reference transformed to the selected facade; not a verified stack")
+        confirmed.SetUserString("plan_id", plate["plan"]["plan_id"])
+        confirmed.SetUserString("fixture_digest", plate["plan"]["fixture_digest"])
         confirmed.SetUserString("units", "metres")
         confirmed.SetUserString("digest", scene["digest"])
+        model.Objects.AddCurve(rhino3dm.PolylineCurve([rhino3dm.Point3d(*point) for point in plate["outline_xyz"]]), confirmed)
         cols, rows = plate["grid"]
-        wall_left, wall_right, inner_right, inner_left = plate["outline_xyz"][:4]
+        origin = plate["grid_origin_xyz"]
+        u_vector = plate["grid_u_vector"]
+        v_vector = plate["grid_v_vector"]
         def grid_point(column: int, row: int) -> rhino3dm.Point3d:
-            u, v = column / cols, row / rows
-            near = [wall_left[i] + (wall_right[i] - wall_left[i]) * u for i in range(3)]
-            far = [inner_left[i] + (inner_right[i] - inner_left[i]) * u for i in range(3)]
-            return rhino3dm.Point3d(*(near[i] + (far[i] - near[i]) * v for i in range(3)))
+            return rhino3dm.Point3d(*(origin[index] + u_vector[index] * column + v_vector[index] * row for index in range(3)))
         for row in range(rows):
             for col in range(cols):
                 if not plate["mask"][row * cols + col]:
@@ -87,10 +89,8 @@ def write_study_3dm(path: Path, scene: dict) -> None:
         minimum, maximum = min(included_values), max(included_values)
         for row in range(rows + 1):
             for col in range(cols + 1):
-                u, v = col / cols, row / rows
-                near = [wall_left[i] + (wall_right[i] - wall_left[i]) * u for i in range(3)]
-                far = [inner_left[i] + (inner_right[i] - inner_left[i]) * u for i in range(3)]
-                vertex = [near[i] + (far[i] - near[i]) * v for i in range(3)]
+                point = grid_point(col, row)
+                vertex = [point.X, point.Y, point.Z]
                 mesh.Vertices.Add(*vertex)
                 sample = values[min(row, rows - 1) * cols + min(col, cols - 1)]
                 ratio = .5 if maximum == minimum else (sample - minimum) / (maximum - minimum)

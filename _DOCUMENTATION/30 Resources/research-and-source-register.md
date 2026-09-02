@@ -32,6 +32,16 @@ This is inferred and adjustable, never authoritative building height.
 | [Three.js ExtrudeGeometry](https://threejs.org/docs/#api/en/geometries/ExtrudeGeometry) | Browser massing from verified footprint rings | Generated | Three.js renders; it does not improve source-data accuracy |
 | [rhino3dm](https://developer.rhino3d.com/guides/opennurbs/what-is-rhino3dmio/) | Write layered `.3dm` files without running Rhino | Generated export | Packaging preserves geometry and metadata; it does not make inference authoritative |
 
+## Published typical unit-plan reference
+
+| Source | Implemented use | Evidence class | Important boundary |
+| --- | --- | --- | --- |
+| [SkyVille @ Dawson sales brochure](https://assets.hdb.gov.sg/residential/buying-a-flat/finding-a-flat/sales-brochure/skyville-dawson.pdf), page 5 | Offline compilation of the 4R Type A base-option outer boundary; Types B and C share it | Published typical reference, then generated geometry | Not a verified Block 87/storey-30 stack or authoritative unit survey; uniformly scaled to the published/cross-checked 87 m² reference area |
+
+Only derived geometry, source hashes, thresholds, quality metrics, and the
+transformation receipt are tracked. The brochure raster and compiler diagnostic
+overlays are deliberately not redistributed.
+
 ## Deferred listing and floorplan research
 
 No universal listing API is accepted for V1. Listing availability and page
@@ -42,7 +52,7 @@ separate accepted trust, licence, retention, and human-verification contract.
 
 ## Known source gaps
 
-- Exact unit position, facade, windows, balcony, and internal layout.
+- Verified stack assignment, exact unit position, facade, windows, balcony, and internal layout.
 - Authoritative building height for every HDB block.
 - Equivalent consistent geometry coverage for private condominiums.
 - Guaranteed listing availability, reusable listing images, or standardized

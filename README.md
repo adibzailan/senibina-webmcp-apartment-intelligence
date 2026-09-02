@@ -5,8 +5,8 @@ application. It brings early-stage architectural solar analysis to a Singapore
 resident evaluating an existing HDB apartment.
 
 The guaranteed demonstration starts with 87 Dawson Road and storey 30. An
-agent resolves the bundled public context, the resident confirms an approximate
-apartment floor plate and window in a visible 3D scene, and deterministic analysis
+agent resolves the bundled public context, the resident places and confirms a
+published typical 4-room reference plan and window in a visible 3D scene, and deterministic analysis
 produces sunpath, shadow, solar-access, and radiation evidence.
 
 Status: implementation gates 1–5 pass. The Windows VM, named Cloudflare Tunnel,
@@ -18,8 +18,9 @@ remain open.
 
 - V1 is an HDB-first consumer decision aid, not a professional certification or
   statutory compliance service.
-- Public records provide contextual building information. The approximate unit
-  width, depth, facade, window position, and internal layout remain human-confirmed.
+- Public records provide contextual building information. A compiler-derived
+  SkyVille @ Dawson 4R Type A reference boundary is uniformly scaled to 87 m²;
+  facade placement, handedness, and window geometry remain human-confirmed.
 - Three.js renders the browser scene. Ladybug Core and Geometry compute the
   bounded solar studies. `rhino3dm.py` writes the layered `.3dm` export.
 - The MVP uses a frozen, attributed Dawson fixture; it has no runtime listing
@@ -64,6 +65,12 @@ PYTHONPATH=server .venv/bin/python -m pytest server/tests
 npm --prefix web test -- --run
 npm --prefix web run build
 ```
+
+The brochure raster is not redistributed. To regenerate the tracked unit-plan
+fixture from a locally retained reviewed page image, create the isolated
+authoring environment from `data/compiler-requirements.txt` and follow
+[`data/README.md`](data/README.md). NumPy and OpenCV are authoring-only and are
+not installed on the deployed VM.
 
 To test WebMCP in Chrome, enable `chrome://flags/#enable-webmcp-testing`, visit
 the localhost URL, and inspect `document.modelContext.getTools()` in DevTools.

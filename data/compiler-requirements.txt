@@ -1,0 +1,6 @@
+--only-binary :all:
+numpy==2.4.6 \
+    --hash=sha256:bf162abab1c1a736333192707cef898e735a5ca00f38f27eeedf44b39d9e85eb \
+    --hash=sha256:043191bfa8eab18c776647b62723ac9dddece59743b13f49b2016094129c2b3f
+opencv-python-headless==4.13.0.92 \
+    --hash=sha256:1a7d040ac656c11b8c38677cc8cccdc149f98535089dbe5b081e80a4e5903209

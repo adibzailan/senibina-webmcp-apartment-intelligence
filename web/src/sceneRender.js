@@ -8,17 +8,27 @@ export function massingPresentation(screen) {
   return { transparent: quiet, opacity: quiet ? .16 : 1, depthWrite: !quiet }
 }
 
-function buildingMesh(building, presentation, targetAddress) {
+export function sectionPlaneElevation(screen, study) {
+  return massingPresentation(screen).transparent && Number.isFinite(study?.plate?.elevation_m)
+    ? study.plate.elevation_m + .15
+    : null
+}
+
+function buildingMesh(building, presentation, targetAddress, clipElevation) {
   const shape = new THREE.Shape(building.footprint.map(([x, y]) => new THREE.Vector2(x, -y)))
   const geometry = new THREE.ExtrudeGeometry(shape, { depth: building.height_m, bevelEnabled: false })
   geometry.rotateX(-Math.PI / 2)
   const materialState = massingPresentation(presentation.screen)
   const isTarget = building.address === targetAddress
+  const visualState = materialState.transparent ? { ...materialState, opacity: isTarget ? .018 : .04 } : materialState
+  const clippingPlanes = clipElevation == null ? [] : [new THREE.Plane(new THREE.Vector3(0, -1, 0), clipElevation)]
   const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: isTarget ? '#d8d3c7' : '#fbfaf6', roughness: .9,
-    ...materialState }))
+    ...visualState,
+    clippingPlanes,
+  }))
   mesh.userData.kind = isTarget ? 'tower' : 'context'
   if (isTarget) {
-    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 24), new THREE.LineBasicMaterial({ color: '#5f665f', transparent: true, opacity: .55 }))
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 24), new THREE.LineBasicMaterial({ color: '#5f665f', transparent: true, opacity: materialState.transparent ? .035 : .55, depthWrite: false, clippingPlanes }))
     mesh.add(edges)
   }
   return mesh
@@ -29,15 +39,12 @@ export function plateDescriptor(source) {
   if (!plate) return null
   const outline = plate.outline_xyz.map(([x, y, z]) => [x, z, -y])
   const xs = outline.map(point => point[0]), ys = outline.map(point => point[1]), zs = outline.map(point => point[2])
-  const columns = plate.grid[0], rows = plate.grid[1]
-  const wallWidth = Math.hypot(plate.outline_xyz[1][0] - plate.outline_xyz[0][0], plate.outline_xyz[1][1] - plate.outline_xyz[0][1])
-  const depth = Math.hypot(plate.outline_xyz[2][0] - plate.outline_xyz[1][0], plate.outline_xyz[2][1] - plate.outline_xyz[1][1])
-  const cellWidth = wallWidth / columns, cellDepth = depth / rows
-  const tangent = plate.wall_direction, inward = [-plate.normal[0], -plate.normal[1]]
+  const uVector = plate.grid_u_vector, vVector = plate.grid_v_vector
+  const cellWidth = Math.hypot(uVector[0], uVector[1]), cellDepth = Math.hypot(vVector[0], vVector[1])
   const cells = plate.sensor_xyz.map(([x, y, z], index) => {
-    const corner = (u, v) => [x + tangent[0] * u + inward[0] * v, y + tangent[1] * u + inward[1] * v, z]
+    const corner = (u, v) => [x + uVector[0] * u + vVector[0] * v, y + uVector[1] * u + vVector[1] * v, z]
     return { position: [x, z, -y], size: [cellWidth, cellDepth], mask: plate.mask[index], index,
-      outline_xyz: [corner(-cellWidth / 2, -cellDepth / 2), corner(cellWidth / 2, -cellDepth / 2), corner(cellWidth / 2, cellDepth / 2), corner(-cellWidth / 2, cellDepth / 2)] }
+      outline_xyz: [corner(-.5, -.5), corner(.5, -.5), corner(.5, .5), corner(-.5, .5)] }
   })
   return {
     plate, outline, cells,
@@ -74,8 +81,13 @@ function addHome(scene, context, study, result, presentation) {
     addGrid(group, d, d.plate.mask, () => '#c8472d')
   } else {
     const plateShape = new THREE.Shape(d.plate.outline_xy.slice(0, -1).map(([x, y]) => new THREE.Vector2(x, -y)))
-    const zone = new THREE.Mesh(new THREE.ShapeGeometry(plateShape), new THREE.MeshBasicMaterial({ color: '#c8472d', transparent: true, opacity: .12, wireframe: true, side: THREE.DoubleSide, depthTest: false }))
+    const zone = new THREE.Mesh(new THREE.ShapeGeometry(plateShape), new THREE.MeshBasicMaterial({ color: '#c8472d', transparent: true, opacity: .18, side: THREE.DoubleSide, depthTest: false }))
     zone.geometry.rotateX(Math.PI / 2); zone.position.y = d.plate.elevation_m; zone.renderOrder = 10; group.add(zone)
+    const boundary = new THREE.LineLoop(
+      new THREE.BufferGeometry().setFromPoints(d.outline.slice(0, -1).map(point => new THREE.Vector3(...point))),
+      new THREE.LineBasicMaterial({ color: '#c8472d', transparent: true, opacity: .9, depthTest: false }),
+    )
+    boundary.position.y = .03; boundary.renderOrder = 11; group.add(boundary)
   }
   if (result && presentation.analysis === 'radiation') {
     const values = result.radiation.sensor_values_kwh_m2, min = result.radiation.minimum_kwh_m2, max = result.radiation.maximum_kwh_m2
@@ -124,7 +136,8 @@ export function populateScene(scene, context, study, result, presentation) {
   scene.add(new THREE.HemisphereLight('#fffdf2', '#5f665f', 2.2))
   const sun = new THREE.DirectionalLight('#fff3c4', 2.6); sun.position.set(-100, 120, -120); scene.add(sun)
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(720, 720), new THREE.MeshStandardMaterial({ color: '#f5f2e9', roughness: 1 })); ground.rotation.x = -Math.PI / 2; ground.userData.kind = 'ground'; scene.add(ground)
-  const geometry = new THREE.Group(); geometry.userData.kind = 'geometry'; context?.buildings.forEach(building => geometry.add(buildingMesh(building, presentation, study?.address))); scene.add(geometry)
+  const clipElevation = sectionPlaneElevation(presentation.screen, study)
+  const geometry = new THREE.Group(); geometry.userData.kind = 'geometry'; context?.buildings.forEach(building => geometry.add(buildingMesh(building, presentation, study?.address, clipElevation))); scene.add(geometry)
   const home = addHome(scene, context, study, result, presentation)
   if (presentation.analysis === 'sunpath' && result) addSunpath(scene, result, home?.centre || [0, 50, 0])
   return { geometry, home }
@@ -155,6 +168,7 @@ export function renderSiteEvidence(context, study, width = 1380, height = 1180) 
   const canvas = document.createElement('canvas'); let renderer; const scene = new THREE.Scene()
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true })
+    renderer.localClippingEnabled = true
     renderer.setPixelRatio(1); renderer.setSize(width, height, false)
     const camera = new THREE.PerspectiveCamera(38, width / height, .1, 3000)
     const { geometry, home } = populateScene(scene, context, study, null, { analysis: 'site_export', screen: 'export', shadowTime: '12:00', solarDate: '2026-03-21' })
