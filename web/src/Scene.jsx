@@ -1,62 +1,46 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { presetForPresentation } from './camera'
+import { applyCameraPreset, boundsFor, disposeObject, populateScene } from './sceneRender'
 
+export default function Scene({ context, study, result, analysis, screen, shadowTime, solarDate, viewRequest, viewRevision, onView }) {
+  const host = useRef(null), compass = useRef(null), runtime = useRef(null), [ready, setReady] = useState(false)
+  const render = () => runtime.current?.renderer.render(runtime.current.scene, runtime.current.camera)
 
-export default function Scene({ context, study, result, analysis, selected = '87' }) {
-  const host = useRef(null)
-  const canvas = useRef(null)
   useEffect(() => {
-    if (!host.current || !context) return
-    const width = host.current.clientWidth, height = host.current.clientHeight
+    if (!host.current) return
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(width, height); canvas.current = renderer.domElement
-    host.current.replaceChildren(renderer.domElement)
-    const scene = new THREE.Scene(); scene.background = new THREE.Color('#dbe4db')
-    const camera = new THREE.PerspectiveCamera(38, width / height, 1, 1200); camera.position.set(230, -260, 210)
-    camera.lookAt(0, 0, 55)
-    scene.add(new THREE.HemisphereLight('#fff9df', '#5a665d', 2.5))
-    const sun = new THREE.DirectionalLight('#fff0bd', 3); sun.position.set(-80, -100, 240); scene.add(sun)
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(700, 700), new THREE.MeshStandardMaterial({ color: '#eae7dd' }))
-    ground.rotation.x = -Math.PI / 2; scene.add(ground)
-    for (const building of context.buildings) {
-      const shape = new THREE.Shape(building.footprint.map(([x, y]) => new THREE.Vector2(x, -y)))
-      const geometry = new THREE.ExtrudeGeometry(shape, { depth: building.height_m, bevelEnabled: false })
-      geometry.rotateX(-Math.PI / 2)
-      const material = new THREE.MeshStandardMaterial({ color: building.block === selected ? '#d95c37' : '#eee8dc', roughness: .85 })
-      scene.add(new THREE.Mesh(geometry, material))
-    }
-    if (study) {
-      const target = context.buildings.find(building => building.address === study.address)
-      if (target) {
-        const xs = target.footprint.map(point => point[0]), ys = target.footprint.map(point => point[1])
-        const facade = study.proposal.facade, horizontal = facade === 'east' || facade === 'west'
-        const factor = { left: .25, centre: .5, right: .75 }[study.proposal.position]
-        const span = horizontal ? [Math.min(...ys), Math.max(...ys)] : [Math.min(...xs), Math.max(...xs)]
-        const centre = span[0] + (span[1] - span[0]) * factor
-        const fixed = facade === 'east' ? Math.max(...xs) + .08 : facade === 'west' ? Math.min(...xs) - .08 : facade === 'north' ? Math.max(...ys) + .08 : Math.min(...ys) - .08
-        const base = (study.storey - 1) * 3 + study.proposal.sill_height
-        const group = new THREE.Group()
-        if (analysis === 'radiation' && result) {
-          const values = result.radiation.sensor_values_kwh_m2, min = result.radiation.minimum_kwh_m2, max = result.radiation.maximum_kwh_m2
-          for (let row = 0; row < 8; row++) for (let col = 0; col < 16; col++) {
-            const ratio = max === min ? .5 : (values[row * 16 + col] - min) / (max - min)
-            const cell = new THREE.Mesh(new THREE.PlaneGeometry(study.proposal.window_width / 16 * .94, study.proposal.window_height / 8 * .9), new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL((45 - ratio * 33) / 360, .78, .55), side: THREE.DoubleSide }))
-            const along = centre - study.proposal.window_width / 2 + study.proposal.window_width * (col + .5) / 16
-            cell.position.set(horizontal ? fixed : along, base + study.proposal.window_height * (row + .5) / 8, horizontal ? along : -fixed)
-            if (horizontal) cell.rotation.y = Math.PI / 2
-            group.add(cell)
-          }
-        } else {
-          const window = new THREE.Mesh(new THREE.PlaneGeometry(study.proposal.window_width, study.proposal.window_height), new THREE.MeshBasicMaterial({ color: '#17231e', side: THREE.DoubleSide }))
-          window.position.set(horizontal ? fixed : centre, base + study.proposal.window_height / 2, horizontal ? centre : -fixed)
-          if (horizontal) window.rotation.y = Math.PI / 2
-          group.add(window)
-        }
-        scene.add(group)
-      }
-    }
-    renderer.render(scene, camera)
-    return () => renderer.dispose()
-  }, [context, selected, study, result, analysis])
-  return <div className="scene" ref={host} aria-label="Three-dimensional Dawson precinct massing" data-canvas-ready={Boolean(canvas.current)} />
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); host.current.replaceChildren(renderer.domElement)
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(38, 1, .1, 3000)
+    const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = false; controls.screenSpacePanning = true; controls.minDistance = 3; controls.maxDistance = 900; controls.maxPolarAngle = Math.PI * .49
+    controls.addEventListener('change', () => { renderer.render(scene, camera); if (compass.current) compass.current.style.transform = `rotate(${controls.getAzimuthalAngle()}rad)` })
+    const resize = new ResizeObserver(entries => { const box = entries[0].contentRect; if (!box.width || !box.height) return; renderer.setSize(box.width, box.height, false); camera.aspect = box.width / box.height; camera.updateProjectionMatrix(); renderer.render(scene, camera) })
+    resize.observe(host.current); runtime.current = { renderer, scene, camera, controls, preset: 'precinct', geometry: null, home: null }; setReady(true)
+    return () => { resize.disconnect(); controls.dispose(); disposeObject(scene); renderer.dispose(); runtime.current = null }
+  }, [])
+
+  useEffect(() => {
+    if (!runtime.current || !context) return
+    const presentation = { analysis, shadowTime, solarDate }
+    const built = populateScene(runtime.current.scene, context, study, result, presentation)
+    runtime.current.geometry = built.geometry; runtime.current.home = built.home; render()
+    if (!runtime.current.hasFrame && built.geometry.children.length) { const preset = viewRequest || presetForPresentation(screen, analysis); runtime.current.preset = preset; applyCameraPreset(runtime.current.camera, runtime.current.controls, boundsFor(built.geometry, built.home, preset), preset, built.home?.facade); runtime.current.hasFrame = true; render() }
+  }, [context, study, result, analysis, shadowTime, solarDate])
+
+  useEffect(() => {
+    const value = runtime.current; if (!value?.geometry || value.geometry.children.length === 0) return
+    const preset = viewRequest || presetForPresentation(screen, analysis); value.preset = preset
+    applyCameraPreset(value.camera, value.controls, boundsFor(value.geometry, value.home, preset), preset, value.home?.facade); render()
+  }, [screen, analysis, viewRequest, viewRevision, ready])
+
+  const choose = preset => { const value = runtime.current; if (!value?.geometry) return; value.preset = preset; applyCameraPreset(value.camera, value.controls, boundsFor(value.geometry, value.home, preset), preset, value.home?.facade); render(); onView?.(preset) }
+  const reset = () => { runtime.current?.controls.reset(); render() }
+  return <div className="scene-shell">
+    <div className="scene" ref={host} aria-label="Interactive three-dimensional Dawson precinct" data-canvas-ready={String(ready)} />
+    <div className="camera-toolbar" aria-label="Camera views"><button onClick={() => choose('precinct')}>Precinct</button><button onClick={() => choose('tower')}>Block 87</button><button onClick={() => choose('home')} disabled={!study}>Home</button><button onClick={reset}>Reset view</button></div>
+    <div className="north-indicator" aria-label="North direction">N<span ref={compass} aria-hidden="true">↑</span></div>
+    <div className="scene-legend"><b>{analysis.replace('_', ' ')}</b>{analysis === 'sunpath' ? <><span className="legend-line solar">21 Mar / 21 Jun / 21 Sep / 21 Dec</span><span>N · E · S · W</span></> : analysis === 'shadow' ? <><span><i className="swatch sunlit"/>Sunlit</span><span><i className="swatch shaded"/>Obstructed</span></> : analysis === 'solar_access' && result ? <><span><i className="continuous-scale access"/>Direct-sun hours</span><span>0–{Math.max(...result.solar_access[solarDate].sensor_hours).toFixed(1)} h</span></> : analysis === 'radiation' && result ? <><span><i className="continuous-scale radiation"/>Incident exposure</span><span>{result.radiation.minimum_kwh_m2}–{result.radiation.maximum_kwh_m2} kWh/m²</span></> : <><span><i className="swatch context"/>Context</span><span><i className="swatch selected"/>Block 87</span><span><i className="swatch confirmed"/>Confirmed home</span></>}</div>
+    <p className="view-help">Drag to orbit · right-drag to pan · wheel or pinch to zoom</p>
+  </div>
 }

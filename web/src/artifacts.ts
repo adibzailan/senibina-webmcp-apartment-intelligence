@@ -1,5 +1,6 @@
 import { zipSync } from 'fflate'
 import { PDFDocument } from 'pdf-lib'
+import { renderSiteEvidence } from './sceneRender'
 
 
 export const CARD_WIDTH = 1600
@@ -23,19 +24,24 @@ export function cardNarrative(name: CardName, result: any) {
 }
 
 function title(ctx: CanvasRenderingContext2D, name: CardName, result: any) {
-  ctx.fillStyle = '#f2efe7'; ctx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT)
-  ctx.fillStyle = '#17231e'; ctx.font = '700 104px Georgia'; ctx.fillText('Apartment Intelligence', 110, 170)
-  ctx.fillStyle = '#d95c37'; ctx.font = '700 54px system-ui'; ctx.fillText(name.replaceAll('-', ' ').toUpperCase(), 110, 275)
-  ctx.strokeStyle = '#17231e'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(110, 325); ctx.lineTo(1490, 325); ctx.stroke()
-  ctx.font = '500 34px system-ui'; ctx.fillStyle = '#17231e'; ctx.fillText('87 Dawson Road · Storey 30 · Dawson, Singapore', 110, 390)
+  ctx.fillStyle = '#f5f2e9'; ctx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT)
+  ctx.fillStyle = '#18211d'; ctx.font = '650 28px Inter'; ctx.fillText('AI', 110, 110)
+  ctx.font = '550 30px Inter'; ctx.fillText('Apartment Intelligence', 165, 110)
+  ctx.textAlign = 'right'; ctx.font = '500 24px Inter'; ctx.fillStyle = '#5f665f'; ctx.fillText('87 Dawson Road · Storey 30', 1490, 110); ctx.textAlign = 'left'
+  ctx.strokeStyle = '#18211d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(110, 145); ctx.lineTo(1490, 145); ctx.stroke()
+  ctx.fillStyle = '#c8472d'; ctx.font = '650 24px Inter'; ctx.fillText(`STUDY ${String(CARD_NAMES.indexOf(name) + 1).padStart(2, '0')} / 05`, 110, 235)
+  ctx.fillStyle = '#18211d'; ctx.font = '500 118px Newsreader'; ctx.fillText(name.replaceAll('-', ' '), 110, 350)
+  ctx.font = '500 34px Newsreader'; ctx.fillStyle = '#5f665f'; ctx.fillText('Dawson precinct · Singapore · deterministic consumer study', 110, 418)
   const narrative = cardNarrative(name, result)
-  ctx.font = '30px system-ui'; wrap(ctx, narrative.method, 110, 1930, 1380, 44)
-  ctx.fillStyle = '#d95c37'; ctx.font = '700 26px ui-monospace, monospace'; ctx.fillText('METHOD & LIMITATIONS', 110, 1855)
-  ctx.fillStyle = '#17231e'; ctx.font = '28px system-ui'; wrap(ctx, narrative.limitations, 110, 2070, 1380, 42)
-  ctx.strokeStyle = '#17231e'; ctx.beginPath(); ctx.moveTo(110, 2190); ctx.lineTo(1490, 2190); ctx.stroke()
-  ctx.font = '24px ui-monospace, monospace'; ctx.fillText(`RESULT ${result.digest}`, 110, 2260)
-  ctx.fillText('SOURCED CONTEXT · INFERRED HEIGHT · HUMAN-CONFIRMED UNIT', 110, 2320)
-  ctx.fillText('CONSUMER DECISION SUPPORT · NOT PROFESSIONAL CERTIFICATION', 110, 2370)
+  ctx.strokeStyle = '#b9b7ae'; ctx.beginPath(); ctx.moveTo(110, 1835); ctx.lineTo(1490, 1835); ctx.stroke()
+  ctx.fillStyle = '#c8472d'; ctx.font = '650 22px Inter'; ctx.fillText('Method', 110, 1895)
+  ctx.fillStyle = '#18211d'; ctx.font = '30px Newsreader'; wrap(ctx, narrative.method, 330, 1895, 1160, 42)
+  ctx.fillStyle = '#c8472d'; ctx.font = '650 22px Inter'; ctx.fillText('Limit', 110, 2045)
+  ctx.fillStyle = '#18211d'; ctx.font = '29px Newsreader'; wrap(ctx, narrative.limitations, 330, 2045, 1160, 41)
+  ctx.strokeStyle = '#18211d'; ctx.beginPath(); ctx.moveTo(110, 2190); ctx.lineTo(1490, 2190); ctx.stroke()
+  ctx.font = '21px Inter'; ctx.fillStyle = '#5f665f'; ctx.fillText(`Result ${result.digest}`, 110, 2250)
+  ctx.fillText('Sourced context · inferred height · human-confirmed unit', 110, 2310)
+  ctx.fillText('Consumer decision support · not professional certification', 110, 2360)
 }
 
 function wrap(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, width: number, lineHeight: number) {
@@ -47,15 +53,9 @@ function wrap(ctx: CanvasRenderingContext2D, value: string, x: number, y: number
   ctx.fillText(line, x, y)
 }
 
-function drawSite(ctx: CanvasRenderingContext2D) {
-  ctx.fillStyle = '#dbe4db'; ctx.fillRect(110, 490, 1380, 1180)
-  for (let row = 0; row < 4; row++) for (let col = 0; col < 5; col++) {
-    ctx.save(); ctx.translate(250 + col * 260, 650 + row * 240); ctx.rotate((row - col) * .07)
-    ctx.fillStyle = row === 2 && col === 2 ? '#d95c37' : '#eee8dc'; ctx.strokeStyle = '#17231e'; ctx.lineWidth = 3
-    ctx.fillRect(-80, -55, 160, 110); ctx.strokeRect(-80, -55, 160, 110); ctx.restore()
-  }
-  ctx.strokeStyle = '#17231e'; ctx.lineWidth = 10; ctx.strokeRect(830, 1090, 180, 100)
-  ctx.fillStyle = '#17231e'; ctx.font = '700 32px ui-monospace, monospace'; ctx.fillText('CONFIRMED WINDOW ZONE', 790, 1260)
+function drawSite(ctx: CanvasRenderingContext2D, studyPackage: any) {
+  if (!studyPackage?.context || !studyPackage?.study) throw new Error('SITE_CONTEXT_REQUIRED')
+  ctx.drawImage(renderSiteEvidence(studyPackage.context, studyPackage.study, 1380, 1180), 110, 490, 1380, 1180)
 }
 
 function drawSunpath(ctx: CanvasRenderingContext2D, result: any) {
@@ -63,33 +63,33 @@ function drawSunpath(ctx: CanvasRenderingContext2D, result: any) {
   ctx.strokeStyle = '#bbb8ae'; ctx.lineWidth = 3
   for (const scale of [.25, .5, .75, 1]) { ctx.beginPath(); ctx.arc(cx, cy, radius * scale, Math.PI, Math.PI * 2); ctx.stroke() }
   result.sunpath.forEach((path: any, index: number) => {
-    ctx.strokeStyle = ['#d95c37', '#17231e', '#6c8b78', '#d0a533'][index]; ctx.lineWidth = 12; ctx.beginPath()
+    ctx.strokeStyle = ['#d7a900', '#f2c230', '#b18b08', '#e5b72a'][index]; ctx.lineWidth = 10; ctx.beginPath()
     path.samples.forEach((sample: any, point: number) => {
       const x = cx + Math.cos((sample.azimuth - 90) * Math.PI / 180) * radius * (1 - sample.altitude / 100)
       const y = cy - Math.sin((sample.azimuth - 90) * Math.PI / 180) * radius * (1 - sample.altitude / 100)
       point ? ctx.lineTo(x, y) : ctx.moveTo(x, y)
-    }); ctx.stroke(); ctx.fillStyle = ctx.strokeStyle; ctx.font = '28px ui-monospace, monospace'; ctx.fillText(path.date.slice(5), 190 + index * 320, 540)
+    }); ctx.stroke(); ctx.fillStyle = ctx.strokeStyle; ctx.font = '24px Inter'; ctx.fillText(path.date.slice(5), 190 + index * 320, 540)
   })
 }
 
 function drawShadow(ctx: CanvasRenderingContext2D, result: any) {
   result.shadow.samples.forEach((sample: any, index: number) => {
     const x = 110 + index * 470
-    ctx.fillStyle = '#dbe4db'; ctx.fillRect(x, 540, 420, 1030)
-    ctx.fillStyle = '#17231e'; ctx.font = '700 64px Georgia'; ctx.fillText(sample.time, x + 38, 650)
-    ctx.fillStyle = '#d95c37'; ctx.fillRect(x + 38, 1400 - 650 * sample.sunlit_fraction, 344, 650 * sample.sunlit_fraction)
-    ctx.strokeStyle = '#17231e'; ctx.strokeRect(x + 38, 750, 344, 650)
-    ctx.fillStyle = '#17231e'; ctx.font = '30px ui-monospace, monospace'; ctx.fillText(`${Math.round(sample.sunlit_fraction * 100)}% sunlit`, x + 38, 1470)
+    ctx.fillStyle = '#d9ddd5'; ctx.fillRect(x, 540, 420, 1030)
+    ctx.fillStyle = '#18211d'; ctx.font = '550 64px Newsreader'; ctx.fillText(sample.time, x + 38, 650)
+    ctx.fillStyle = '#f2c230'; ctx.fillRect(x + 38, 1400 - 650 * sample.sunlit_fraction, 344, 650 * sample.sunlit_fraction)
+    ctx.strokeStyle = '#18211d'; ctx.strokeRect(x + 38, 750, 344, 650)
+    ctx.fillStyle = '#18211d'; ctx.font = '30px Inter'; ctx.fillText(`${Math.round(sample.sunlit_fraction * 100)}% sunlit`, x + 38, 1470)
   })
 }
 
 function drawAccess(ctx: CanvasRenderingContext2D, result: any) {
   Object.entries(result.solar_access).forEach(([date, study]: any, index) => {
     const y = 570 + index * 270
-    ctx.fillStyle = '#17231e'; ctx.font = '700 36px ui-monospace, monospace'; ctx.fillText(date, 110, y)
-    ctx.fillStyle = '#dbe4db'; ctx.fillRect(500, y - 50, 900, 76)
-    ctx.fillStyle = '#d95c37'; ctx.fillRect(500, y - 50, study.total_hours / 12 * 900, 76)
-    ctx.font = '700 42px Georgia'; ctx.fillStyle = '#17231e'; ctx.fillText(`${study.total_hours.toFixed(1)} h`, 500, y + 100)
+    ctx.fillStyle = '#18211d'; ctx.font = '600 30px Inter'; ctx.fillText(date, 110, y)
+    ctx.fillStyle = '#45534d'; ctx.fillRect(500, y - 50, 900, 76)
+    ctx.fillStyle = '#f2c230'; ctx.fillRect(500, y - 50, study.total_hours / 12 * 900, 76)
+    ctx.font = '550 46px Newsreader'; ctx.fillStyle = '#18211d'; ctx.fillText(`${study.total_hours.toFixed(1)} h`, 500, y + 100)
   })
 }
 
@@ -98,17 +98,25 @@ function drawRadiation(ctx: CanvasRenderingContext2D, result: any) {
   const min = result.radiation.minimum_kwh_m2, max = result.radiation.maximum_kwh_m2
   for (let row = 0; row < 8; row++) for (let col = 0; col < 16; col++) {
     const ratio = max === min ? .5 : (values[row * 16 + col] - min) / (max - min)
-    ctx.fillStyle = `hsl(${45 - ratio * 33} 78% ${70 - ratio * 25}%)`
+    ctx.fillStyle = radiationCanvasColour(ratio)
     ctx.fillRect(110 + col * 86, 570 + (7 - row) * 120, 82, 116)
   }
-  ctx.fillStyle = '#17231e'; ctx.font = '700 48px Georgia'; ctx.fillText(`Average ${result.radiation.average_kwh_m2} kWh/m²`, 110, 1650)
-  ctx.font = '28px ui-monospace, monospace'; ctx.fillText(`${min} MIN`, 110, 1730); ctx.fillText(`${max} MAX`, 1310, 1730)
+  ctx.fillStyle = '#18211d'; ctx.font = '550 50px Newsreader'; ctx.fillText(`Average ${result.radiation.average_kwh_m2} kWh/m²`, 110, 1650)
+  ctx.font = '24px Inter'; ctx.fillText(`${min} minimum`, 110, 1730); ctx.fillText(`${max} maximum`, 1280, 1730)
 }
 
-function card(name: CardName, result: any): HTMLCanvasElement {
+function radiationCanvasColour(ratio: number) {
+  const stops = [[24, 63, 90], [43, 140, 134], [227, 201, 70], [200, 71, 45]]
+  const scaled = Math.min(.999, Math.max(0, ratio)) * 3
+  const index = Math.floor(scaled), amount = scaled - index
+  const colour = stops[index].map((value, channel) => Math.round(value + (stops[index + 1][channel] - value) * amount))
+  return `rgb(${colour.join(' ')})`
+}
+
+function card(name: CardName, result: any, studyPackage?: any): HTMLCanvasElement {
   const canvas = document.createElement('canvas'); canvas.width = CARD_WIDTH; canvas.height = CARD_HEIGHT
   const ctx = canvas.getContext('2d')!; title(ctx, name, result)
-  if (name === 'site-unit') drawSite(ctx)
+  if (name === 'site-unit') drawSite(ctx, studyPackage)
   else if (name === 'sunpath') drawSunpath(ctx, result)
   else if (name === 'shadow') drawShadow(ctx, result)
   else if (name === 'solar-access') drawAccess(ctx, result)
@@ -119,8 +127,9 @@ function card(name: CardName, result: any): HTMLCanvasElement {
 const blob = (canvas: HTMLCanvasElement) => new Promise<Blob>((resolve, reject) =>
   canvas.toBlob(value => value ? resolve(value) : reject(new Error('PNG_FAILED')), 'image/png'))
 
-export async function exportBundle(result: any, model: Blob) {
-  const cards = await Promise.all(CARD_NAMES.map(async name => [name, await blob(card(name, result))] as const))
+export async function exportBundle(result: any, model: Blob, studyPackage?: any) {
+  await Promise.all([document.fonts.load('500 118px Newsreader'), document.fonts.load('500 30px Inter')])
+  const cards = await Promise.all(CARD_NAMES.map(async name => [name, await blob(card(name, result, studyPackage))] as const))
   const pdf = await PDFDocument.create()
   for (const [, png] of cards) {
     const image = await pdf.embedPng(await png.arrayBuffer())

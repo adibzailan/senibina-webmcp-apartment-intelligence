@@ -29,4 +29,19 @@ describe('shared visible state', () => {
     )
     expect(complete.analysis).toBe('sunpath')
   })
+
+  it('uses one presentation action for UI and WebMCP selections', () => {
+    const action = { type: 'show-analysis', analysis: 'shadow', shadowTime: '09:00', view: 'home' }
+    const ui = reduce(initialState, { ...action, source: 'ui' })
+    const webmcp = reduce(initialState, { ...action, source: 'webmcp' })
+    expect(ui).toEqual(webmcp)
+    expect(ui).toMatchObject({ analysis: 'shadow', shadowTime: '09:00', viewRequest: 'home' })
+  })
+
+  it('preserves a manually moved camera when only time or seasonal date changes', () => {
+    const shadow = { ...initialState, screen: 'analyse' as const, analysis: 'shadow' as const, viewRevision: 4 }
+    expect(reduce(shadow, { type: 'show-analysis', analysis: 'shadow', shadowTime: '15:00' }).viewRevision).toBe(4)
+    const access = { ...shadow, analysis: 'solar_access' as const }
+    expect(reduce(access, { type: 'show-analysis', analysis: 'solar_access', solarDate: '2026-12-21' }).viewRevision).toBe(4)
+  })
 })

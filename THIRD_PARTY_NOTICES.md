@@ -10,6 +10,10 @@ are the authoritative version inventory.
   their distributions.
 - TypeScript uses Apache-2.0. Uvicorn, HTTPX, and pip-tools use BSD-family
   licences.
+- Newsreader is copyright 2020 The Newsreader Project Authors and Inter is
+  copyright 2020 The Inter Project Authors. Both self-hosted font families are
+  redistributed under the SIL Open Font License 1.1; their licence texts and
+  SHA-256 checksums are retained under `web/public/fonts/`.
 - The Dawson fixture is derived from data.gov.sg datasets under the Singapore
   Open Data Licence. Government data does not imply endorsement.
 - The bundled Singapore Changi TMYx weather file retains its source, citation,
