@@ -10,6 +10,8 @@ implemented behavior, and validated analysis.
 ## Documentation authority
 
 - Start at `_DOCUMENTATION/README.md`.
+- `DESIGN.md` is the authority for the live interface, architectural graphics,
+  evidence exports, and visual-evaluation standards.
 - `10 Projects` owns the finite challenge-submission outcome and exactly one
   non-empty scalar `next_action`.
 - `20 Areas` owns current product, architecture, security, and operations truth.

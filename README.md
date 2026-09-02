@@ -31,6 +31,8 @@ remain open.
 
 Repository knowledge follows PARA. Start at
 [`_DOCUMENTATION/README.md`](_DOCUMENTATION/README.md).
+The interface, architectural graphics, and evidence exports follow the
+repository-local [`DESIGN.md`](DESIGN.md).
 
 Founder-only competition evaluation and deployment notes live under the
 Git-ignored `private/` directory. Ignored files are local working material and
