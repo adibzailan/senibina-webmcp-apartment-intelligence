@@ -24,8 +24,6 @@ remain open.
   bounded solar studies. `rhino3dm.py` writes the layered `.3dm` export.
 - The MVP uses a frozen, attributed Dawson fixture; it has no runtime listing
   scraper, floorplan upload, OneMap dependency, database, account, or LLM.
-- Rhino.Compute is excluded from the MVP unless an approved requirement cannot
-  be met by the simpler stack.
 - Results must distinguish sourced, inferred, generated, and human-confirmed
   information.
 

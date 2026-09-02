@@ -167,9 +167,8 @@ declared public hostname to the loopback application.
   while proxying to the Cloudflare-managed tunnel hostname.
 - Public negative checks returned 403 for an unexpected Origin, 422 for an
   unknown confirmation field, and 404 for a cross-session study handle.
-- A real restart returned the app, tunnel connector, and pre-existing
-  Rhino.Compute process without manual intervention. Parallels autostart and
-  Windows AC sleep prevention are enabled.
+- A real restart returned the app and tunnel connector without manual
+  intervention.
 - Public Chrome discovered six WebMCP tools. Analysis was refused before the
   trusted visible confirmation action, then completed after the human click.
 - Export readback proved five 1600 × 2400 PNGs, a five-page PDF, matching result

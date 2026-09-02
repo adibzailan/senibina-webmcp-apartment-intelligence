@@ -5,9 +5,9 @@ It contains no tunnel token, private hostname receipt, or administrator secret.
 
 ## Platform gate
 
-The verified deployment reuses the founder-approved `SNBA - Dev - SMRT` VM with
-4 vCPU and 16 GB RAM, preserving its existing Rhino.Compute workflow. Install
-Node 22.22.3 ARM64 and CPython 3.13.2 x86-64.
+Use a Windows 11 ARM environment with Node 22.22.3 ARM64 and CPython 3.13.2
+x86-64. The application itself requires no installed Rhino application or
+remote CAD computation service.
 Before deploying the app, install the hash-pinned Python environment and prove
 that Ladybug imports and rhino3dm 8.32.1 writes and reads a metre-unit file with
 the five required layers. Stop for founder review if emulation, a wheel, or the

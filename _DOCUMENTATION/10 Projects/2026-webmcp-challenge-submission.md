@@ -28,12 +28,11 @@ the submitted URLs are read back successfully.
 - Apartment Intelligence is the founder-approved product title.
 - Ten backend and five frontend tests pass on macOS; the same backend tests and
   frontend suite/build also pass in Windows.
-- The reused `SNBA - Dev - SMRT` Windows VM runs the app under the dedicated
-  non-admin `ApartmentIntel` account on loopback. Rhino.Compute remains running
-  for its existing workflows.
+- The Windows runtime runs the app under the dedicated non-admin
+  `ApartmentIntel` account on loopback.
 - The named Cloudflare Tunnel and Vercel hostname bridge serve
-  <https://apartment.senibina.com.sg>. Both services, the app, and Rhino.Compute
-  recovered after a real Windows restart.
+  <https://apartment.senibina.com.sg>. Both services and the app recovered after
+  a real Windows restart.
 - A real public Chrome WebMCP journey discovered all six tools, returned
   `CONFIRMATION_REQUIRED`, accepted only the visible human confirmation, then
   analysed and exported successfully.
@@ -85,8 +84,8 @@ deployment and restart recovery; video and submission checks remain.
   replacement of an architect or environmental consultant.
 - Full internal-apartment simulation, annual energy modelling, CFD, or thermal
   comfort certification.
-- Generic prompt-to-3D, arbitrary scripts, Rhino.Compute, Grasshopper execution,
-  or Revit integration.
+- Generic prompt-to-3D, arbitrary scripts, Grasshopper execution, remote CAD
+  computation, or Revit integration.
 - Accounts, billing, database persistence, runtime LLMs, live OneMap calls,
   enterprise administration, or a general AEC platform.
 

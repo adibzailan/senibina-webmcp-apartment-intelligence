@@ -11,7 +11,7 @@ not grant server authority.
 
 The MVP will not accept arbitrary server-side URL fetching, executable model
 content, scripts, filesystem paths, plug-ins, Grasshopper definitions, or
-Rhino.Compute endpoints. The MVP resolves addresses only from its bundled,
+remote CAD execution endpoints. The MVP resolves addresses only from its bundled,
 attributed Dawson fixture and accepts no listing or floorplan content.
 
 Exact security objectives and release gates are maintained in

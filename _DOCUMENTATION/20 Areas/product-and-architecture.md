@@ -78,8 +78,8 @@ Guaranteed input:
    grids, and coloured result meshes into a downloadable `.3dm`.
 
 Three.js is the browser renderer; Rhino is not required to display the model.
-Rhino.Compute remains excluded unless an approved future geometry requirement
-cannot be met by Three.js, Ladybug geometry, and `rhino3dm.py`.
+The application has no remote CAD computation service: Three.js, Ladybug
+geometry, and `rhino3dm.py` cover the complete v1 runtime.
 
 ## Draft WebMCP contract
 
