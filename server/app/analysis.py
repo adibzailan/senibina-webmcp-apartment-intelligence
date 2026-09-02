@@ -117,23 +117,24 @@ def _to_sun_vector(sun) -> Vector3D:
     return Vector3D(-sun.sun_vector.x, -sun.sun_vector.y, -sun.sun_vector.z)
 
 
-def _sunlit_fraction(sensors: list[Point3D], sun, buildings: list[dict]) -> float:
+def _sensor_visibility(sensors: list[Point3D], sun, buildings: list[dict]) -> list[int]:
     if not sun.is_during_day:
-        return 0.0
+        return [0] * len(sensors)
     direction = _to_sun_vector(sun)
-    visible = sum(not _is_occluded(sensor, direction, buildings) for sensor in sensors)
-    return visible / len(sensors)
+    return [0 if _is_occluded(sensor, direction, buildings) else 1 for sensor in sensors]
 
 
 def _shadow(sensors: list[Point3D], buildings: list[dict]) -> dict:
     samples = []
     for hour in (9, 12, 15):
         sun = _sun(3, 21, hour)
+        visibility = _sensor_visibility(sensors, sun, buildings)
         samples.append({
             "time": f"{hour:02d}:00",
             "altitude": round(sun.altitude, 2),
             "azimuth": round(sun.azimuth, 2),
-            "sunlit_fraction": round(_sunlit_fraction(sensors, sun, buildings), 4),
+            "sensor_values": visibility,
+            "sunlit_fraction": round(sum(visibility) / len(visibility), 4),
         })
     return {"date": "2026-03-21", "timezone": "Asia/Singapore", "samples": samples}
 
@@ -142,18 +143,23 @@ def _solar_access(sensors: list[Point3D], buildings: list[dict]) -> dict:
     result = {}
     for month, day in SEASONAL_DATES:
         morning = afternoon = 0.0
+        sensor_hours = [0.0] * len(sensors)
         for half_hour in range(12, 38):
             hour, minute = divmod(half_hour * 30, 60)
-            fraction = _sunlit_fraction(sensors, _sun(month, day, hour, minute), buildings)
+            visibility = _sensor_visibility(sensors, _sun(month, day, hour, minute), buildings)
+            fraction = sum(visibility) / len(visibility)
             if hour < 13:
                 morning += 0.5 * fraction
             else:
                 afternoon += 0.5 * fraction
+            for index, visible in enumerate(visibility):
+                sensor_hours[index] += 0.5 * visible
         result[f"2026-{month:02d}-{day:02d}"] = {
             "morning_hours": round(morning, 3),
             "afternoon_hours": round(afternoon, 3),
             "total_hours": round(morning + afternoon, 3),
             "interval_minutes": 30,
+            "sensor_hours": sensor_hours,
         }
     return result
 
@@ -203,7 +209,7 @@ def analyse_scene(scene: dict) -> dict:
 
     _, weather_source = _weather()
     result = {
-        "method_version": "apartment-intelligence-solar-v2",
+        "method_version": "apartment-intelligence-solar-v3",
         "weather": weather_source,
         "sunpath": sunpath,
         "shadow": _shadow(sensors, buildings),
