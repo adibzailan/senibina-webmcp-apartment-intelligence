@@ -16,7 +16,7 @@ from starlette.background import BackgroundTask
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
-from .analysis import analyse_scene
+from .analysis import analyse_scene, derive_plate
 from .export_3dm import write_study_3dm
 
 
@@ -44,12 +44,18 @@ class ProposalInput(ClosedModel):
     facade: Literal["north", "east", "south", "west"]
     position: Literal["left", "centre", "right"]
     width: float = Field(ge=2, le=20)
+    depth: float = Field(ge=2, le=12)
     window_width: float = Field(ge=0.5, le=12)
     window_height: float = Field(ge=0.5, le=3)
     sill_height: float = Field(ge=0, le=2)
 
 
 class ConfirmationInput(ClosedModel):
+    proposal_revision: int = Field(ge=1)
+    challenge: str = Field(min_length=32, max_length=128)
+
+
+class ConfirmationChallengeInput(ClosedModel):
     proposal_revision: int = Field(ge=1)
 
 
@@ -63,6 +69,15 @@ def get_study(study_id: str, session: str | None) -> dict | JSONResponse:
         return error("STUDY_EXPIRED", 404, "Create a new apartment study.")
     study["touched"] = time.monotonic()
     return study
+
+
+def study_target(study: dict, proposal: dict | None = None) -> dict:
+    return {**(proposal or study["proposal"]), "storey": study["storey"], "building": study["building"]}
+
+
+def plate_summary(study: dict) -> dict:
+    plate = derive_plate(study_target(study))
+    return {key: plate[key] for key in ("usable_area_m2", "sensor_count", "spacing_m", "normal_state")}
 
 
 def _analysis_worker(scene: dict, queue) -> None:
@@ -142,9 +157,10 @@ def create_study(payload: StudyInput, study_session: str | None = Cookie(default
         "storey": payload.storey,
         "building": building,
         "proposal": {"facade": "east", "position": "centre", "width": 8.0,
-                     "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
+                     "depth": 6.0, "window_width": 4.0, "window_height": 1.2, "sill_height": 0.9},
         "proposal_revision": 1,
         "confirmed_revision": None,
+        "confirmation_challenges": {},
         "touched": time.monotonic(),
     }
     response = JSONResponse({"study_id": study_id, "state": "needs_confirmation", "next_action": "Review and confirm the visible unit proposal."}, status_code=201)
@@ -159,8 +175,11 @@ def study_state(study_id: str, study_session: str | None = Cookie(default=None))
         return study
     next_actions = {"needs_confirmation": "Confirm the visible proposal.", "ready": "Run solar analysis.",
                     "analysing": "Wait for the bounded analysis.", "complete": "Explore or export the completed analysis."}
+    plate = derive_plate(study_target(study))
     return {"study_id": study_id, "state": study["state"], "address": study["address"],
             "storey": study["storey"], "proposal": study["proposal"],
+            "plate_summary": plate_summary(study),
+            "plate": plate,
             "proposal_revision": study["proposal_revision"],
             "source_state": "sourced", "height_state": "inferred",
             "next_action": next_actions[study["state"]]}
@@ -171,14 +190,22 @@ def propose(study_id: str, payload: ProposalInput, study_session: str | None = C
     study = get_study(study_id, study_session)
     if isinstance(study, JSONResponse):
         return study
-    study["proposal"] = payload.model_dump()
+    proposal = payload.model_dump()
+    try:
+        derive_plate(study_target(study, proposal))
+    except ValueError as failure:
+        code = str(failure)
+        next_action = "Choose a facade and position with usable floor area." if code == "PROPOSAL_OUTSIDE_FOOTPRINT" else "Reduce the opening or choose another facade position."
+        return error(code, 422, next_action)
+    study["proposal"] = proposal
     study["proposal_revision"] += 1
+    study["confirmation_challenges"] = {}
     study["state"] = "needs_confirmation"
     return {"study_id": study_id, "state": study["state"], "proposal_revision": study["proposal_revision"], "next_action": "Review and confirm the visible proposal."}
 
 
-@app.post("/api/studies/{study_id}/confirmation")
-def confirm(study_id: str, payload: ConfirmationInput,
+@app.post("/api/studies/{study_id}/confirmation-challenge")
+def confirmation_challenge(study_id: str, payload: ConfirmationChallengeInput,
             x_user_activation: str | None = Header(default=None),
             study_session: str | None = Cookie(default=None)):
     study = get_study(study_id, study_session)
@@ -187,6 +214,25 @@ def confirm(study_id: str, payload: ConfirmationInput,
     if x_user_activation != "trusted":
         return error("CONFIRMATION_REQUIRED", 403, "Use the visible Confirm this home button.")
     if payload.proposal_revision != study["proposal_revision"]:
+        return error("STALE_CONFIRMATION", 409, "Review the latest visible proposal.")
+    challenge = secrets.token_urlsafe(32)
+    study["confirmation_challenges"] = {challenge: {
+        "revision": payload.proposal_revision,
+        "expires": time.monotonic() + 10,
+    }}
+    return {"challenge": challenge, "expires_in_seconds": 10}
+
+
+@app.post("/api/studies/{study_id}/confirmation")
+def confirm(study_id: str, payload: ConfirmationInput,
+            study_session: str | None = Cookie(default=None)):
+    study = get_study(study_id, study_session)
+    if isinstance(study, JSONResponse):
+        return study
+    receipt = study["confirmation_challenges"].pop(payload.challenge, None)
+    if not receipt or receipt["expires"] < time.monotonic():
+        return error("CONFIRMATION_REQUIRED", 403, "Use the visible Confirm this home button again.")
+    if payload.proposal_revision != study["proposal_revision"] or receipt["revision"] != payload.proposal_revision:
         return error("STALE_CONFIRMATION", 409, "Review the latest visible proposal.")
     study["confirmed_revision"] = payload.proposal_revision
     study["state"] = "ready"
@@ -211,7 +257,7 @@ def run_analysis(study_id: str, study_session: str | None = Cookie(default=None)
     try:
         analysis_history[study["session"]] = recent + [now]
         study["state"] = "analysing"
-        target = {**study["proposal"], "storey": study["storey"], "building": study["building"]}
+        target = study_target(study)
         buildings = [
             {"id": building["id"], "footprint": building["footprint"], "height_m": building["height_m"]}
             for building in FIXTURE["buildings"]

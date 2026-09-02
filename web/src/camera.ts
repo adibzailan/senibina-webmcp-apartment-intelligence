@@ -7,7 +7,7 @@ export const facadeDirection = (facade: string): Vec3 => ({
 
 export function presetForPresentation(screen: string, analysis: string): ViewPreset {
   if (screen === 'provide' || screen === 'verify') return 'precinct'
-  if (screen === 'locate') return 'tower'
+  if (screen === 'locate') return 'home'
   if (analysis === 'solar_access' || analysis === 'radiation') return 'home'
   return 'tower'
 }

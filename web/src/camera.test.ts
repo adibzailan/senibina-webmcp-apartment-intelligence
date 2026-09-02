@@ -21,7 +21,7 @@ describe('architectural camera', () => {
 
   it('selects stage-aware presets', () => {
     expect(presetForPresentation('provide', 'site')).toBe('precinct')
-    expect(presetForPresentation('locate', 'site')).toBe('tower')
+    expect(presetForPresentation('locate', 'site')).toBe('home')
     expect(presetForPresentation('analyse', 'sunpath')).toBe('tower')
     expect(presetForPresentation('analyse', 'radiation')).toBe('home')
   })

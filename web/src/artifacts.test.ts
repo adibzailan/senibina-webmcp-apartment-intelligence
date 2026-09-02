@@ -8,6 +8,7 @@ describe('architectural artifact contract', () => {
     expect(CARD_NAMES).toHaveLength(5)
     expect([CARD_WIDTH, CARD_HEIGHT]).toEqual([1600, 2400])
     expect(exportManifest('digest')).toMatchObject({ digest: 'digest', cards: CARD_NAMES })
+    expect(exportManifest('digest', { address: '88 Dawson Road', storey: 22 })).toMatchObject({ address: '88 Dawson Road', storey: 22 })
   })
 
   it('gives every card a distinct computed method and keeps radiation limitations visible', () => {
@@ -17,5 +18,8 @@ describe('architectural artifact contract', () => {
     } as any
     expect(new Set(CARD_NAMES.map(name => cardNarrative(name, result).method)).size).toBe(5)
     expect(cardNarrative('radiation', result).limitations).toContain('no inter-reflection')
+    expect(cardNarrative('shadow', result).method).toContain('apartment floor plate')
+    expect(cardNarrative('solar-access', result).limitations).not.toContain('16 × 8')
+    expect(cardNarrative('radiation', result).method).toContain('confirmed window aperture')
   })
 })

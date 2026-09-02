@@ -7,6 +7,7 @@ const analyses = ['sunpath', 'shadow', 'solar_access', 'radiation']
 const shadowTimes = ['09:00', '12:00', '15:00']
 const solarDates = ['2026-03-21', '2026-06-21', '2026-09-21', '2026-12-21']
 const views = ['precinct', 'tower', 'home']
+export const DEFAULT_PROPOSAL = { width: 8, depth: 6, window_width: 4, window_height: 1.2, sill_height: .9 }
 
 export function validateShowAnalysis(input) {
   const allowed = ['analysis', 'shadow_time', 'solar_date', 'view']
@@ -17,6 +18,19 @@ export function validateShowAnalysis(input) {
   }
   return { analysis: input.analysis, ...(input.shadow_time ? { shadowTime: input.shadow_time } : {}),
     ...(input.solar_date ? { solarDate: input.solar_date } : {}), ...(input.view ? { view: input.view } : {}) }
+}
+
+export function conciseStudyState(state) {
+  return {
+    study_id: state.study_id,
+    state: state.state,
+    address: state.address,
+    storey: state.storey,
+    source_state: state.source_state,
+    height_state: state.height_state,
+    plate_summary: state.plate_summary,
+    next_action: state.next_action,
+  }
 }
 
 export async function registerWebMCP(dispatch, getState, onExport) {
@@ -39,9 +53,11 @@ export async function registerWebMCP(dispatch, getState, onExport) {
       execute: execute(async (input, signal) => { const result = await api.create(input, signal); dispatch({ type: 'study-created', payload: result, source: 'webmcp' }); return result }) },
     { name: 'propose_unit_location', description: 'Stage an approximate facade and horizontal unit position for visible resident review. This never confirms geometry.',
       inputSchema: object({ study_id: text, facade: { type: 'string', enum: ['north', 'east', 'south', 'west'] }, position: { type: 'string', enum: ['left', 'centre', 'right'] } }),
-      execute: execute((input, signal) => api.proposal(input.study_id, { facade: input.facade, position: input.position, width: 8, window_width: 4, window_height: 1.2, sill_height: .9 }, signal)) },
+      execute: execute((input, signal) => api.proposal(input.study_id, { facade: input.facade, position: input.position, ...DEFAULT_PROPOSAL }, signal)) },
     { name: 'get_study_state', description: 'Read concise provenance, state, missing information, and the next human action.', annotations: { readOnlyHint: true },
-      inputSchema: object({ study_id: text }), execute: execute((input, signal) => api.state(input.study_id, signal)) },
+      inputSchema: object({ study_id: text }), execute: execute(async (input, signal) => {
+        const state = await api.state(input.study_id, signal); dispatch({ type: 'study-state', payload: state, source: 'webmcp' }); return conciseStudyState(state)
+      }) },
     { name: 'run_solar_analysis', description: 'Run all four deterministic solar studies. Unconfirmed or stale geometry is refused.',
       inputSchema: object({ study_id: text }), execute: execute((input, signal) => api.analyse(input.study_id, signal)) },
     { name: 'show_analysis', description: 'Show a completed analysis in the shared visible interface without changing evidence.', annotations: { readOnlyHint: true },

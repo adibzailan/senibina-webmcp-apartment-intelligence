@@ -1,22 +1,21 @@
 ---
 title: Analysis and output reference
 para: resource
-status: proposed
+status: current
 ---
 
 # Analysis and output reference
 
-This reference defines the proposed V1 studies and presentation contract. It is
-not evidence that an analysis method has been implemented or validated.
+This reference defines the implemented V1 study and presentation contract.
 
 ## Study set
 
 | Study | Consumer question | Proposed calculation | Primary graphic |
 | --- | --- | --- | --- |
 | Sunpath | Where does the sun travel relative to this home? | Equinox, solstice, and selected-date solar positions | North-aligned 3D sunpath and key positions |
-| Shadow | When do neighbouring buildings shade the target facade/windows? | Context intersections at 09:00, 12:00, and 15:00 SGT | Comparable shadow views |
-| Solar access | For how long can each target surface see direct sun? | Four seasonal dates at 30-minute intervals | Hours-of-sun colour map |
-| Radiation | How much incident solar exposure reaches the facade? | 16 × 8 grid; 12 monthly representative days; occluded DNI plus isotropic DHI | Approximate exposure map with numeric legend |
+| Shadow | Where does direct sun reach the apartment floor? | Aperture-gated context intersections at 09:00, 12:00, and 15:00 SGT | Horizontal sun-patch map |
+| Solar access | For how long can the apartment floor see direct sun through its window? | Four seasonal dates at 30-minute intervals | Floor hours-of-sun colour map |
+| Radiation | How much approximate solar exposure reaches the apartment floor through its window? | Up to 256 floor sensors; 12 monthly representative days; aperture- and obstruction-gated DNI plus isotropic DHI through a sampled aperture factor | Horizontal exposure map with numeric legend |
 
 Every study must record north, location, date or analysis period, time zone,
 weather source, geometry version, sampling settings, legend, units, assumptions,
@@ -26,9 +25,10 @@ Radiation is not interchangeable with daylight, glare, indoor temperature,
 cooling load, comfort, or energy consumption. Those require different models
 and remain out of V1.
 
-The radiation method has no inter-reflection and does not obstruct diffuse sky
-with surrounding massing. It is approximate incident solar exposure, not a
-Radiance simulation or certification.
+The radiation method excludes glazing transmittance, inter-reflection, internal
+partitions, balcony slabs, and overhangs. Diffuse exposure uses an isotropic sky
+and a visible sensor-to-aperture configuration factor. It is approximate
+interior solar exposure, not a Radiance simulation or certification.
 
 ## Five-card graphic system
 
@@ -54,7 +54,7 @@ results, labels, provenance, or uncertainty.
 | PNG set | Five standalone 1600 × 2400 cards |
 | PDF | The same five compositions in a fixed order with no hidden extra claims |
 | ZIP | PNGs, PDF, `.3dm`, and machine-readable provenance/result summary |
-| `.3dm` | Metre-unit scene, layers, names, source/confidence metadata, target unit/windows, analysis grids, and coloured result meshes |
+| `.3dm` | Metre-unit scene, layers, names, source/confidence metadata, confirmed floor plate/window, horizontal analysis grids, and coloured result meshes |
 
 Required `.3dm` layers are `01_SOURCED_CONTEXT`, `02_INFERRED_MASSING`,
 `03_HUMAN_CONFIRMED_UNIT`, `04_GENERATED_ANALYSIS`, and `05_RESULTS`.

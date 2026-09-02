@@ -22,11 +22,11 @@ export default function Scene({ context, study, result, analysis, screen, shadow
 
   useEffect(() => {
     if (!runtime.current || !context) return
-    const presentation = { analysis, shadowTime, solarDate }
+    const presentation = { analysis, screen, shadowTime, solarDate }
     const built = populateScene(runtime.current.scene, context, study, result, presentation)
     runtime.current.geometry = built.geometry; runtime.current.home = built.home; render()
     if (!runtime.current.hasFrame && built.geometry.children.length) { const preset = viewRequest || presetForPresentation(screen, analysis); runtime.current.preset = preset; applyCameraPreset(runtime.current.camera, runtime.current.controls, boundsFor(built.geometry, built.home, preset), preset, built.home?.facade); runtime.current.hasFrame = true; render() }
-  }, [context, study, result, analysis, shadowTime, solarDate])
+  }, [context, study, result, analysis, screen, shadowTime, solarDate])
 
   useEffect(() => {
     const value = runtime.current; if (!value?.geometry || value.geometry.children.length === 0) return
@@ -40,7 +40,7 @@ export default function Scene({ context, study, result, analysis, screen, shadow
     <div className="scene" ref={host} aria-label="Interactive three-dimensional Dawson precinct" data-canvas-ready={String(ready)} />
     <div className="camera-toolbar" aria-label="Camera views"><button onClick={() => choose('precinct')}>Precinct</button><button onClick={() => choose('tower')}>Block 87</button><button onClick={() => choose('home')} disabled={!study}>Home</button><button onClick={reset}>Reset view</button></div>
     <div className="north-indicator" aria-label="North direction">N<span ref={compass} aria-hidden="true">↑</span></div>
-    <div className="scene-legend"><b>{analysis.replace('_', ' ')}</b>{analysis === 'sunpath' ? <><span className="legend-line solar">21 Mar / 21 Jun / 21 Sep / 21 Dec</span><span>N · E · S · W</span></> : analysis === 'shadow' ? <><span><i className="swatch sunlit"/>Sunlit</span><span><i className="swatch shaded"/>Obstructed</span></> : analysis === 'solar_access' && result ? <><span><i className="continuous-scale access"/>Direct-sun hours</span><span>0–{Math.max(...result.solar_access[solarDate].sensor_hours).toFixed(1)} h</span></> : analysis === 'radiation' && result ? <><span><i className="continuous-scale radiation"/>Incident exposure</span><span>{result.radiation.minimum_kwh_m2}–{result.radiation.maximum_kwh_m2} kWh/m²</span></> : <><span><i className="swatch context"/>Context</span><span><i className="swatch selected"/>Block 87</span><span><i className="swatch confirmed"/>Confirmed home</span></>}</div>
+    <div className="scene-legend"><b>{analysis.replace('_', ' ')}</b>{analysis === 'sunpath' ? <><span className="legend-line solar">21 Mar / 21 Jun / 21 Sep / 21 Dec</span><span>N · E · S · W</span></> : analysis === 'shadow' ? <><span><i className="swatch sunlit"/>Sunlit floor</span><span><i className="swatch shaded"/>No direct sun</span></> : analysis === 'solar_access' && result ? <><span><i className="continuous-scale access"/>Floor direct-sun hours</span><span>0–{Math.max(...result.solar_access[solarDate].sensor_hours).toFixed(1)} h</span></> : analysis === 'radiation' && result ? <><span><i className="continuous-scale radiation"/>Interior floor exposure</span><span>{result.radiation.minimum_kwh_m2}–{result.radiation.maximum_kwh_m2} kWh/m²</span></> : <><span><i className="swatch context"/>Translucent massing</span><span><i className="swatch confirmed"/>Apartment floor plate</span></>}</div>
     <p className="view-help">Drag to orbit · right-drag to pan · wheel or pinch to zoom</p>
   </div>
 }

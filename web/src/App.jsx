@@ -11,7 +11,7 @@ const analyses = [
   ['sunpath', 'Sunpath', 'Seasonal paths'],
   ['shadow', 'Shadow', 'Three daily moments'],
   ['solar_access', 'Solar Access', 'Four seasonal dates'],
-  ['radiation', 'Radiation', 'Annual facade exposure'],
+  ['radiation', 'Radiation', 'Interior floor exposure'],
 ]
 
 export default function App() {
@@ -54,7 +54,7 @@ export default function App() {
   const propose = async event => {
     event.preventDefault(); const form = new FormData(event.currentTarget)
     try {
-      const payload = { facade: form.get('facade'), position: form.get('position'), width: Number(form.get('width')), window_width: Number(form.get('window_width')), window_height: Number(form.get('window_height')), sill_height: Number(form.get('sill_height')) }
+      const payload = { facade: form.get('facade'), position: form.get('position'), width: Number(form.get('width')), depth: Number(form.get('depth')), window_width: Number(form.get('window_width')), window_height: Number(form.get('window_height')), sill_height: Number(form.get('sill_height')) }
       const response = await api.proposal(state.studyId, payload); dispatch({ type: 'study-state', payload: response, source: 'ui' }); setStudy(await api.state(state.studyId)); setMessage(response.next_action)
     } catch (error) { setMessage(error.body?.next_action || error.message) }
   }
@@ -95,19 +95,20 @@ export default function App() {
         </section>}
 
         {state.screen === 'locate' && study && <section>
-          <ChapterHeader number="03" title="Choose the facade you recognise."><p>Adjust the visible proposal. Red appears only after you confirm this is the home you mean.</p></ChapterHeader>
+          <ChapterHeader number="03" title="Place the apartment you recognise."><p>Adjust the approximate floor plate and its exterior opening. Red appears only after you confirm this is the home you mean.</p></ChapterHeader>
           <form className="proposal" onSubmit={propose}>
             <label>Facade<select name="facade" defaultValue={study.proposal.facade}><option>north</option><option>east</option><option>south</option><option>west</option></select></label>
             <label>Position<select name="position" defaultValue={study.proposal.position}><option>left</option><option>centre</option><option>right</option></select></label>
             <label>Unit zone (m)<input name="width" type="number" min="2" max="20" step=".5" defaultValue={study.proposal.width}/></label>
+            <label>Apartment depth (m)<input name="depth" type="number" min="2" max="12" step=".5" defaultValue={study.proposal.depth}/></label>
             <label>Window width (m)<input name="window_width" type="number" min=".5" max="12" step=".1" defaultValue={study.proposal.window_width}/></label>
             <label>Window height (m)<input name="window_height" type="number" min=".5" max="3" step=".1" defaultValue={study.proposal.window_height}/></label>
             <label>Sill height (m)<input name="sill_height" type="number" min="0" max="2" step=".1" defaultValue={study.proposal.sill_height}/></label>
             <button className="secondary">Update the visible proposal</button>
           </form>
-          <p className="proposal-summary"><span>{study.proposal.facade} facade · {study.proposal.position} zone</span><span>storey {study.storey} · {study.proposal.window_width} × {study.proposal.window_height} m window</span></p>
+          <p className="proposal-summary"><span>{study.proposal.facade} facade · {study.proposal.position} zone · {study.proposal.width} × {study.proposal.depth} m</span><span>{study.plate_summary?.usable_area_m2} m² usable grid · {study.plate_summary?.spacing_m} m sensors · {study.plate_summary?.normal_state?.replaceAll('_', ' ')}</span><span>storey {study.storey} · {study.proposal.window_width} × {study.proposal.window_height} m window</span></p>
           <button className="primary confirmation" onClick={confirm}>Confirm this home</button>
-          <p className="human-boundary">Only your direct click can confirm the geometry. An agent cannot perform this action.</p>
+          <p className="human-boundary">Confirm in this visible interface. Confirmation is not exposed as a WebMCP tool; it is an interaction boundary, not identity proof.</p>
         </section>}
 
         {state.screen === 'analyse' && <section>
@@ -141,7 +142,7 @@ export default function App() {
 function AnalysisReading({ analysis, result, status, shadowTime, solarDate }) {
   if (!result) return <div className="analysis-reading"><p className="section-reference">{status === 'ready' ? 'Ready to calculate' : 'Awaiting confirmation'}</p><p>{status === 'ready' ? 'The resident-confirmed geometry is ready for the four deterministic studies.' : 'The four studies become available after the resident confirms the visible home.'}</p></div>
   if (analysis === 'sunpath') return <div className="analysis-reading"><p className="section-reference">Seasonal solar geometry</p><p>Equinoxes and solstices, Singapore time. The high tropical paths explain why facade direction matters more than a simple south-facing rule.</p></div>
-  if (analysis === 'shadow') { const sample = result.shadow.samples.find(item => item.time === shadowTime); return <div className="analysis-reading"><p className="section-reference">21 March · {shadowTime}</p><p><strong>{Math.round(sample.sunlit_fraction * 100)}%</strong> of the confirmed window grid is sunlit. Solar altitude {sample.altitude}°, azimuth {sample.azimuth}°.</p></div> }
-  if (analysis === 'solar_access') return <div className="analysis-reading"><p className="section-reference">{solarDate} · direct sun</p><p><strong>{result.solar_access[solarDate].total_hours.toFixed(1)} hours</strong> averaged across the confirmed facade grid at 30-minute intervals.</p></div>
-  return <div className="analysis-reading"><p className="section-reference">Approximate annual incident exposure</p><p><strong>{result.radiation.average_kwh_m2} kWh/m²</strong> average. Direct EPW radiation is obstruction-tested; diffuse sky is isotropic and unobstructed.</p></div>
+  if (analysis === 'shadow') { const sample = result.shadow.samples.find(item => item.time === shadowTime); return <div className="analysis-reading"><p className="section-reference">21 March · {shadowTime}</p><p><strong>{sample.sun_patch_area_m2.toFixed(1)} m²</strong> of direct sun reaches the approximate apartment floor. Solar altitude {sample.altitude}°, azimuth {sample.azimuth}°.</p></div> }
+  if (analysis === 'solar_access') return <div className="analysis-reading"><p className="section-reference">{solarDate} · direct sun</p><p><strong>{result.solar_access[solarDate].total_hours.toFixed(1)} hours</strong> averaged across the confirmed floor plate at 30-minute intervals.</p></div>
+  return <div className="analysis-reading"><p className="section-reference">Approximate interior solar exposure through the window</p><p><strong>{result.radiation.average_kwh_m2} kWh/m²</strong> average across the floor plate. Direct and isotropic diffuse EPW radiation are aperture- and obstruction-tested; glazing and reflections are excluded.</p></div>
 }

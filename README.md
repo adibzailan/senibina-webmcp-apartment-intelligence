@@ -5,8 +5,8 @@ application. It brings early-stage architectural solar analysis to a Singapore
 resident evaluating an existing HDB apartment.
 
 The guaranteed demonstration starts with 87 Dawson Road and storey 30. An
-agent resolves the bundled public context, the resident confirms the
-target unit and windows in a visible 3D scene, and deterministic analysis
+agent resolves the bundled public context, the resident confirms an approximate
+apartment floor plate and window in a visible 3D scene, and deterministic analysis
 produces sunpath, shadow, solar-access, and radiation evidence.
 
 Status: implementation gates 1–5 pass. The Windows VM, named Cloudflare Tunnel,
@@ -18,8 +18,8 @@ remain open.
 
 - V1 is an HDB-first consumer decision aid, not a professional certification or
   statutory compliance service.
-- Public records provide contextual building information. Exact unit facade,
-  window position, balcony geometry, and internal layout remain human-confirmed.
+- Public records provide contextual building information. The approximate unit
+  width, depth, facade, window position, and internal layout remain human-confirmed.
 - Three.js renders the browser scene. Ladybug Core and Geometry compute the
   bounded solar studies. `rhino3dm.py` writes the layered `.3dm` export.
 - The MVP uses a frozen, attributed Dawson fixture; it has no runtime listing

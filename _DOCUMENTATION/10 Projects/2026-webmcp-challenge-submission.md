@@ -34,7 +34,7 @@ the submitted URLs are read back successfully.
   <https://apartment.senibina.com.sg>. Both services and the app recovered after
   a real Windows restart.
 - A real public Chrome WebMCP journey discovered all six tools, returned
-  `CONFIRMATION_REQUIRED`, accepted only the visible human confirmation, then
+  `CONFIRMATION_REQUIRED`, accepted confirmation through the visible UI, then
   analysed and exported successfully.
 - Artifact readback proved five 1600 × 2400 PNGs, a five-page PDF, one manifest,
   and a metre-unit `.3dm` with five expected layers, 29 objects, and metadata.
@@ -48,7 +48,7 @@ the submitted URLs are read back successfully.
 - Guarantee one Dawson journey for Blocks 86–94, centred on 87 Dawson Road,
   postal 141087, storey 30.
 - Use a frozen, reproducible public-data fixture and label every inference.
-- Require the resident to confirm the target facade, unit, and windows in 3D.
+- Require the resident to confirm an approximate target floor plate, facade, and window in 3D.
 - Run sunpath, shadow, solar-access, and radiation studies deterministically.
 - Present interactive 3D plus five consistent architectural graphics.
 - Export the five PNG cards, combined PDF, ZIP, and layered `.3dm`.

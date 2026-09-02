@@ -44,51 +44,68 @@ def write_study_3dm(path: Path, scene: dict) -> None:
 
     target = scene.get("target")
     if target:
-        footprint = target["building"]["footprint"]
-        xs = [point[0] for point in footprint]; ys = [point[1] for point in footprint]
-        x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
-        facade = target.get("facade", "east")
-        z0 = (target["storey"] - 1) * 3 + target.get("sill_height", .9)
-        width = target.get("window_width", 4); height = target.get("window_height", 1.2)
-        factor = {"left": .25, "centre": .5, "right": .75}[target.get("position", "centre")]
-        if facade in {"east", "west"}:
-            fixed = x1 if facade == "east" else x0; centre = y0 + (y1 - y0) * factor
-            point = lambda u, v: rhino3dm.Point3d(fixed, centre + u, z0 + v)
-        else:
-            fixed = y1 if facade == "north" else y0; centre = x0 + (x1 - x0) * factor
-            point = lambda u, v: rhino3dm.Point3d(centre + u, fixed, z0 + v)
-
-        window = rhino3dm.PolylineCurve([
-            point(-width / 2, 0), point(width / 2, 0), point(width / 2, height),
-            point(-width / 2, height), point(-width / 2, 0),
-        ])
+        plate = scene.get("result", {}).get("plate")
+        if not plate:
+            raise ValueError("Floor plate result is required for the v4 export")
         confirmed = rhino3dm.ObjectAttributes(); confirmed.LayerIndex = 2
-        confirmed.Name = "Human-confirmed target window band"
+        confirmed.Name = "Human-confirmed usable apartment floor plate cell"
         confirmed.SetUserString("state", "human-confirmed")
         confirmed.SetUserString("method", "visible first-party confirmation")
+        confirmed.SetUserString("assumption", "rectangular proposal clipped by sourced footprint sensor mask")
+        confirmed.SetUserString("units", "metres")
         confirmed.SetUserString("digest", scene["digest"])
-        model.Objects.AddCurve(window, confirmed)
+        cols, rows = plate["grid"]
+        wall_left, wall_right, inner_right, inner_left = plate["outline_xyz"][:4]
+        def grid_point(column: int, row: int) -> rhino3dm.Point3d:
+            u, v = column / cols, row / rows
+            near = [wall_left[i] + (wall_right[i] - wall_left[i]) * u for i in range(3)]
+            far = [inner_left[i] + (inner_right[i] - inner_left[i]) * u for i in range(3)]
+            return rhino3dm.Point3d(*(near[i] + (far[i] - near[i]) * v for i in range(3)))
+        for row in range(rows):
+            for col in range(cols):
+                if not plate["mask"][row * cols + col]:
+                    continue
+                points = [grid_point(col, row), grid_point(col + 1, row), grid_point(col + 1, row + 1), grid_point(col, row + 1), grid_point(col, row)]
+                model.Objects.AddCurve(rhino3dm.PolylineCurve(points), confirmed)
 
-        cols, rows = 16, 8
+        aperture = plate["aperture"]
+        anchor = plate["anchor_xy"]; tangent = plate["wall_direction"]
+        floor_z = plate["elevation_m"] - .02
+        width = aperture["width_m"]; height = aperture["height_m"]; z0 = floor_z + aperture["sill_m"]
+        point = lambda u, v: rhino3dm.Point3d(anchor[0] + tangent[0] * u, anchor[1] + tangent[1] * u, z0 + v)
+        window = rhino3dm.PolylineCurve([point(-width / 2, 0), point(width / 2, 0), point(width / 2, height), point(-width / 2, height), point(-width / 2, 0)])
+        window_attributes = rhino3dm.ObjectAttributes(); window_attributes.LayerIndex = 2
+        window_attributes.Name = "Human-confirmed exterior window aperture"
+        window_attributes.SetUserString("state", "human-confirmed")
+        window_attributes.SetUserString("method", "visible first-party confirmation")
+        window_attributes.SetUserString("digest", scene["digest"])
+        model.Objects.AddCurve(window, window_attributes)
+
         mesh = rhino3dm.Mesh()
         values = scene.get("result", {}).get("radiation", {}).get("sensor_values_kwh_m2", [0.0] * (cols * rows))
-        minimum, maximum = min(values), max(values)
+        included_values = [value for value, mask in zip(values, plate["mask"]) if mask]
+        minimum, maximum = min(included_values), max(included_values)
         for row in range(rows + 1):
             for col in range(cols + 1):
-                vertex = point(-width / 2 + width * col / cols, height * row / rows)
-                mesh.Vertices.Add(vertex.X, vertex.Y, vertex.Z)
+                u, v = col / cols, row / rows
+                near = [wall_left[i] + (wall_right[i] - wall_left[i]) * u for i in range(3)]
+                far = [inner_left[i] + (inner_right[i] - inner_left[i]) * u for i in range(3)]
+                vertex = [near[i] + (far[i] - near[i]) * v for i in range(3)]
+                mesh.Vertices.Add(*vertex)
                 sample = values[min(row, rows - 1) * cols + min(col, cols - 1)]
                 ratio = .5 if maximum == minimum else (sample - minimum) / (maximum - minimum)
                 red, green, blue = colorsys.hls_to_rgb((45 - ratio * 33) / 360, .55, .78)
                 mesh.VertexColors.Add(int(red * 255), int(green * 255), int(blue * 255))
         for row in range(rows):
             for col in range(cols):
+                if not plate["mask"][row * cols + col]:
+                    continue
                 a = row * (cols + 1) + col
                 mesh.Faces.AddFace(a, a + 1, a + cols + 2, a + cols + 1)
         generated = rhino3dm.ObjectAttributes(); generated.LayerIndex = 3
-        generated.Name = "Generated 16 x 8 radiation sensor mesh"
+        generated.Name = "Generated horizontal radiation sensor mesh"
         generated.SetUserString("state", "generated")
-        generated.SetUserString("method", "occluded direct DNI plus isotropic DHI")
+        generated.SetUserString("method", "aperture-gated direct DNI plus isotropic diffuse aperture factor")
         generated.SetUserString("units", "kWh/m2 approximate")
         generated.SetUserString("digest", scene["digest"])
         model.Objects.AddMesh(mesh, generated)
@@ -97,6 +114,6 @@ def write_study_3dm(path: Path, scene: dict) -> None:
         result.Name = "Result digest"
         result.SetUserString("state", "result")
         result.SetUserString("digest", scene["digest"])
-        model.Objects.AddTextDot(f"Result {scene['digest']}", point(0, height + 1), result)
+        model.Objects.AddTextDot(f"Result {scene['digest']}", rhino3dm.Point3d(anchor[0], anchor[1], z0 + height + 1), result)
     if not model.Write(str(path), 8):
         raise RuntimeError("Failed to write 3dm")

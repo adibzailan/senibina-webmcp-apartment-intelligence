@@ -8,26 +8,27 @@ export const CARD_HEIGHT = 2400
 export const CARD_NAMES = ['site-unit', 'sunpath', 'shadow', 'solar-access', 'radiation'] as const
 type CardName = typeof CARD_NAMES[number]
 
-export function exportManifest(digest: string) {
-  return { product: 'Apartment Intelligence', digest, cards: CARD_NAMES, width: CARD_WIDTH, height: CARD_HEIGHT }
+export function exportManifest(digest: string, study?: any) {
+  return { product: 'Apartment Intelligence', digest, address: study?.address, storey: study?.storey, cards: CARD_NAMES, width: CARD_WIDTH, height: CARD_HEIGHT }
 }
 
 export function cardNarrative(name: CardName, result: any) {
   const content = {
-    'site-unit': { method: 'Official HDB footprint extruded using inferred 3.0 m floor-to-floor height.', limitations: 'Facade, unit zone and openings are resident-confirmed approximations.' },
+    'site-unit': { method: 'Official HDB footprint, inferred massing, and resident-confirmed approximate apartment floor plate.', limitations: 'The ground-level footprint is reused at the selected storey; the apartment rectangle and opening are approximations.' },
     sunpath: { method: 'Ladybug solar positions for equinoxes and solstices in Singapore time.', limitations: 'Paths describe the sun; context obstruction is shown in the other studies.' },
-    shadow: { method: 'Ladybug Geometry rays from the confirmed window grid at 09:00, 12:00 and 15:00.', limitations: 'Three representative instants on 21 March, not a full-year animation.' },
-    'solar-access': { method: 'Direct-sun hours sampled every 30 minutes on four seasonal dates.', limitations: 'Hours are averaged across the 16 × 8 confirmed window sensor grid.' },
-    radiation: { method: '12 monthly representative days: occluded EPW DNI × incidence plus isotropic DHI × 0.5.', limitations: result.radiation?.limitations?.join('; ') || 'no inter-reflection; diffuse sky is unobstructed' },
+    shadow: { method: 'Aperture-gated Ladybug Geometry rays across the apartment floor plate at 09:00, 12:00 and 15:00.', limitations: 'Three representative instants on 21 March; open plan with no internal partitions.' },
+    'solar-access': { method: 'Direct-sun hours on the apartment floor plate, sampled every 30 minutes on four seasonal dates.', limitations: 'The apartment footprint and one exterior opening are resident-confirmed approximations.' },
+    radiation: { method: '12 monthly representative days: EPW direct and diffuse exposure reaching the floor through the confirmed window aperture.', limitations: result.radiation?.limitations?.join('; ') || 'no glazing transmittance; no inter-reflection' },
   }
   return content[name]
 }
 
-function title(ctx: CanvasRenderingContext2D, name: CardName, result: any) {
+function title(ctx: CanvasRenderingContext2D, name: CardName, result: any, studyPackage?: any) {
   ctx.fillStyle = '#f5f2e9'; ctx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT)
   ctx.fillStyle = '#18211d'; ctx.font = '650 28px Inter'; ctx.fillText('AI', 110, 110)
   ctx.font = '550 30px Inter'; ctx.fillText('Apartment Intelligence', 165, 110)
-  ctx.textAlign = 'right'; ctx.font = '500 24px Inter'; ctx.fillStyle = '#5f665f'; ctx.fillText('87 Dawson Road · Storey 30', 1490, 110); ctx.textAlign = 'left'
+  const identity = studyPackage?.study ? `${studyPackage.study.address} · Storey ${studyPackage.study.storey}` : 'Dawson precinct study'
+  ctx.textAlign = 'right'; ctx.font = '500 24px Inter'; ctx.fillStyle = '#5f665f'; ctx.fillText(identity, 1490, 110); ctx.textAlign = 'left'
   ctx.strokeStyle = '#18211d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(110, 145); ctx.lineTo(1490, 145); ctx.stroke()
   ctx.fillStyle = '#c8472d'; ctx.font = '650 24px Inter'; ctx.fillText(`STUDY ${String(CARD_NAMES.indexOf(name) + 1).padStart(2, '0')} / 05`, 110, 235)
   ctx.fillStyle = '#18211d'; ctx.font = '500 118px Newsreader'; ctx.fillText(name.replaceAll('-', ' '), 110, 350)
@@ -72,35 +73,40 @@ function drawSunpath(ctx: CanvasRenderingContext2D, result: any) {
   })
 }
 
+function drawPlateGrid(ctx: CanvasRenderingContext2D, result: any, values: number[], x: number, y: number, width: number, height: number, colour: (value: number, values: number[]) => string) {
+  const [cols, rows] = result.plate.grid
+  const cellWidth = width / cols, cellHeight = height / rows
+  values.forEach((value, index) => {
+    if (!result.plate.mask[index]) return
+    const row = Math.floor(index / cols), col = index % cols
+    ctx.fillStyle = colour(value, values); ctx.fillRect(x + col * cellWidth, y + (rows - row - 1) * cellHeight, cellWidth - 2, cellHeight - 2)
+  })
+  ctx.strokeStyle = '#18211d'; ctx.lineWidth = 3; ctx.strokeRect(x, y, width, height)
+}
+
 function drawShadow(ctx: CanvasRenderingContext2D, result: any) {
   result.shadow.samples.forEach((sample: any, index: number) => {
     const x = 110 + index * 470
-    ctx.fillStyle = '#d9ddd5'; ctx.fillRect(x, 540, 420, 1030)
     ctx.fillStyle = '#18211d'; ctx.font = '550 64px Newsreader'; ctx.fillText(sample.time, x + 38, 650)
-    ctx.fillStyle = '#f2c230'; ctx.fillRect(x + 38, 1400 - 650 * sample.sunlit_fraction, 344, 650 * sample.sunlit_fraction)
-    ctx.strokeStyle = '#18211d'; ctx.strokeRect(x + 38, 750, 344, 650)
-    ctx.fillStyle = '#18211d'; ctx.font = '30px Inter'; ctx.fillText(`${Math.round(sample.sunlit_fraction * 100)}% sunlit`, x + 38, 1470)
+    drawPlateGrid(ctx, result, sample.sensor_values, x + 38, 750, 344, 650, value => value ? '#f2c230' : '#45534d')
+    ctx.fillStyle = '#18211d'; ctx.font = '30px Inter'; ctx.fillText(`${sample.sun_patch_area_m2.toFixed(1)} m² sun patch`, x + 38, 1470)
   })
 }
 
 function drawAccess(ctx: CanvasRenderingContext2D, result: any) {
   Object.entries(result.solar_access).forEach(([date, study]: any, index) => {
-    const y = 570 + index * 270
-    ctx.fillStyle = '#18211d'; ctx.font = '600 30px Inter'; ctx.fillText(date, 110, y)
-    ctx.fillStyle = '#45534d'; ctx.fillRect(500, y - 50, 900, 76)
-    ctx.fillStyle = '#f2c230'; ctx.fillRect(500, y - 50, study.total_hours / 12 * 900, 76)
-    ctx.font = '550 46px Newsreader'; ctx.fillStyle = '#18211d'; ctx.fillText(`${study.total_hours.toFixed(1)} h`, 500, y + 100)
+    const x = 110 + (index % 2) * 710, y = 570 + Math.floor(index / 2) * 540
+    const maximum = Math.max(1, ...study.sensor_hours)
+    ctx.fillStyle = '#18211d'; ctx.font = '600 30px Inter'; ctx.fillText(date, x, y)
+    drawPlateGrid(ctx, result, study.sensor_hours, x, y + 45, 620, 390, value => radiationCanvasColour(value / maximum))
+    ctx.font = '550 36px Newsreader'; ctx.fillText(`${study.total_hours.toFixed(1)} h average`, x, y + 490)
   })
 }
 
 function drawRadiation(ctx: CanvasRenderingContext2D, result: any) {
   const values = result.radiation.sensor_values_kwh_m2
   const min = result.radiation.minimum_kwh_m2, max = result.radiation.maximum_kwh_m2
-  for (let row = 0; row < 8; row++) for (let col = 0; col < 16; col++) {
-    const ratio = max === min ? .5 : (values[row * 16 + col] - min) / (max - min)
-    ctx.fillStyle = radiationCanvasColour(ratio)
-    ctx.fillRect(110 + col * 86, 570 + (7 - row) * 120, 82, 116)
-  }
+  drawPlateGrid(ctx, result, values, 110, 570, 1380, 960, value => radiationCanvasColour(max === min ? .5 : (value - min) / (max - min)))
   ctx.fillStyle = '#18211d'; ctx.font = '550 50px Newsreader'; ctx.fillText(`Average ${result.radiation.average_kwh_m2} kWh/m²`, 110, 1650)
   ctx.font = '24px Inter'; ctx.fillText(`${min} minimum`, 110, 1730); ctx.fillText(`${max} maximum`, 1280, 1730)
 }
@@ -115,7 +121,7 @@ function radiationCanvasColour(ratio: number) {
 
 function card(name: CardName, result: any, studyPackage?: any): HTMLCanvasElement {
   const canvas = document.createElement('canvas'); canvas.width = CARD_WIDTH; canvas.height = CARD_HEIGHT
-  const ctx = canvas.getContext('2d')!; title(ctx, name, result)
+  const ctx = canvas.getContext('2d')!; title(ctx, name, result, studyPackage)
   if (name === 'site-unit') drawSite(ctx, studyPackage)
   else if (name === 'sunpath') drawSunpath(ctx, result)
   else if (name === 'shadow') drawShadow(ctx, result)
@@ -136,7 +142,7 @@ export async function exportBundle(result: any, model: Blob, studyPackage?: any)
     const page = pdf.addPage([CARD_WIDTH, CARD_HEIGHT]); page.drawImage(image, { x: 0, y: 0, width: CARD_WIDTH, height: CARD_HEIGHT })
   }
   const files: Record<string, Uint8Array> = {
-    'manifest.json': new TextEncoder().encode(JSON.stringify({ ...exportManifest(result.digest), method_version: result.method_version, weather: result.weather }, null, 2)),
+    'manifest.json': new TextEncoder().encode(JSON.stringify({ ...exportManifest(result.digest, studyPackage?.study), method_version: result.method_version, weather: result.weather }, null, 2)),
     'apartment-intelligence.pdf': await pdf.save(),
     'apartment-intelligence.3dm': new Uint8Array(await model.arrayBuffer()),
   }

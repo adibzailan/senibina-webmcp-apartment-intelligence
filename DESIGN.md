@@ -11,7 +11,7 @@ The apartment question and evidence come before branding. The interface should r
 - Use an editorial workbench: quiet masthead, concise study summary, dominant architectural canvas, contextual reading rail, then paced evidence chapters.
 - Desktop uses a 12-column grid. The canvas occupies eight columns and the rail four. Tablet uses six columns. Mobile uses four columns and places the canvas before controls.
 - Prefer a continuous paper field, thin rules, precise alignment, and meaningful whitespace. A bordered surface exists only when containment or interaction requires it.
-- The 3D precinct is the lead image. Sunpath is the celestial diagram; Shadow is a time study; Solar Access and Radiation are facade evidence drawings.
+- The 3D precinct is the lead image. Sunpath is the celestial diagram; Shadow is a time study; Solar Access and Radiation are horizontal apartment-floor evidence drawings.
 - The five steps remain product state, not a permanent tab strip. Show a short location line and a modest progress index.
 
 ## Typography
@@ -46,16 +46,16 @@ The apartment question and evidence come before branding. The interface should r
 
 - Open on an intentional north-west axonometric view with the full Dawson context visible, a level horizon, and useful ground margin.
 - Orbit, pan, zoom, reset, north, and stage-aware presets must be visible and keyboard reachable.
-- Surrounding buildings are neutral. Block 87 receives only a quiet secondary distinction. The confirmed window/unit zone alone receives the strongest red.
+- From Locate onward, Block 87 and surrounding massing are translucent context. The proposed floor plate is an outline; the human-confirmed apartment floor plate and opening alone receive the strongest red.
 - North, view name, scale/extent note, and analysis legend belong to the drawing edge, not floating dashboard cards.
 - A live 3D surface must respond to pointer orbit, right-button/modified pan, wheel/pinch zoom, and reset. A fixed render must never be presented as interactive 3D.
 
 ## Environmental studies
 
 - **Sunpath:** show seasonal paths, selected-date path, cardinal directions, and date legend. Yellow is reserved for solar geometry.
-- **Shadow:** provide 09:00, 12:00, and 15:00 conditions. Show the selected time, solar altitude/azimuth, and facade sunlit fraction.
-- **Solar Access:** show a 16 × 8 facade grid for each seasonal date with one continuous hours scale.
-- **Radiation:** show the annual 16 × 8 facade heatmap, minimum/average/maximum, units, and the approximation limits.
+- **Shadow:** provide 09:00, 12:00, and 15:00 floor conditions. Show the selected time, solar altitude/azimuth, and direct-sun patch area.
+- **Solar Access:** show the confirmed horizontal floor grid for each seasonal date with one continuous hours scale.
+- **Radiation:** show approximate annual interior floor exposure through the confirmed window, with minimum/average/maximum, units, components, and limitations.
 - Every graphic must make method, time period, units, orientation, and limitation inspectable without requiring provenance to dominate the view.
 
 ## Evidence states
@@ -86,7 +86,7 @@ The apartment question and evidence come before branding. The interface should r
 
 - All cards are exactly 1600 × 2400 and share one portrait editorial grid, type system, caption position, method/limitation block, source line, and digest footer.
 - Each card has a distinct evidence composition; do not fit every result into the same generic card.
-- Site & Unit uses the deterministic Dawson footprint scene and confirmed window geometry, never schematic placeholder blocks.
+- Site & Unit uses deterministic Dawson geometry with translucent massing, the confirmed floor plate, and the confirmed window, never schematic placeholder blocks.
 - The PDF is the five cards in order: Site & Unit, Sunpath, Shadow, Solar Access, Radiation.
 - Export typography uses the loaded Newsreader and Inter faces before canvas rendering begins.
 

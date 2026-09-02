@@ -42,8 +42,8 @@ Guaranteed input:
 1. **Provide the apartment:** select or enter a Dawson address and storey.
 2. **Research and verify:** review candidate address, building, height basis,
    surroundings, weather source, missing facts, and confidence.
-3. **Locate the home:** inspect approximate 3D massing and confirm the target
-   facade, storey, unit zone, windows, and balcony where relevant.
+3. **Locate the home:** inspect translucent approximate massing and confirm the
+   target facade, storey, adjustable floor-plate width and depth, and window.
 4. **Explore the sun:** view sunpath, shadow, solar-access, and radiation studies
    in the same scene with plain-language findings.
 5. **Keep the evidence:** export five graphics, a PDF, a ZIP, and a layered
@@ -65,8 +65,8 @@ Guaranteed input:
 2. The backend resolves these against the bundled Dawson fixture and Singapore
    weather file; it does not scrape listings or call a runtime upstream API.
 3. A canonical scene record stores footprint rings, coordinate reference,
-   north, base elevation, height basis, source, confidence, and target-unit
-   annotations.
+   north, base elevation, height basis, source, confidence, and the derived,
+   resident-confirmed approximate floor plate and aperture.
 4. Three.js extrudes and renders the same verified scene record in the browser.
 5. The resident corrects and confirms the target unit geometry through a visible
    first-party action.
@@ -101,14 +101,17 @@ through the visible first-party interface. Confirmation is not a WebMCP tool and
 cannot be supplied as a Boolean argument. Manual UI and WebMCP actions call the
 same application functions and update the same visible state.
 
+The visible click is exchanged for a short-lived, revision-bound, single-use
+server challenge. Replays and static activation headers cannot confirm a study.
+
 Tool results stay concise and never return full geometry. Confirmation binds the
 visible proposal revision and canonical scene digest; stale confirmation is
 rejected.
 
 ## End-state artifacts
 
-- Interactive north-aligned 3D context with target building, unit, windows, and
-  analysis overlays.
+- Interactive north-aligned translucent 3D context with the confirmed apartment
+  floor plate, window aperture, and horizontal analysis overlays.
 - Five 1600 × 2400 portrait PNG cards: Site & Unit, Sunpath, Shadow, Solar
   Access, and Radiation.
 - One combined PDF containing the same five compositions.
