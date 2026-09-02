@@ -16,10 +16,15 @@ export const api = {
   create: (input, signal) => request('/api/studies', { method: 'POST', body: JSON.stringify(input), signal }),
   state: (id, signal) => request(`/api/studies/${id}`, { signal }),
   proposal: (id, input, signal) => request(`/api/studies/${id}/proposal`, { method: 'PUT', body: JSON.stringify(input), signal }),
-  confirm: (id, revision) => request(`/api/studies/${id}/confirmation`, {
+  confirm: async (id, revision) => {
+    const receipt = await request(`/api/studies/${id}/confirmation-challenge`, {
     method: 'POST', headers: { 'X-User-Activation': 'trusted' },
     body: JSON.stringify({ proposal_revision: revision }),
-  }),
+    })
+    return request(`/api/studies/${id}/confirmation`, {
+      method: 'POST', body: JSON.stringify({ proposal_revision: revision, challenge: receipt.challenge }),
+    })
+  },
   analyse: (id, signal) => request(`/api/studies/${id}/analysis`, { method: 'POST', signal }),
   result: (id, signal) => request(`/api/studies/${id}/result`, { signal }),
   model: (id, signal) => request(`/api/studies/${id}/export.3dm`, { signal }),

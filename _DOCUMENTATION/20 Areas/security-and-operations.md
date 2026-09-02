@@ -80,6 +80,11 @@ tunnel control is publicly exposed. Deployment credentials remain VM-local.
   results.
 - Do not let an agent alter source labels, uncertainty, confirmation state, or
   deterministic values while producing plain-language explanations.
+- A trusted browser click requests a ten-second, session- and revision-bound
+  single-use confirmation challenge. The server rejects a static activation
+  header, a replayed challenge, or a challenge for stale geometry. This is an
+  application interaction boundary, not cryptographic proof of a physical
+  person's identity against a compromised same-origin page.
 - Exports must carry the same provenance and uncertainty shown in the page.
 
 ## Release gate
