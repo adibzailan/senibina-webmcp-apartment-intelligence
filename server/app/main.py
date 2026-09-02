@@ -7,6 +7,7 @@ import secrets
 import threading
 import time
 from pathlib import Path
+from queue import Empty
 from typing import Literal
 
 from fastapi import Cookie, FastAPI, Header, Request
@@ -73,11 +74,19 @@ def bounded_analysis(scene: dict) -> dict | None:
     queue = context.Queue(1)
     process = context.Process(target=_analysis_worker, args=(scene, queue))
     process.start()
-    process.join(15)
+    try:
+        # Drain the payload before joining. A per-sensor result can fill a
+        # Windows pipe while the child flushes its queue, otherwise leaving
+        # parent and child waiting for one another until the timeout.
+        result = queue.get(timeout=15)
+    except Empty:
+        process.terminate(); process.join(2)
+        return None
+    process.join(2)
     if process.is_alive():
         process.terminate(); process.join(2)
         return None
-    return queue.get_nowait() if process.exitcode == 0 else None
+    return result if process.exitcode == 0 else None
 
 
 @app.middleware("http")
