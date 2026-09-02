@@ -33,4 +33,17 @@ describe('Apartment Intelligence design contract', () => {
     expect(app).not.toContain('<h1>Apartment<br/>')
     expect(app).not.toContain('SENIBINA / CONSUMER ENVIRONMENTAL STUDY')
   })
+
+  it('does not repeat the four analyses below the interactive workbench', () => {
+    expect(app).not.toContain('evidence-chapters')
+    expect(app).not.toContain('Four readings of the same home.')
+    expect(css).not.toContain('.evidence-chapters')
+  })
+
+  it('starts without filler status copy or a divider above status messages', () => {
+    expect(app).not.toContain('Ready for one reproducible Dawson study.')
+    expect(app).toContain('{message && <p className="status" role="status">{message}</p>}')
+    expect(css).not.toMatch(/\.status\{[^}]*border-top/)
+    expect(css).toMatch(/\.workbench\{[^}]*border-bottom/)
+  })
 })

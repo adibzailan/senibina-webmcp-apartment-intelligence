@@ -20,7 +20,7 @@ export default function App() {
   const [context, setContext] = useState(null)
   const [study, setStudy] = useState(null)
   const [result, setResult] = useState(null)
-  const [message, setMessage] = useState('Ready for one reproducible Dawson study.')
+  const [message, setMessage] = useState('')
   const live = useRef({ context, study, result }); live.current = { context, study, result }
 
   useEffect(() => { const c = new AbortController(); api.context(c.signal).then(setContext); return () => c.abort() }, [])
@@ -126,14 +126,9 @@ export default function App() {
           <ul className="export-list"><li>Five 1600 × 2400 PNG evidence cards</li><li>Five-page PDF report</li><li>Layered metre-unit Rhino model</li><li>Manifest, method and result digest</li></ul>
           <button className="primary" disabled={state.status !== 'complete'} onClick={() => download(state.studyId)}>Download the evidence ZIP</button>
         </section>}
-        <p className="status" role="status">{message}</p>
+        {message && <p className="status" role="status">{message}</p>}
       </aside>
     </section>
-
-    {result && <section className="evidence-chapters" aria-labelledby="evidence-heading">
-      <div className="evidence-intro"><p className="section-reference">Environmental evidence</p><h2 id="evidence-heading">Four readings of the same home.</h2><p>The diagrams are different because each answers a different question. They share geometry, weather and one result digest.</p></div>
-      {analyses.map(([name, label, note], index) => <article key={name} className="evidence-chapter"><p>{String(index + 1).padStart(2, '0')}</p><h3>{label}</h3><p>{note}. <button className="text-action" onClick={() => openAnalysis(name)}>Open this evidence in the viewer</button></p></article>)}
-    </section>}
 
     <ProvenanceDisclosure context={context} result={result}/>
     <ReportFooter/>
