@@ -24,7 +24,8 @@ export default function App() {
   const live = useRef({ context, study, result }); live.current = { context, study, result }
 
   useEffect(() => { const c = new AbortController(); api.context(c.signal).then(setContext); return () => c.abort() }, [])
-  useEffect(() => { if (!state.studyId) return; const c = new AbortController(); api.state(state.studyId, c.signal).then(setStudy); return () => c.abort() }, [state.studyId, state.status, state.revision])
+  useEffect(() => { if (!state.studyId) return; const c = new AbortController(); api.state(state.studyId, c.signal).then(value => { setStudy(value); setMessage(value.next_action) }); return () => c.abort() }, [state.studyId, state.status, state.revision])
+  useEffect(() => { if (state.status !== 'complete') setResult(null) }, [state.studyId, state.status])
   useEffect(() => { if (state.status !== 'complete' || !state.studyId) return; const c = new AbortController(); api.result(state.studyId, c.signal).then(setResult); return () => c.abort() }, [state.status, state.studyId])
 
   const download = async studyId => {
