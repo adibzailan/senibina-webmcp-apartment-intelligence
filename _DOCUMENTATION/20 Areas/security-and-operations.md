@@ -72,6 +72,31 @@ One FastAPI process serves the built web application and `/api` on
 the only ingress; no RDP, port forwarding, admin route, filesystem path, or
 tunnel control is publicly exposed. Deployment credentials remain VM-local.
 
+### Proposed managed deployment
+
+The preferred post-submission migration removes the home Mac and Windows VM
+from the public request path:
+
+- Vercel serves the React application at the canonical
+  `apartments.senibina.com.sg` hostname and its project-provided
+  `vercel.app` address.
+- A Render web service runs the existing FastAPI, Ladybug, and `rhino3dm`
+  runtime from a reproducible container. Grasshopper, Rhino, Rhino.Compute,
+  persistent storage, and a runtime model remain unnecessary.
+- Browser requests reach the Render API only through the declared application
+  route. The same input validation, session ownership, analysis concurrency,
+  timeout, export-size, and rate controls remain authoritative.
+
+Render's free service is acceptable for the prototype even though it can sleep
+after inactivity and restart at any time. The interface must treat wake-up as
+an expected state, show that the analysis engine is starting, and retry with
+bounded exponential backoff. A lightweight health endpoint may be warmed only
+for a defined demonstration or judging interval; it must not run an analysis.
+The schedule must have an explicit end date and be disabled after that window.
+
+This is an approved direction, not evidence that the managed deployment has
+been created or that the current VM deployment has been retired.
+
 ## Evidence integrity
 
 - Bind each analysis to the exact scene, weather source, period, assumptions,

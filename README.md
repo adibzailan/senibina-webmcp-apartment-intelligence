@@ -14,6 +14,21 @@ public hostname, Chrome WebMCP journey, restart recovery, and complete artifact
 bundle have been exercised. Demo-video preparation and challenge submission
 remain open.
 
+## Public-interest research
+
+Apartment Intelligence is also a Senibina research project for the public
+good. Its longer-term hypothesis is that useful architectural knowledge about
+existing homes should not remain available only to professionals: residents
+should be able to understand sunlight, obstruction, environmental exposure,
+and the provenance and uncertainty behind each conclusion.
+
+The Dawson study is one deliberately bounded beginning. Future research may
+reconstruct and validate reference floor plans for a wider subset of Singapore
+housing, creating a transparent and reusable public-interest knowledge base.
+Any reconstructed plan must retain its source, method, confidence, and limits;
+it must never be presented as an authoritative unit survey or verified stack
+without supporting evidence.
+
 ## Product boundary
 
 - V1 is an HDB-first consumer decision aid, not a professional certification or
