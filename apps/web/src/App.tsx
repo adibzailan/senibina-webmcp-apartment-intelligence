@@ -106,14 +106,15 @@ export default function App() {
   const focus: "home" | "tower" = state.result ? "home" : "tower";
 
   // live staging: any placement change on the Place/Confirm screens re-stages after a short pause
+  // A placement the server already holds (staged by a click or by a tool) is never sent again, so no
+  // late update can arrive after the confirm click and make the confirmation stale.
   const placementKey = JSON.stringify(state.placement);
-  const stagedKey = useRef<string>("");
   useEffect(() => {
     if (!state.studyId || !(state.screen === "place" || state.screen === "confirm")) return;
-    if (stagedKey.current === placementKey) return;
-    const t = setTimeout(() => { stagedKey.current = placementKey; proposePlacement(ctx, {}).catch(() => {}); }, 250);
+    if (state.stagedPlacement === placementKey || state.busy) return;
+    const t = setTimeout(() => { proposePlacement(ctx, {}).catch(() => {}); }, 250);
     return () => clearTimeout(t);
-  }, [placementKey, state.studyId, state.screen]);
+  }, [placementKey, state.studyId, state.screen, state.stagedPlacement, state.busy]);
 
   // pickable slots on the tower while placing
   const slots = useMemo(() => (context?.plate ? plateSlots(context.plate, state.storey) : []), [context, state.storey]);

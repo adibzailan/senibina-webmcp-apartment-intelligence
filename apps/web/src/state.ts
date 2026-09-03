@@ -12,6 +12,7 @@ export interface State {
   studyState: string | null;
   placement: Placement;
   placementRevision: number;
+  stagedPlacement: string | null; // JSON of the placement the server holds, so the page never re-stages it
   confirmedRevision: number | null;
   result: any | null;
   digest: string | null;
@@ -29,6 +30,7 @@ export const initialState: State = {
   studyState: null,
   placement: { facade: "NE", stack_position: "end", variant: "A", mirrored: false, openings: {} },
   placementRevision: 0,
+  stagedPlacement: null,
   confirmedRevision: null,
   result: null,
   digest: null,
@@ -59,7 +61,7 @@ export function reducer(s: State, a: Action): State {
     case "set_storey": return { ...s, storey: a.storey };
     case "study_created": return { ...s, studyId: a.studyId, studyState: a.studyState, screen: "place", placementRevision: 0, confirmedRevision: null, result: null, digest: null, message: null };
     case "set_placement": return { ...s, placement: { ...s.placement, ...a.placement, openings: { ...s.placement.openings, ...(a.placement.openings || {}) } }, result: null, digest: null };
-    case "placement_staged": return { ...s, placementRevision: a.revision, studyState: a.studyState, screen: s.screen === "locate" || s.screen === "place" ? "confirm" : s.screen === "confirm" ? "confirm" : s.screen, result: null, digest: null };
+    case "placement_staged": return { ...s, placementRevision: a.revision, stagedPlacement: JSON.stringify(s.placement), studyState: a.studyState, screen: s.screen === "locate" || s.screen === "place" ? "confirm" : s.screen === "confirm" ? "confirm" : s.screen, result: null, digest: null };
     case "confirmed": return { ...s, confirmedRevision: a.revision, studyState: a.studyState, screen: "analysis" };
     case "analysed": return { ...s, result: a.result, digest: a.digest, studyState: a.studyState, screen: "analysis" };
     case "set_view": return { ...s, view: { ...s.view, ...a.view } };
