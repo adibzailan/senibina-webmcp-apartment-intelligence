@@ -68,6 +68,7 @@ def timeline(v):
         T.append(("cut", dict(t0=marks["tool:create_apartment_study"] - 0.2, t1=marks["agent:hide"], speed=1.9, cap="Three units. Three clicks. One table."), "b09"))
         T.append(("cut", dict(t0=marks["agent:hide"], t1=marks["end"] - 0.3, speed=1.1, cap="Keep the evidence."), "b10"))
         T.append(("pdf", dict(pages=[1, 2, 3, 7, 10], each=1.5), None))
+        T.append(("card", dict(sec=6.5, lines=["“This is the report a sustainability consultant", "takes four weeks to run, and the model", "has to be kept simple. Not any more.”"], size=54, sub="An architectural assistant at a Singapore practice, on reading the PDF, 3 September 2026"), None))
         T.append(("card", dict(sec=10, lines=THESIS, size=54, sub="apartments.senibina.com.sg   A public-interest study by Senibina for apartment living. Singapore now, the region next."), "b11"))
     elif v == "fast":
         T.append(("card", dict(sec=4, lines=["Will this apartment get", "the sun you expect?"]), "b01"))
@@ -81,6 +82,7 @@ def timeline(v):
         T.append(("cut", dict(t0=marks["tool:create_apartment_study"] - 0.2, t1=marks["agent:hide"], speed=2.4, cap="Three units. Three clicks. One table."), "b09"))
         T.append(("cut", dict(t0=marks["agent:hide"], t1=marks["end"] - 0.5, speed=1.3, cap="Keep the evidence."), "b10"))
         T.append(("pdf", dict(pages=[1, 2, 3, 10], each=1.1), None))
+        T.append(("card", dict(sec=6.5, lines=["“This is the report a sustainability consultant", "takes four weeks to run, and the model", "has to be kept simple. Not any more.”"], size=54, sub="An architectural assistant at a Singapore practice, on reading the PDF, 3 September 2026"), None))
         T.append(("card", dict(sec=8.5, lines=THESIS, size=54, sub="apartments.senibina.com.sg   A public-interest study by Senibina for apartment living. Singapore now, the region next."), "b11"))
     elif v == "product-first":
         T.append(("cut", dict(t0=marks["screen:analysis"] + 8.0, t1=marks["screen:analysis"] + 13.5, speed=1.0, cap="Will this apartment get the sun you expect?"), "b01"))
@@ -94,6 +96,7 @@ def timeline(v):
         T.append(("cut", dict(t0=marks["tool:create_apartment_study"] - 0.2, t1=marks["agent:hide"], speed=2.0, cap="Three units. Three clicks. One table."), "b09"))
         T.append(("cut", dict(t0=marks["agent:hide"], t1=marks["end"] - 0.4, speed=1.2, cap="Keep the evidence."), "b10"))
         T.append(("pdf", dict(pages=[1, 2, 3, 7, 10], each=1.3), None))
+        T.append(("card", dict(sec=6.5, lines=["“This is the report a sustainability consultant", "takes four weeks to run, and the model", "has to be kept simple. Not any more.”"], size=54, sub="An architectural assistant at a Singapore practice, on reading the PDF, 3 September 2026"), None))
         T.append(("card", dict(sec=9, lines=THESIS, size=54, sub="apartments.senibina.com.sg   A public-interest study by Senibina for apartment living. Singapore now, the region next."), "b11"))
     return T
 
