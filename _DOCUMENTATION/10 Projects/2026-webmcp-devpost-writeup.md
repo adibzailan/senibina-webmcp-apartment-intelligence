@@ -14,7 +14,7 @@ Will this apartment get the sun a buyer expects? An architectural practice answe
 
 ## What it does
 
-The resident picks a real block and storey (SkyVille @ Dawson, Singapore, is covered), chooses the wing and layout they recognise on a 3D model of the tower, and confirms it with one click. The engine, Ladybug and Radiance, the same daylight tools an architectural practice runs inside Grasshopper, then computes sun path, shadow at sixteen instants, direct-sun hours on four key dates and annual radiation on a 0.1 to 0.5 m floor grid, room by room, and shows it on the apartment in 3D. The resident can export a report with the cover, the plans, a north arrow, room labels and the result digest on every page, or the model as GLB, OBJ or 3DM.
+The resident picks a real block and storey (SkyVille @ Dawson, Singapore, is covered), chooses the wing and layout they recognise on a 3D model of the tower, and confirms it with one click. The engine, Ladybug and Radiance, the same daylight tools an architectural practice runs inside Rhino and Grasshopper, its 3D modelling software, then computes sun path, shadow at sixteen instants, direct-sun hours on four key dates and annual radiation on a 0.1 to 0.5 m floor grid, room by room, and shows it on the apartment in 3D. The resident can export a report with the cover, the plans, a north arrow, room labels and the result digest on every page, or the model as GLB, OBJ or 3DM.
 
 ## How WebMCP fits
 
