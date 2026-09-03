@@ -138,6 +138,8 @@ export default function App() {
   const stepIndex = Math.max(1, STEPS.indexOf(state.screen) + 1);
 
   const home = (context?.supported ?? []).find((h: any) => h.address === state.address || h.postal_code === state.address.trim());
+  const [lo, hi] = (home?.storey_range ?? [2, 47]) as [number, number];
+  const storeyOk = Number.isInteger(state.storey) && state.storey >= lo && state.storey <= hi;
   return (
     <div className="container">
       <header className="masthead">
@@ -199,12 +201,17 @@ export default function App() {
             </div>
           </section>
           {state.screen === "locate" && <section>
-            <label htmlFor="address">Address or postal code</label>
-            <div className="field"><input id="address" list="homes" value={state.address} onChange={(e) => dispatch({ type: "set_address", address: e.target.value })} /></div>
-            <datalist id="homes">{(context?.supported ?? []).map((h: any) => <option key={h.postal_code} value={h.address} />)}</datalist>
-            <label htmlFor="storey">Storey</label>
-            <div className="field"><input id="storey" type="number" min={2} max={47} value={state.storey} onChange={(e) => dispatch({ type: "set_storey", storey: Number(e.target.value) })} /></div>
-            <button className="primary" disabled={!!state.busy} onClick={() => createStudy(ctx, state.address, state.storey).catch(() => {})}>Start the study</button>
+            <label htmlFor="address">Address</label>
+            <div className="field"><select id="address" value={home ? home.address : ""} onChange={(e) => dispatch({ type: "set_address", address: e.target.value })}>
+              {!home && <option value="">Choose a covered block</option>}
+              {(context?.supported ?? []).map((h: any) => <option key={h.postal_code} value={h.address}>{h.address}, {h.development}, Singapore {h.postal_code}</option>)}
+            </select></div>
+            <label htmlFor="storey">Storey{home ? `, ${lo} to ${hi}` : ""}</label>
+            <div className="field"><input id="storey" type="number" min={lo} max={hi} value={state.storey} aria-invalid={!storeyOk}
+              onChange={(e) => dispatch({ type: "set_storey", storey: Number(e.target.value) })}
+              onBlur={(e) => { const n = Math.min(hi, Math.max(lo, Number(e.target.value) || lo)); if (n !== state.storey) dispatch({ type: "set_storey", storey: n }); }} /></div>
+            {!storeyOk && <p className="status error" style={{ padding: 0 }}>This block has storeys {lo} to {hi}.</p>}
+            <button className="primary" disabled={!!state.busy || !home || !storeyOk} onClick={() => createStudy(ctx, state.address, state.storey).catch(() => {})}>Start the study</button>
             <table className="evidence coverage"><tbody>
               <tr><td>Development</td><td>SkyVille @ Dawson, Block 87</td></tr>
               <tr><td>Postal code</td><td>141087</td></tr>
