@@ -36,7 +36,7 @@ const log = (line, cls) => p.evaluate(([l, c]) => window.__agentLog(l, c), [line
 const agent = async (name, input) => {
   await log(`${name}(${JSON.stringify(input)})`, "call"); mark("tool:" + name, { input });
   const r = await p.evaluate(([n, i]) => window.__aiTools.find(t => t.name === n).execute(i).catch(e => ({ thrown: String(e) })), [name, input]);
-  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
+  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.mode === "survey" ? `survey, unconfirmed: avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
   await log(`  -> ${short}`, r.refused || r.thrown ? "no" : "ok"); mark("reply:" + name, { reply: short });
   return r;
 };
@@ -63,15 +63,12 @@ await click(p.getByRole("button", { name: "Apartment", exact: true }), "apartmen
 await click(p.getByRole("button", { name: "Massing" }), "massing-off"); await p.waitForTimeout(2200);
 await click(p.getByRole("button", { name: "Massing" }), "massing-on"); await p.waitForTimeout(600);
 const ev = await agent("explain_evidence", { study_id: studyId, item: "radiation" }); await p.waitForTimeout(2600);
-// beat 9: three units (two more, sequential, click each)
+// beat 9: survey mode, three units in a row, no click
 const rows = [];
-for (const u of [{ storey: 12, facade: "NE", stack_position: "end", variant: "A" }, { storey: 44, facade: "SW", stack_position: "end", variant: "C" }]) {
-  const c = await agent("create_apartment_study", { address: "87 Dawson Road", storey: u.storey }); await p.waitForTimeout(600);
-  await agent("propose_unit_placement", { study_id: c.study_id, facade: u.facade, stack_position: u.stack_position, variant: u.variant }); await p.waitForTimeout(900);
-  await click(p.getByTestId("confirm-button"), "confirm-" + u.storey); await p.getByRole("heading", { name: /Sun, shade/ }).waitFor();
-  const r = await agent("run_solar_analysis", { study_id: c.study_id, grid_spacing_m: 0.25 }); rows.push({ ...u, avg: r.radiation?.avg }); await p.waitForTimeout(900);
+for (const u of [{ storey: 12, facade: "NE", stack_position: "end", variant: "A" }, { storey: 30, facade: "SE", stack_position: "inner", variant: "B" }, { storey: 44, facade: "SW", stack_position: "end", variant: "C" }]) {
+  const r = await agent("survey_unit", { address: "87 Dawson Road", ...u, grid_spacing_m: 0.5 }); rows.push({ ...u, avg: r.radiation?.avg }); await p.waitForTimeout(700);
 }
-await log(`table: NE tip s12 ${rows[0].avg} | SE core s30 ${ev?.value ?? ""} | SW tip s44 ${rows[1].avg} kWh/m2`, "ok"); mark("table"); await p.waitForTimeout(3000);
+await log(`survey table: NE tip s12 ${rows[0].avg} | SE core s30 ${rows[1].avg} | SW tip s44 ${rows[2].avg} kWh/m2, all unconfirmed`, "ok"); mark("table"); await p.waitForTimeout(3200);
 // beat 10: export PDF
 await p.evaluate(() => window.__agentShow(false)); mark("agent:hide");
 await click(p.getByRole("button", { name: "Keep the evidence", exact: true }), "keep"); await p.waitForTimeout(1200);

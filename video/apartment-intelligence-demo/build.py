@@ -87,7 +87,7 @@ def product_beats(pace):
         ("cut", dict(t0=marks["agent:show"] - 0.3, t1=marks["click:confirm"] - 0.3, speed=s[1], cap="An agent can stage a placement. It cannot confirm one.", pip=12.0), "b06"),
         ("cut", dict(t0=marks["click:confirm"] - 0.6, t1=marks["screen:analysis"] + 1.2, speed=1.0, cap="That click belongs to a person.", pip=44.0), "b07"),
         ("cut", dict(t0=marks["screen:analysis"] + 1.2, t1=marks["tool:create_apartment_study"] - 0.2, speed=s[2], cap="Radiation, per room. Every number carries its source.", pip=48.0), "b08"),
-        ("cut", dict(t0=marks["tool:create_apartment_study"] - 0.2, t1=marks["agent:hide"], speed=s[3], cap="Three units. Three clicks. One table.", pip=60.0), "b09"),
+        ("cut", dict(t0=marks["tool:create_apartment_study"] - 0.2, t1=marks["agent:hide"], speed=s[3], cap="Three units surveyed. No click. Every number unconfirmed.", pip=60.0), "b09"),
         ("cut", dict(t0=marks["agent:hide"], t1=marks["end"] - 0.4, speed=s[4], cap="Keep the evidence.", pip=80.0), "b10"),
     ]
 def tail(pdf_each, close_sec):
