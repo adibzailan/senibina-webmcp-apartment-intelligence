@@ -62,6 +62,8 @@ table.evidence td { border-top: 1px solid var(--rule); padding: 4px 6px; vertica
 .colophon { border-top: 1px solid var(--ink); margin-top: 48px; padding: 24px 0 40px; }
 .colophon-brand { font-family: var(--serif); font-size: 22px; letter-spacing: 0.04em; }
 .colophon-line { font-family: var(--serif); font-size: 16px; color: var(--ink-muted); margin: 4px 0 12px; }
+.colophon-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.colophon-link:hover { text-decoration-thickness: 2px; }
 .steps { display: flex; align-items: center; gap: 8px; }
 .step-arrow { min-height: 28px; padding: 0 8px; font-size: 14px; line-height: 1; }
 table.evidence th { text-align: left; font-weight: 500; font-size: 12px; color: var(--ink-muted); padding: 4px 6px; border-bottom: 1px solid var(--ink); }

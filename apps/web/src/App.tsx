@@ -293,7 +293,7 @@ export default function App() {
 
       <footer className="colophon">
         <div className="colophon-brand">Apartment Intelligence</div>
-        <div className="colophon-line">A Senibina public-interest study · Singapore first</div>
+        <div className="colophon-line">A public-interest study by <a className="colophon-link" href="https://senibina.com.sg" target="_blank" rel="noopener noreferrer">Senibina</a> · Singapore now, the region next</div>
         <div className="status">Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification.</div>
       </footer>
     </div>
