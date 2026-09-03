@@ -1,13 +1,16 @@
 ---
 title: Clean-room reconstruction (v2)
-para: project
+para: archive
 status: complete
 decision_date: 2026-09-03
 branch: v2-clean-room (merged to main on 2026-09-03)
-next_action: None here; the live outcome is owned by 2026-webmcp-challenge-submission.md. A later project may plan the Rhino/Revit import path for founder-modelled tower massing.
 ---
 
-# Clean-room reconstruction handoff
+# Clean-room reconstruction handoff (v2, completed 3 September 2026)
+
+Archived record of the v2 rebuild goal. Current product truth lives in
+`20 Areas/product-and-architecture.md` and `20 Areas/security-and-operations.md`;
+the interface authority is `DESIGN.md`. Superseded details below are kept as written.
 
 This note is the source truth for the v2 rebuild goal. It was prepared on
 3 September 2026 from a read-only inspection of this repository, the local
@@ -59,7 +62,7 @@ Labels: PROVEN (from this repository), VERIFIED (primary source opened
 | Analysis | `server/app/analysis.py` | edge placement, ≤256 sensors (falls back to 1.0 m), custom shadow/access/radiation loops |
 | 3DM export | `server/app/export_3dm.py` | five layers, user strings |
 | Web | `web/src/App.jsx`, `state.ts`, `Scene.jsx`, `sceneRender.js`, `webmcp.js`, `artifacts.ts` | reducer, Three.js, six WebMCP tools, canvas cards |
-| Deployment | `WINDOWS_DEPLOYMENT.md`, `deploy/` | Windows VM, Cloudflare tunnel, Vercel proxy |
+| Deployment | `40 Archives/v1-windows-deployment.md`, `deploy/archive/` | Windows VM, Cloudflare tunnel, Vercel proxy |
 
 Known weaknesses to fix in v2 (PROVEN unless marked):
 
