@@ -88,6 +88,9 @@ export async function cardsPdf(svgText: string, sceneDataUrl: string | null, dig
   back.drawText("Apartment Intelligence", { x: M, y: PH / 2 + 40, size: 34, font: serif, color: INK });
   back.drawText("A public-interest study by Senibina for apartment living. Singapore now, the region next.", { x: M, y: PH / 2, size: 18, font: serif, color: MUTED });
   y = PH / 2 - 60;
+  const thesis = "Built with Ladybug and Radiance, the same daylight engines architects use in practice, so the study a practice would run for a client is now open to the people who live there.";
+  for (const line of wrap(thesis, 13, sans, PW - 2 * M)) { back.drawText(line, { x: M, y, size: 13, font: sans, color: INK }); y -= 19; }
+  y -= 14;
   const legal = "Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification. Upper-storey plate inferred from the ground outline; openings assumed unless published. PDF and PNG are presentation renders of the digest-bound cards.";
   for (const line of wrap(legal, 13, sans, PW - 2 * M)) { back.drawText(line, { x: M, y, size: 13, font: sans, color: MUTED }); y -= 19; }
   back.drawText("senibina.com.sg", { x: M, y: M + 12, size: 13, font: sans, color: INK });
