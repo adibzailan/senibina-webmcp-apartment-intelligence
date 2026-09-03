@@ -35,7 +35,7 @@ export class Viewer {
   onFrame: ((azimuthDeg: number) => void) | null = null;
 
   constructor(public el: HTMLElement) {
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true, logarithmicDepthBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setClearColor(0xfbfaf6, 1);
     el.appendChild(this.renderer.domElement);
@@ -45,9 +45,10 @@ export class Viewer {
     this.controls.enableDamping = false;
     this.scene.add(new THREE.HemisphereLight(0xffffff, 0xb0b0a0, 1.1));
     const d = new THREE.DirectionalLight(0xffffff, 0.8); d.position.set(-200, -300, 400); this.scene.add(d);
+    // ground layers are spaced apart so they never fight for the same depth
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshBasicMaterial({ color: 0xf5f2e9 }));
-    ground.position.z = -0.05; this.scene.add(ground);
-    const grid = new THREE.GridHelper(1200, 24, 0xb9b7ae, 0xe2e0d8); grid.rotation.x = Math.PI / 2; grid.position.z = -0.04; this.scene.add(grid);
+    ground.position.z = -1.0; ground.renderOrder = -2; this.scene.add(ground);
+    const grid = new THREE.GridHelper(1200, 24, 0xb9b7ae, 0xe2e0d8); grid.rotation.x = Math.PI / 2; grid.position.z = -0.6; grid.renderOrder = -1; this.scene.add(grid);
     const dom = this.renderer.domElement;
     dom.addEventListener("pointerdown", (e) => { this.downAt = [e.clientX, e.clientY]; });
     dom.addEventListener("pointerup", (e) => {
@@ -110,8 +111,8 @@ export class Viewer {
     const cxPx = (tx - radius) * T + size / 2, cyPx = (ty - radius) * T + size / 2;
     const cx = (cxPx - px) * mpp, cy = -(cyPx - py) * mpp;
     if (this.basemap) this.scene.remove(this.basemap);
-    this.basemap = new THREE.Mesh(new THREE.PlaneGeometry(metres, metres), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity }));
-    this.basemap.position.set(cx, cy, -0.03); this.basemap.renderOrder = 0;
+    this.basemap = new THREE.Mesh(new THREE.PlaneGeometry(metres, metres), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity, depthWrite: false }));
+    this.basemap.position.set(cx, cy, -0.2); this.basemap.renderOrder = 0;
     this.scene.add(this.basemap);
   }
 
@@ -129,7 +130,7 @@ export class Viewer {
       const extras = o.userData || o.parent?.userData || {};
       const token: string = extras.opacity_token || "context";
       const alpha = OPACITY[token];
-      o.material = new THREE.MeshLambertMaterial({ color: COLOURS[token], transparent: alpha < 1, opacity: alpha, depthWrite: alpha >= 1, side: THREE.DoubleSide });
+      o.material = new THREE.MeshLambertMaterial({ color: COLOURS[token], transparent: alpha < 1, opacity: alpha, depthWrite: alpha >= 1, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: token === "home" ? 0 : 1, polygonOffsetUnits: token === "home" ? 0 : 1 });
       o.renderOrder = alpha < 1 ? 1 : 2;
       const edges = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 30), new THREE.LineBasicMaterial({ color: token === "home" ? 0x18211d : 0x5f665f, transparent: true, opacity: token === "context" ? 0.18 : token === "tower" ? 0.4 : 0.9 }));
       edges.renderOrder = 3; o.add(edges);
