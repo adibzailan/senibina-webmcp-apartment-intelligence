@@ -23,7 +23,10 @@ export default function App() {
 
   useEffect(() => {
     if (!canvasRef.current || viewerRef.current) return;
-    try { viewerRef.current = new Viewer(canvasRef.current); } catch (e) { console.warn("WebGL unavailable", e); }
+    try {
+      viewerRef.current = new Viewer(canvasRef.current);
+      viewerRef.current.loadGlb("/api/context/scene.glb").then(() => viewerRef.current?.preset("precinct")).catch((e) => console.warn(e));
+    } catch (e) { console.warn("WebGL unavailable", e); }
     return () => { viewerRef.current?.dispose(); viewerRef.current = null; };
   }, []);
 

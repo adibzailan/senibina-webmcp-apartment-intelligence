@@ -74,7 +74,7 @@ export class Viewer {
       const alpha = OPACITY[token];
       o.material = new THREE.MeshLambertMaterial({ color: COLOURS[token], transparent: alpha < 1, opacity: alpha, depthWrite: alpha >= 1, side: THREE.DoubleSide });
       o.renderOrder = alpha < 1 ? 1 : 2;
-      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 20), new THREE.LineBasicMaterial({ color: token === "home" ? 0x18211d : 0x5f665f, transparent: true, opacity: token === "context" ? 0.35 : 0.8 }));
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 30), new THREE.LineBasicMaterial({ color: token === "home" ? 0x18211d : 0x5f665f, transparent: true, opacity: token === "context" ? 0.18 : token === "tower" ? 0.4 : 0.9 }));
       edges.renderOrder = 3; o.add(edges);
       const box = new THREE.Box3().setFromObject(o);
       this.precinct.union(box);

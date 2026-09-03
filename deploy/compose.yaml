@@ -4,6 +4,7 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile
     image: apartment-intelligence:v2
+    platform: linux/amd64
     ports:
       - "8000:8000"
     environment:

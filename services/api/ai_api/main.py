@@ -178,6 +178,25 @@ def context(request: Request, response: Response):
             "opacity_tokens": {"context": 0.16, "tower": 0.28, "home": 1.0, "glass": 0.35}, "licence": PRECINCT["licence"]}
 
 
+_CONTEXT_GLB: bytes | None = None
+
+
+@app.get("/api/context/scene.glb")
+def context_scene():
+    """Precinct-only scene (sourced footprints extruded, target tower as bands) for the opening view."""
+    global _CONTEXT_GLB
+    if _CONTEXT_GLB is None:
+        from ai_geometry.build import Box, Scene, neighbour_boxes
+        from shapely.geometry import Polygon
+        boxes = neighbour_boxes(PRECINCT, PLATE.block)
+        fp = list(Polygon(PLATE.footprint).exterior.coords[:-1]); core = list(Polygon(PLATE.core).exterior.coords[:-1])
+        for b in PLATE.bands:
+            poly = core if b.kind in ("sky_garden", "roof") else fp
+            boxes.append(Box(f"plate-{b.id}", "slab", poly, b.base_m, b.top_m, True, "tower", {"element": "plate", "state": "inferred"}))
+        _CONTEXT_GLB = write_glb(Scene(boxes=boxes, placement=Placement(storey=PRECINCT["target"]["demo_storey"])))
+    return Response(content=_CONTEXT_GLB, media_type="model/gltf-binary")
+
+
 @app.post("/api/studies", status_code=201)
 def create_study(body: CreateStudy, request: Request, response: Response):
     sess = session_of(request, response)

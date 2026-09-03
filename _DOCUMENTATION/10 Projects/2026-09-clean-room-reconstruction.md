@@ -4,7 +4,7 @@ para: project
 status: approved-for-goal
 decision_date: 2026-09-03
 branch: v2-clean-room
-next_action: Run the v2 goal on branch v2-clean-room and stop at Gate 1 with the plate and unit overlays for founder review.
+next_action: Founder reviews the Gate 1 overlays in output/gate1 and the local readback on branch v2-clean-room, then accepts or corrects the plate and unit recipes.
 ---
 
 # Clean-room reconstruction handoff
@@ -330,3 +330,37 @@ Dropped: opencv-python-headless, pyembree, pygltflib, three-mesh-bvh.
 
 The measured copy-paste goal is stored beside this note as
 `2026-09-clean-room-reconstruction.goal.txt`.
+
+## 14. Gate 1 record (2026-09-03, awaiting founder acceptance)
+
+Overlays are rendered by `tests/acceptance/gate1_overlays.py` into `output/gate1/` (ignored;
+rasters never committed). Committed artefacts are coordinates only:
+`data/recipes/4r-type-{a,b,c}.recipe.json` and `data/recipes/skyville-block87-plate.recipe.json`.
+
+- **4R Type A/B/C over brochure p.5** — envelope, interior walls, columns, shelter, service yard,
+  kitchen and windows sit on the drawn walls within about 0.25 m at the published 12.5 m frontage
+  scale. Type B removes bedroom 3; Type C merges bedroom 2 into the master suite. Side windows,
+  kitchen window, balcony and railings are assumed and toggleable.
+- **Block 87 plate over WOHA storey-5 plan** — the reconstructed core, four wings and two slots
+  per wing sit on the sourced HDB footprint. Against the raster, the footprint's wing splay differs
+  by up to about 15 degrees on one wing pair and the raster's storey-5 (sky-garden) plate is not
+  the typical plate; blocks 86, 87 and 88 share the same wing angles in the sourced data, so the
+  footprint was kept as authority and the raster treated as a secondary check.
+- **Storey heights** — 3.6 m first, 2.8 m typical, 5.6 m at sky-garden storeys 3/14/25/36, 4.0 m
+  roof structures; this sums to 147.6 m against the published 147.8 m. Storey 30 floor at 90.4 m.
+- **Which wing end is the 4-room stack** is unknown; both `end` and `inner` are offered and
+  labelled assumed.
+
+## 15. Build status (2026-09-03)
+
+- Radiance 6.1a (LBNL-ETA 39b99660) and ladybug-radiance 0.2.12 passed intake; both pinned.
+- Sunpath within 0.008 degrees of pvlib NREL SPA at twelve instants; unobstructed horizontal
+  annual radiation within 1.03% of EPW GHI with the Reinhart sky (Tregenza was 3.1%, so the
+  577-patch sky is the default).
+- Analysis on the 0.25 m grid (1,270 sensors) runs in about 2.5 s locally; identical inputs give
+  identical digest, GLB, OBJ, SVG and evidence.json bytes. 3DM embeds fresh GUIDs.
+- 20 Python tests, 4 vitest parity tests and 6 Playwright journeys (Chrome 152, WebMCP flag,
+  1440/1024/390) pass. Chrome 152 in this environment did not expose `document.modelContext`
+  under Playwright, so tool discovery was verified through the page's own registry; native
+  `getTools()` is asserted whenever the API is present.
+- Docker: Radiance's Linux build is x86-64 only, so the runtime stage is pinned to linux/amd64.

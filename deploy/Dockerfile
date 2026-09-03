@@ -7,7 +7,8 @@ RUN npm ci --no-audit --no-fund
 COPY apps/web/ ./
 RUN npm run build
 
-FROM python:3.13-slim-bookworm AS runtime
+# Radiance ships x86-64 Linux binaries only, so the runtime stage is pinned to linux/amd64 (emulated on Apple silicon, native on Render).
+FROM --platform=linux/amd64 python:3.13-slim-bookworm AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-certificates && rm -rf /var/lib/apt/lists/*
 # Radiance: pinned release + SHA-256 (verified 2026-09-03)
@@ -16,7 +17,7 @@ ARG RADIANCE_SHA256=fe2b0df32acb90e5b03e37039555aea85098f5343f17247bfec700189009
 RUN curl -fsSL -o /tmp/radiance.zip https://github.com/LBNL-ETA/Radiance/releases/download/${RADIANCE_TAG}/Radiance_${RADIANCE_TAG}_Linux.zip \
  && echo "${RADIANCE_SHA256}  /tmp/radiance.zip" | sha256sum -c - \
  && cd /tmp && unzip -q radiance.zip && mkdir -p /usr/local/radiance \
- && tar -xzf /tmp/radiance-*-Linux.tar.gz -C /usr/local/radiance --strip-components=1 \
+ && tar -xzf /tmp/radiance-*-Linux.tar.gz -C /usr/local/radiance --strip-components=4 \
  && rm -rf /tmp/radiance* && /usr/local/radiance/bin/gendaymtx -version || true
 ENV RADIANCE_PATH=/usr/local/radiance RAYPATH=/usr/local/radiance/lib PATH=/usr/local/radiance/bin:$PATH
 WORKDIR /app

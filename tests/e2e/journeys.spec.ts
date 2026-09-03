@@ -62,6 +62,7 @@ test("WebMCP journey: eight tools, read-only hints, no confirm tool, refusal bef
   expect(refused.refused).toBe(true);
   await expect(call("propose_unit_placement", { study_id: created.study_id, facade: "SE", confirmed: true })).rejects.toThrow(/422/);
   await page.getByTestId("confirm-button").click();
+  await expect(page.getByRole("heading", { name: /Sun, shade and radiation/ })).toBeVisible();
   const ran: any = await call("run_solar_analysis", { study_id: created.study_id, grid_spacing_m: 0.5 });
   expect(ran.digest).toMatch(/^[0-9a-f]{64}$/);
   const st: any = await call("get_study_state", { study_id: created.study_id });
