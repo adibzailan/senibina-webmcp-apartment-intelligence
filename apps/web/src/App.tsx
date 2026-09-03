@@ -281,7 +281,7 @@ export default function App() {
             </div>
             <label>3D model</label>
             <div className="toolbar">
-              {([["glb", "GLB"], ["obj", "OBJ"], ["3dm", "3DM, for Rhino"]] as const).map(([f, l]) => <button key={f} aria-pressed={picks.includes(f)} onClick={() => togglePick(f)}>{l}</button>)}
+              {([["glb", "GLB"], ["obj", "OBJ"], ["3dm", "3DM"]] as const).map(([f, l]) => <button key={f} aria-pressed={picks.includes(f)} onClick={() => togglePick(f)}>{l}</button>)}
             </div>
             <label>Everything</label>
             <div className="toolbar">
