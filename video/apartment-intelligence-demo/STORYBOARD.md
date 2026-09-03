@@ -32,7 +32,7 @@ burned-in captions, cursor).
 | # | Time | Picture | Caption | Narration |
 |---|---|---|---|---|
 | 1 | 0:00–0:07 | Paper card. Serif question: "Will this apartment get the sun you expect?" | none | (music alone, then) Will this apartment get the sun you expect? |
-| 2 | 0:07–0:34 | Practice supercut: sunpath diagram, a floor-plate radiation study, direct-sun hours by date, a tower-scale precinct study. Each holds 4 to 6 s with a slow push. | "How architects answer it." then "Sun path." "Radiation on the floor." "Hours of direct sun." "The tower among its neighbours." | In practice we answer it with instruments. A sun path for the site. Radiation on every square metre of floor. Hours of direct sun on the days that matter. All of it computed, all of it on the drawing, before anyone commits. |
+| 2 | 0:07–0:34 | Practice supercut from Adib's own studio wall: wide shot of the wardrobe doors covered in taped trace, sticky notes and heat maps (hold 5 s, slow push); the "Radiation Benefit" trace with red pen over pencil (4 s); the "Sunlight Hours + Overshadowing, June" plan with the hand-drawn section and hours scale (5 s); the annotated version, "giving neighbours a view of trees" (4 s); then two engine cards, the Dawson radiation floor and the direct-sun hours by date (4 s each). Each still gets a 2 to 4 percent push, hard cuts on full stops. | "How architects answer it." then "Radiation on the site." "Hours of sun, June." "Drawn over, argued over." "Then on every square metre of floor." | In practice, and in school before it, we answer it with instruments. A wall of trace. Radiation across the site. Hours of direct sun in June, drawn over and argued over. Then the same numbers on every square metre of floor, before anyone commits. |
 | 3 | 0:34–0:52 | Paper cards in sequence, each a phrase a listing might carry: "Bright and airy." "Gets the afternoon sun." "Unblocked, high floor." Then one card: "None of it is measured." | the phrases themselves | When a home is sold, the same question gets a sentence. Bright and airy. Afternoon sun. High floor, unblocked. Every word is a guess about light. None of it is measured. |
 | 4 | 0:52–1:00 | Paper card: "Apartment Intelligence" masthead, sub "Version 0, built for the OpenAI WebMCP Challenge". Cut to the live page: the grid of ten drawn developments. | "The same instruments, for the person who will live there." | Apartment Intelligence takes the practice instruments, Ladybug and Radiance, and hands them to the person who will live there. |
 | 5 | 1:00–1:12 | Human beat. Cursor clicks SkyVille @ Dawson; page lands on "Start with your block and storey." Storey set to 30. Start the study. | "A real block. A real storey." | Start with a real block. Eighty-seven Dawson Road, storey thirty. |
@@ -47,12 +47,15 @@ Word count of the narration column: about 300. Room to breathe; full stops land 
 
 ## Practice supercut sources (act one)
 
-Use our own material only, no search-engine images:
+Own material only, no search-engine images. Adib's academic studio photographs and study
+sheets go in `video/apartment-intelligence-demo/footage/practice/` (ignored by Git; they are
+personal originals). Needed at full resolution:
 
-- Sunpath and radiation cards rendered by this engine for the Dawson study.
-- A precinct-scale study rendered from the same engine on the whole block plate, for the
-  "tower among its neighbours" shot.
-- Adib's own Grasshopper and Ladybug screens from practice, if he supplies them, for one shot.
+- `wall-wide.jpg`: the wardrobe wall with trace, notes and heat maps.
+- `radiation-benefit.jpg`: the "Radiation Benefit" trace with red pen.
+- `sunlight-hours-june.png`: the "Sunlight Hours + Overshadowing, June" plan.
+- `sunlight-hours-june-annotated.png`: the same plan with the pink annotations.
+- Engine cards for the Dawson study are rendered fresh by the capture script.
 
 ## Split screen convention (act three)
 
