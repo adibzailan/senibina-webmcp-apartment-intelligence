@@ -5,6 +5,7 @@ import { cardsPdf, download, svgToPng, zipBlob } from "./cards";
 import { initialState, reducer, State } from "./state";
 import { Viewer } from "./viewer";
 import { plateSlots } from "./slots";
+import { PROJECTS } from "./projects";
 import { registerWebMcp, toolDefinitions } from "./webmcp";
 
 const STEPS: State["screen"][] = ["locate", "place", "confirm", "analysis", "export"];
@@ -140,9 +141,21 @@ export default function App() {
     <div className="container">
       <header className="masthead">
         <h1>Apartment Intelligence</h1>
+        {mcp && <span className={"mcp-label" + (mcp.registered ? " on" : "")} title={mcp.registered ? `Eight tools on ${mcp.where}` : "Enable chrome://flags/#enable-webmcp-testing in Chrome 152"}>{mcp.registered ? "WebMCP tools registered" : "WebMCP off in this browser"}</span>}
       </header>
 
       {state.screen === "locate" && <h2 className="question">Will this apartment get the sun you expect?</h2>}
+      {state.screen === "locate" && <section className="projects" aria-label="Developments">
+        <p className="lede" style={{ marginBottom: 12 }}>Choose the development you live in or are looking at. One is ready today; the others are being traced.</p>
+        <div className="project-grid">
+          {PROJECTS.map((p) => <button key={p.slug} className={"project" + (p.live ? " live" : "")} disabled={!p.live} aria-pressed={p.live && state.address === p.address} onClick={() => p.live && dispatch({ type: "set_address", address: p.address! })}>
+            <span className="project-art" style={{ backgroundImage: `url(/projects/${p.slug}.png)` }} aria-hidden="true" />
+            <span className="project-name">{p.name}</span>
+            <span className="project-meta">{p.town} · blocks {p.blocks} · {p.storeys} storeys</span>
+            <span className="project-state">{p.live ? "Ready" : "Not yet covered"}</span>
+          </button>)}
+        </div>
+      </section>}
       {state.screen === "place" && <h2 className="question">Choose the wing and layout you recognise.</h2>}
       {state.screen === "confirm" && <h2 className="question">Confirm the placement you see.</h2>}
       {state.screen === "analysis" && <h2 className="question">Sun, shade and radiation on your floor.</h2>}
@@ -175,7 +188,6 @@ export default function App() {
               <span>Step {stepIndex} of 5 · {({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyState ? ` · ${STATE_WORDS[state.studyState] ?? state.studyState}` : ""}</span>
               <button className="step-arrow" aria-label="Next step" disabled={!canAdvance(state)} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex] })}>→</button>
             </div>
-            <div className="study-meta">{mcp ? (mcp.registered ? `WebMCP tools registered on ${mcp.where}` : "WebMCP not enabled in this browser (chrome://flags/#enable-webmcp-testing)") : ""}</div>
           </section>
           {state.screen === "locate" && <section>
             <label htmlFor="address">Address or postal code</label>
@@ -183,8 +195,14 @@ export default function App() {
             <datalist id="homes">{(context?.supported ?? []).map((h: any) => <option key={h.postal_code} value={h.address} />)}</datalist>
             <label htmlFor="storey">Storey</label>
             <div className="field"><input id="storey" type="number" min={2} max={47} value={state.storey} onChange={(e) => dispatch({ type: "set_storey", storey: Number(e.target.value) })} /></div>
-            <p className="status">This build covers SkyVille @ Dawson Block 87 (postal 141087), storeys 2 to 47. Storey 30 is the worked example; no storey-30 plan is published, so the plate is inferred.</p>
             <button className="primary" disabled={!!state.busy} onClick={() => createStudy(ctx, state.address, state.storey).catch(() => {})}>Start the study</button>
+            <table className="evidence coverage"><tbody>
+              <tr><td>Development</td><td>SkyVille @ Dawson, Block 87</td></tr>
+              <tr><td>Postal code</td><td>141087</td></tr>
+              <tr><td>Storeys</td><td>2 to 47 (sky gardens at 3, 14, 25, 36)</td></tr>
+              <tr><td>Plans</td><td>4-room Type A, B, C, from the published brochure</td></tr>
+              <tr><td>Upper floors</td><td>Estimated from the ground outline; no storey-30 plan is published</td></tr>
+            </tbody></table>
           </section>}
 
           {(state.screen === "place" || state.screen === "confirm") && <section>

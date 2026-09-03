@@ -8,6 +8,8 @@ async function noHorizontalOverflow(page: Page) {
 test("human journey: locate, place, confirm by click, analyse, export", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Will this apartment/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /SkyVille @ Dawson/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /Pinnacle @ Duxton/ })).toBeDisabled();
   await noHorizontalOverflow(page);
   await page.getByRole("button", { name: "Start the study" }).click();
   await expect(page.getByRole("heading", { name: /Choose the wing|Confirm the placement/ })).toBeVisible();
