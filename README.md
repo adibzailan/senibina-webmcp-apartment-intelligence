@@ -179,10 +179,10 @@ Three checks, from cheapest to most complete:
   `create_apartment_study`, a staged placement, the refusal before the click,
   the click, `run_solar_analysis`, `get_study_state`, `explain_evidence`,
   `show_analysis`.
-- **A multi-unit agent run.** The same tools can be called in sequence for
-  several units in one page session; each unit still needs one visible click
-  on the confirm button. A 3 September 2026 run compared three placements
-  (NE wing tip Type A on storey 12, SE near the core Type B on storey 30, SW
-  wing tip Type C on storey 44) and read back a distinct digest and radiation
-  average for each. There is one live study at a time, so an agent gathers
-  results unit by unit and keeps its own comparison table.
+- **A multi-unit agent run.** `survey_unit` compares several placements in
+  one page session with no click; each reply is labelled unconfirmed and
+  carries the surveys left in the ten-minute window. A 3 September 2026 run in
+  the ChatGPT desktop app's built-in browser surveyed three placements (NE wing
+  tip Type A on storey 12, SE near the core Type B on storey 30, SW wing tip
+  Type C on storey 44), chose one, staged it, was refused, waited for the
+  click, then ran and explained the confirmed study.
