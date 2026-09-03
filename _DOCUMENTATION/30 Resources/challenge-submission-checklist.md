@@ -27,4 +27,8 @@ status: active-reference
 - [x] 20 Python, 4 vitest and 6 Playwright tests pass locally (v2).
 - [x] Docker image builds, serves, survives kill/restart, runs an analysis (v2).
 - [x] v2 deployed to a public HTTPS URL: https://apartment-intelligence.onrender.com (3 Sep 2026).
-- [x] Public read-back: six Playwright journeys, 0.25 m analysis in 6.2 s, six exports.
+- [x] Public read-back: six Playwright journeys, 0.25 m analysis in 6.2 s, every export.
+- [x] 3 Sep 2026 evening, local build: each page export (PDF report, GLB, OBJ, 3DM, ZIP) produced a real file headless; PDF read page by page.
+- [x] Three units driven through the eight tools in one page session, each with its own visible click; distinct digests read back.
+- [ ] Push the Version 0 polish to `main` and re-run the six journeys against the live URL.
+- [ ] 0.1 m grid timing on Render (3.3 s locally for 7,542 sensors; 15 s budget).

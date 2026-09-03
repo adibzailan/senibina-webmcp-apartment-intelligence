@@ -29,8 +29,18 @@ the submitted URLs are read back successfully.
   [`2026-09-clean-room-reconstruction.md`](2026-09-clean-room-reconstruction.md).
 - 3 September 2026, afternoon: v2 is live at <https://apartment-intelligence.onrender.com>
   (Render blueprint, Singapore, 1 CPU / 2 GB). Public readback: six Playwright journeys pass,
-  a 0.25 m analysis completes in 6.2 s, all six exports download. The Windows VM is shut down;
+  a 0.25 m analysis completes in 6.2 s, every export downloads. The Windows VM is shut down;
   `apartments.senibina.com.sg` is not yet pointed at Render.
+- 3 September 2026, evening (local, not yet pushed): Version 0 polish. Ten-tile
+  development grid with pen-and-ink art, address dropdown and storey range,
+  title-case choice labels, green confirm, three-dimensional compass, Massing
+  toggle, room labels in the scene and on every card, north arrow on every
+  card, Fine 0.1 m / Medium 0.25 m / Coarse 0.5 m grid, pick-then-Export with a
+  designed PDF report (paper cover and back cover, fixed apartment isometric,
+  one card per block). Footer names Senibina, the Ladybug and Radiance thesis
+  and the challenge. Verified headless: every export produces a real file; a
+  three-unit agent sequence through the WebMCP tools; 6 Playwright, 4 vitest,
+  20 pytest pass.
 - v1: the public baseline, dependency locks, Dawson fixture, application,
   analysis engine, export pipeline, and six WebMCP tools were implemented and
   published on 1 September 2026.
@@ -42,11 +52,11 @@ the submitted URLs are read back successfully.
 - The named Cloudflare Tunnel and Vercel hostname bridge serve
   <https://apartment.senibina.com.sg>. Both services and the app recovered after
   a real Windows restart.
-- A real public Chrome WebMCP journey discovered all six tools, returned
-  `CONFIRMATION_REQUIRED`, accepted confirmation through the visible UI, then
-  analysed and exported successfully.
-- Artifact readback proved five 1600 × 2400 PNGs, a five-page PDF, one manifest,
-  and a metre-unit `.3dm` with five expected layers, 29 objects, and metadata.
+- v1 receipts (superseded by v2): a real public Chrome WebMCP journey
+  discovered the six v1 tools, returned `CONFIRMATION_REQUIRED`, accepted
+  confirmation through the visible UI, then analysed and exported; artifact
+  readback proved five 1600 × 2400 PNGs, a five-page PDF, one manifest, and a
+  metre-unit `.3dm` with five layers, 29 objects, and metadata.
 - Demo-video preparation and final challenge submission remain deliberately
   unstarted.
 - JourneyProof remains a separate earlier concept and repository.
@@ -59,8 +69,10 @@ the submitted URLs are read back successfully.
 - Use a frozen, reproducible public-data fixture and label every inference.
 - Require the resident to confirm an approximate target floor plate, facade, and window in 3D.
 - Run sunpath, shadow, solar-access, and radiation studies deterministically.
-- Present interactive 3D plus five consistent architectural graphics.
-- Export the five PNG cards, combined PDF, ZIP, and layered `.3dm`.
+- Present interactive 3D plus consistent architectural graphics (v2: seven
+  cards in one `cards.svg`).
+- Export a report and models (v2: PDF report, GLB, OBJ, 3DM, ZIP; the SVG
+  cards and evidence.json travel inside the ZIP).
 - Let WebMCP coordinate the same stateful actions exposed in the visible UI.
 
 ## Milestones

@@ -43,16 +43,22 @@ Guaranteed input:
 
 ## Five-screen journey
 
-1. **Locate:** enter a Dawson address and storey; the precinct opens as a
-   translucent north-west axonometric.
-2. **Place:** choose the wing, the 4-room stack position (wing tip or near the
-   core, both assumed), the published layout (Type A/B/C), mirroring, and which
-   assumed openings apply.
+1. **Locate:** pick a development from the grid of ten tiles (SkyVille @
+   Dawson is covered; nine are Not Yet Covered), choose the covered address
+   from a dropdown and a storey inside the block's range; the precinct opens as
+   a translucent north-west axonometric over an OpenStreetMap ground.
+2. **Place:** choose the wing and the 4-room stack position (Wing Tip or Near
+   the Core, both assumed), the published layout (Type A, B or C), As Published
+   or Mirrored, and which assumed openings apply. Room names appear above the
+   rooms in the scene.
 3. **Confirm:** read the confirmation sentence and click; the click is exchanged
    for a ten-second single-use server challenge.
-4. **Analyse:** run Ladybug + Radiance on a 0.1, 0.25 or 0.5 m floor grid and
-   inspect sunpath, shadow, solar access and radiation in the same scene.
-5. **Export:** the page offers PDF and PNG reports, GLB, OBJ and 3DM models, and a ZIP bundle that also carries the SVG cards and evidence.json. Agents can still request any format by name.
+4. **Analyse:** choose Fine 0.1 m, Medium 0.25 m or Coarse 0.5 m, run
+   Ladybug + Radiance, and inspect sunpath, shadow, solar access and radiation
+   in the same scene, with a Massing toggle and a three-dimensional compass.
+5. **Keep the evidence:** pick a PDF report, GLB, OBJ, 3DM or the full ZIP,
+   then Export. The ZIP also carries `cards.svg` and `evidence.json`; agents
+   can request any format, PNG included, through `export_study`.
 
 ## Information states
 
@@ -95,12 +101,15 @@ external binary bundled in the Docker image.
 | `create_apartment_study` | Open a study for an address and storey | Creates a study; nothing is confirmed |
 | `propose_unit_placement` | Stage wing, stack position, layout, mirroring | Staging only |
 | `get_study_state` | Concise state and provenance summary | Read-only |
-| `run_solar_analysis` | Run the deterministic analysis | Refused unless the current placement was confirmed by a click |
+| `run_solar_analysis` | Run the deterministic analysis; `grid_spacing_m` 0.1, 0.25 or 0.5 | Refused unless the current placement was confirmed by a click |
 | `show_analysis` | Switch study, date, hour and camera in the visible page | Presentation only |
 | `explain_evidence` | Return the provenance record for an item | Read-only, numbers unaltered |
-| `export_study` | Trigger downloads from the visible page | Adds nothing to the evidence |
+| `export_study` | Trigger downloads from the visible page: glb, obj, 3dm, evidence.json, cards.svg, png, pdf, zip | Adds nothing to the evidence |
 
 There is no confirmation tool. A `confirmed` argument is rejected with 422.
+One study is live per page session. An agent comparing several units runs
+them in sequence, each with its own visible click, and keeps its own table;
+a 3 September 2026 run did this for three placements in one session.
 Tools and controls call the same actions and reducer; a Playwright test drives
 both paths and compares state. Registration is on `document.modelContext` with
 the `navigator.modelContext` fallback, `readOnlyHint` on the read tools, and
@@ -112,7 +121,13 @@ the `navigator.modelContext` fallback, `readOnlyHint` on the read tools, and
   (walls, columns, openings, balcony), the sensor grid heatmap, and the sun
   vector for the selected instant.
 - `cards.svg`: radiation, four direct-sun-hours maps, sunpath and shadow cards,
-  byte-stable and digest-bound; PNG and PDF are browser renders of it.
+  each plan card with room labels and a north arrow; byte-stable and
+  digest-bound. PNG is a browser render of it.
+- `apartment-intelligence-report.pdf`: a browser-composed report with a paper
+  cover, a "Site and unit" page of two fixed views (apartment isometric with
+  massing off, tower in its precinct), the cards one per block with page
+  footers, and a paper back cover. Presentation only; the digest is printed on
+  the cover and every footer. Layout rules live in `DESIGN.md`.
 - `scene.glb`, `analytical.obj`, `scene.3dm` (layers context, tower, home,
   glass, analysis; provenance in user strings), `evidence.json`, and
   `bundle.zip` with `manifest.json` hashes.

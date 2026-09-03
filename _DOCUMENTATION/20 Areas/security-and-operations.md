@@ -67,12 +67,13 @@ worker timeout, 100 live studies, and 20 MB export bundles.
 
 ## Deployment boundary
 
-Two runtimes exist on 3 September 2026:
+One runtime is public on 3 September 2026:
 
-- **v1 (live):** one FastAPI process on `127.0.0.1:8000` inside the dedicated
-  Windows VM behind a named Cloudflare Tunnel, serving
+- **v1 (shut down 3 September 2026):** one FastAPI process on `127.0.0.1:8000`
+  inside the dedicated Windows VM behind a named Cloudflare Tunnel, serving
   `apartment.senibina.com.sg`. Its source trees were removed from `main` in
-  commit `461e344`; the VM runs its own earlier checkout.
+  commit `461e344`. The VM is off; the tunnel and Vercel proxy are to be
+  retired once `apartments.senibina.com.sg` points at Render.
 - **v2 (live at https://apartment-intelligence.onrender.com since 3 September 2026):** one Docker image (`deploy/Dockerfile`,
   linux/amd64) holding Python 3.13, Radiance 6.1a, the API, the data and the
   built web bundle; one Uvicorn worker; `/healthz`. Radiance is invoked as a
@@ -97,7 +98,10 @@ Deployment credentials remain host-local in both cases. On Render the service se
 `AI_EXPECTED_ORIGINS` (its own origin and `apartments.senibina.com.sg`) so state-changing API
 calls from other origins receive 403, and `AI_COOKIE_SECURE=true`.
 
-### Proposed managed deployment
+### Superseded proposal: Vercel front end plus Render API
+
+Kept for the record; the section above replaced it on 3 September 2026. The
+original text follows.
 
 The preferred post-submission migration removes the home Mac and Windows VM
 from the public request path:
@@ -163,7 +167,11 @@ not backed up by Git.
 - 4 reducer parity tests and 6 Playwright journeys (human and WebMCP, 1440/1024/390)
   in Chrome 152 with `--enable-features=WebMCP`; eight tools discovered natively.
 - Docker compose up, healthz, in-container analysis, kill, up, healthz.
-- Not run: axe audit, reduced-motion and 200% zoom checks, Render deploy.
+- Render deploy executed the same afternoon; live readback in the submission project.
+- Evening, local build: every page export verified headless (PDF read page by page); a
+  three-unit sequence through the eight tools with one visible click per unit; horizontal
+  overflow check passes at 390 px after the address dropdown fix.
+- Not run: axe audit, reduced-motion and 200% zoom checks.
 
 The v2 dependency intake is recorded in
 [`dependency-intake-v2-2026-09-03.md`](dependency-intake-v2-2026-09-03.md).

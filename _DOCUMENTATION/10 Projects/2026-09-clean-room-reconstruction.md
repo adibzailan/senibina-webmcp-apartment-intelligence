@@ -1,10 +1,10 @@
 ---
 title: Clean-room reconstruction (v2)
 para: project
-status: approved-for-goal
+status: complete
 decision_date: 2026-09-03
-branch: v2-clean-room
-next_action: Decide whether to merge v2-clean-room into main, then plan the Rhino/Revit import path for founder-modelled tower massing.
+branch: v2-clean-room (merged to main on 2026-09-03)
+next_action: None here; the live outcome is owned by 2026-webmcp-challenge-submission.md. A later project may plan the Rhino/Revit import path for founder-modelled tower massing.
 ---
 
 # Clean-room reconstruction handoff
@@ -27,7 +27,7 @@ Labels: PROVEN (from this repository), VERIFIED (primary source opened
   HDB brochure plans, built into walls, openings, balcony, AC ledge, service
   yard and overhangs by code. Plausible over precise: the apartment must read
   as belonging to the tower, the tower to the precinct.
-- Radiation grid: 0.25 m default, 0.5 m fast option, per-room readings.
+- Radiation grid: 0.25 m default, 0.5 m fast option, per-room readings. (Superseded 3 Sep evening: Fine 0.1 m, Medium 0.25 m, Coarse 0.5 m.)
 - Functionality before UI. DESIGN.md stays the interface authority; no
   redesign in this goal.
 - Deployment target: one Docker image, proven locally; Render deployment
@@ -47,7 +47,7 @@ Labels: PROVEN (from this repository), VERIFIED (primary source opened
    visible click. Agents may propose, never confirm.
 4. Explore: sunpath, shadow at three instants, direct-sun hours on four dates,
    annual radiation on a fine floor grid. Same geometry, same digest.
-5. Keep: GLB, 3DM, evidence.json, five SVG cards, PNG/PDF, manifest, ZIP.
+5. Keep: GLB, 3DM, evidence.json, SVG cards (seven in one file), PNG/PDF, manifest, ZIP. (Superseded 3 Sep evening: the page offers a PDF report, GLB, OBJ, 3DM and ZIP.)
 
 ## 2. Current repository map (PROVEN)
 
@@ -371,4 +371,7 @@ rasters never committed). Committed artefacts are coordinates only:
   kill, up, healthz) passed. Render deploy is documented in `deploy/render.yaml`, not executed.
 - Not run: axe accessibility audit, reduced-motion check, 200% zoom check, Render deploy.
 - Gate 1 accepted by Adib on 2026-09-03 after viewing the 3D apartment in the page ("I accept. This is good"). Apartment and tower recipes stand with their reconstructed/assumed labels.
-- Gate 2 readback delivered 2026-09-03; goal complete on branch v2-clean-room, not pushed.
+- Gate 2 readback delivered 2026-09-03; goal complete on branch v2-clean-room, then merged to
+  `main` and deployed to Render the same afternoon (see the submission project and
+  `20 Areas/security-and-operations.md`). The interface polish that followed is recorded in the
+  submission project's current state and in `DESIGN.md`, not here.

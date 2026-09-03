@@ -13,14 +13,35 @@ The guaranteed demonstration starts with 87 Dawson Road and storey 30. An
 agent resolves the bundled public context, the resident places and confirms a
 published typical 4-room plan, with real walls, columns, openings and balcony,
 inside a reconstructed Block 87 plate, and Ladybug + Radiance produce
-deterministic sunpath, shadow, direct-sun and radiation evidence on a 0.25 m
-floor grid.
+deterministic sunpath, shadow, direct-sun and radiation evidence on a 0.1,
+0.25 or 0.5 m floor grid, with per-room readings.
 
-Status (3 September 2026): the v2 clean-room rebuild is on `main` and live at
+Status (3 September 2026): Version 0, built for the OpenAI WebMCP Challenge.
+The v2 clean-room rebuild is on `main` and live at
 <https://apartment-intelligence.onrender.com> (Render, Singapore, built from
 `deploy/render.yaml` on every push). The earlier v1 Windows VM host is shut
 down. See
 [`_DOCUMENTATION/10 Projects/2026-09-clean-room-reconstruction.md`](_DOCUMENTATION/10%20Projects/2026-09-clean-room-reconstruction.md).
+
+## What the page does
+
+1. **Locate.** A grid of ten HDB developments, each drawn as a pen-and-ink tile
+   (`apps/web/public/projects/`). SkyVille @ Dawson is covered; the other nine
+   are labelled Not Yet Covered. Below the grid the study rail offers the
+   covered address as a dropdown and a storey field that shows the block's
+   range.
+2. **Place.** Eight outlined 4-room slots on the tower (four wings, wing tip or
+   near the core), the published layout (Type A, B or C), a mirrored-plan
+   toggle, and the assumed windows, balcony and railings in a folded list.
+3. **Confirm.** A green button and a plain sentence. A tool cannot do this.
+4. **Analyse.** Choose a measuring grid (Fine 0.1 m, Medium 0.25 m, Coarse
+   0.5 m) and run. Sunpath, shadow, solar access and radiation share one 3D
+   scene with room names floating above each room, a three-dimensional compass,
+   an OpenStreetMap ground, and a Massing toggle that fades the tower away.
+5. **Keep the evidence.** Pick a PDF report, GLB, OBJ, 3DM, or the full ZIP,
+   then one Export button. The PDF carries a paper cover, a fixed apartment
+   isometric and tower view, one drawing card per block with north arrow and
+   room labels, page footers with the digest, and a paper back cover.
 
 ## Public-interest research
 
@@ -112,7 +133,8 @@ npm --prefix apps/web test
 ```
 
 The Playwright journeys use installed Google Chrome 152 with
-`--enable-features=WebMCP` at 1440, 1024 and 390 px widths.
+`--enable-features=WebMCP` at 1440, 1024 and 390 px widths. Point them at a
+different port with `AI_BASE_URL=http://127.0.0.1:8001`.
 
 ## Docker
 
@@ -138,3 +160,22 @@ tool; a `confirmed` argument is rejected, and confirmation is a visible click
 exchanged for a ten-second single-use server challenge. Enable
 `chrome://flags/#enable-webmcp-testing` and inspect
 `document.modelContext.getTools()` in DevTools.
+
+### Checking the tool surface
+
+Three checks, from cheapest to most complete:
+
+- **DevTools.** On the live page, `document.modelContext.getTools().map(t => t.name)`
+  lists the eight tools. Without the Chrome flag the page still registers them
+  on `window.__aiTools` for tests, and the masthead says so.
+- **Playwright.** `tests/e2e/journeys.spec.ts` runs the WebMCP journey: discovery,
+  `create_apartment_study`, a staged placement, the refusal before the click,
+  the click, `run_solar_analysis`, `get_study_state`, `explain_evidence`,
+  `show_analysis`.
+- **A multi-unit agent run.** The same tools can be called in sequence for
+  several units in one page session; each unit still needs one visible click
+  on the confirm button. A 3 September 2026 run compared three placements
+  (NE wing tip Type A on storey 12, SE near the core Type B on storey 30, SW
+  wing tip Type C on storey 44) and read back a distinct digest and radiation
+  average for each. There is one live study at a time, so an agent gathers
+  results unit by unit and keeps its own comparison table.

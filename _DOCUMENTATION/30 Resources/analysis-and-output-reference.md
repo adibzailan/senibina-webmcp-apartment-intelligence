@@ -45,9 +45,12 @@ upper-storey plate, heights, openings and balcony are inferred or assumed.
 `cards.svg` stacks the radiation heatmap, one direct-sun-hours map per key
 date, the sunpath diagram and the shadow-instant table. It is generated
 server-side with fixed number formatting and no timestamps, so it is
-byte-stable and digest-bound. PNG and PDF (1600 × 2400 pages, Site & Unit page
-first from the live canvas) are browser renders of the same SVG and are
-presentation only.
+byte-stable and digest-bound. Every plan card carries a north arrow computed
+from the wing orientation and a label at each room centroid. PNG is a browser
+render of the same SVG. The PDF report (`apartment-intelligence-report.pdf`,
+1190 × 1684 pages) composes a paper cover, a "Site and unit" page of two fixed
+canvas views, the cards one per block with digest footers, and a paper back
+cover; it is presentation only and its layout is owned by `DESIGN.md`.
 
 ## Download package
 
@@ -58,6 +61,9 @@ presentation only.
 | `scene.3dm` | Metre-unit meshes on layers `context`, `tower`, `home`, `glass`, `analysis` with provenance user strings; embeds fresh GUIDs, so not byte-stable |
 | `evidence.json` | The full result record, canonical JSON |
 | `cards.svg` | Digest-bound evidence cards |
+| `apartment-intelligence-report.pdf` | Browser-composed report; not byte-stable |
+
+The page offers the PDF, GLB, OBJ, 3DM and ZIP as buttons; `evidence.json`, `cards.svg` and PNG travel in the ZIP or are requested by name through `export_study`.
 | `bundle.zip` | All of the above plus `manifest.json` with SHA-256 per file (fixed 1980 timestamps) |
 
 ## Failure and uncertainty presentation
