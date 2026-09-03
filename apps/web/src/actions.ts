@@ -63,7 +63,7 @@ export async function runAnalysis(ctx: Ctx, spacing: 0.1 | 0.25 | 0.5 = 0.25) {
     ctx.dispatch({ type: "message", message: { kind: "error", text: msg } });
     return { refused: true, reason: msg };
   }
-  return guard(ctx, "Running Ladybug + Radiance analysis", async () => {
+  return guard(ctx, "Running the environmental analysis", async () => {
     const r = await ctx.api.analyse(s.studyId!, spacing);
     const result = await ctx.api.result(s.studyId!);
     ctx.dispatch({ type: "analysed", result, digest: r.digest, studyState: r.state });
