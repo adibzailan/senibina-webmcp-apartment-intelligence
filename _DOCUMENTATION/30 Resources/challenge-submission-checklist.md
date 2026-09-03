@@ -30,5 +30,7 @@ status: active-reference
 - [x] Public read-back: six Playwright journeys, 0.25 m analysis in 6.2 s, every export.
 - [x] 3 Sep 2026 evening, local build: each page export (PDF report, GLB, OBJ, 3DM, ZIP) produced a real file headless; PDF read page by page.
 - [x] Three units driven through the eight tools in one page session, each with its own visible click; distinct digests read back.
-- [ ] Push the Version 0 polish to `main` and re-run the six journeys against the live URL.
-- [ ] 0.1 m grid timing on Render (3.3 s locally for 7,542 sensors; 15 s budget).
+- [x] Version 0 pushed to `main` 3 Sep 17:14 SGT; six journeys pass against the live URL with `--workers=1` (the server allows one analysis at a time).
+- [x] Live grid timings on Render: 0.5 m 4.4 s, 0.25 m 5.4 s, 0.1 m 10.6 s server time, all inside the 15 s budget.
+- [x] Live run exposed and fixed a stale-confirmation race (the page re-staged a tool-staged placement after the click); pushed 17:35 SGT.
+- [ ] Attach `apartments.senibina.com.sg` and `apartment.senibina.com.sg` on Render and in Vercel DNS (founder).

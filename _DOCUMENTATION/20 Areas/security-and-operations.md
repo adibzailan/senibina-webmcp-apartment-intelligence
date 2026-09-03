@@ -171,6 +171,9 @@ not backed up by Git.
 - Evening, local build: every page export verified headless (PDF read page by page); a
   three-unit sequence through the eight tools with one visible click per unit; horizontal
   overflow check passes at 390 px after the address dropdown fix.
+- After the Version 0 push: six journeys pass against the live URL run serially; live grid
+  timings 4.4 / 5.4 / 10.6 s for 0.5 / 0.25 / 0.1 m. A stale-confirmation race found only on the
+  live host (a debounced re-stage landing after the click) was fixed the same evening.
 - Not run: axe audit, reduced-motion and 200% zoom checks.
 
 The v2 dependency intake is recorded in
