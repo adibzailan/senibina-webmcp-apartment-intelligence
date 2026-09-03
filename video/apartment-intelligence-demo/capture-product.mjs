@@ -36,7 +36,7 @@ const log = (line, cls) => p.evaluate(([l, c]) => window.__agentLog(l, c), [line
 const agent = async (name, input) => {
   await log(`${name}(${JSON.stringify(input)})`, "call"); mark("tool:" + name, { input });
   const r = await p.evaluate(([n, i]) => window.__aiTools.find(t => t.name === n).execute(i).catch(e => ({ thrown: String(e) })), [name, input]);
-  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.mode === "survey" ? `survey, unconfirmed: avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
+  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.mode === "survey" ? `survey, unconfirmed: avg ${r.radiation?.avg} kWh/m2` : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
   await log(`  -> ${short}`, r.refused || r.thrown ? "no" : "ok"); mark("reply:" + name, { reply: short });
   return r;
 };

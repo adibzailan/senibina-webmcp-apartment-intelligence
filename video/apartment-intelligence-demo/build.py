@@ -6,7 +6,9 @@ SERIF = f"{F}/fonts/snba-serif-regular.ttf"; SANS = f"{F}/fonts/snba-sans-serif-
 PROD = f"{F}/product/product.webm"; FOUNDER = f"{F}/founder/desk-take-1.mov"; PDF = f"{F}/product/pdf"; PR = f"{F}/practice"
 MUSIC = f"{F}/music/music__20260903_191426.mp3"; BEATS = f"{F}/audio/beats"
 W, H, FPS = 1920, 1080, 30; PAPER = "0xf5f2e9"; INK = "0x18211d"; MUTED = "0x5f665f"
-marks = {m["name"]: m["t"] for m in json.load(open(f"{F}/product/timing.json"))["marks"]}
+_marks = json.load(open(f"{F}/product/timing.json"))["marks"]
+marks = {}
+for m in _marks: marks.setdefault(m["name"], m["t"])   # first occurrence of each name
 def esc(t): return t.replace("\\", "\\\\").replace("'", "’").replace(":", "\\:").replace("%", "\\%")
 def run(cmd): subprocess.run(cmd, shell=True, check=True)
 def dt(text, font, size, color, x, y): return f"drawtext=fontfile={font}:text='{esc(text)}':fontsize={size}:fontcolor={color}:x={x}:y={y}"
@@ -86,8 +88,8 @@ def product_beats(pace):
         ("cut", dict(t0=marks["start"] + 1.0, t1=marks["screen:place"] + 1.0, speed=s[0], cap="A real block. A real storey.", pip=2.0), "b05"),
         ("cut", dict(t0=marks["agent:show"] - 0.3, t1=marks["click:confirm"] - 0.3, speed=s[1], cap="An agent can stage a placement. It cannot confirm one.", pip=12.0), "b06"),
         ("cut", dict(t0=marks["click:confirm"] - 0.6, t1=marks["screen:analysis"] + 1.2, speed=1.0, cap="That click belongs to a person.", pip=44.0), "b07"),
-        ("cut", dict(t0=marks["screen:analysis"] + 1.2, t1=marks["tool:create_apartment_study"] - 0.2, speed=s[2], cap="Radiation, per room. Every number carries its source.", pip=48.0), "b08"),
-        ("cut", dict(t0=marks["tool:create_apartment_study"] - 0.2, t1=marks["agent:hide"], speed=s[3], cap="Three units surveyed. No click. Every number unconfirmed.", pip=60.0), "b09"),
+        ("cut", dict(t0=marks["screen:analysis"] + 1.2, t1=marks["tool:survey_unit"] - 0.2, speed=s[2], cap="Radiation, per room. Every number carries its source.", pip=48.0), "b08"),
+        ("cut", dict(t0=marks["tool:survey_unit"] - 0.2, t1=marks["agent:hide"], speed=s[3], cap="Three units surveyed. No click. Every number unconfirmed.", pip=60.0), "b09"),
         ("cut", dict(t0=marks["agent:hide"], t1=marks["end"] - 0.4, speed=s[4], cap="Keep the evidence.", pip=80.0), "b10"),
     ]
 def tail(pdf_each, close_sec):
