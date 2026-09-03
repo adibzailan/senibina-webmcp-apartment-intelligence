@@ -333,8 +333,9 @@ def survey(body: SurveyIn, request: Request, response: Response):
     lo, hi = target["storey_range"]
     if not (lo <= body.storey <= hi):
         raise err(422, "STOREY_OUT_OF_RANGE", f"Choose a storey between {lo} and {hi}.")
-    if not store.allow_analysis(sess):
-        raise err(429, "RATE_LIMITED", "Five analyses per ten minutes per session; wait and retry.")
+    ok, remaining, reset = store.allow_survey(sess)
+    if not ok:
+        raise err(429, "RATE_LIMITED", f"Thirty surveys per ten minutes per session; the oldest expires in {reset} s. Studies have their own budget of five.")
     if not _analysis_lock.acquire(blocking=False):
         raise err(409, "ANALYSIS_BUSY", "Another analysis is running; retry in a few seconds.")
     try:
@@ -352,6 +353,7 @@ def survey(body: SurveyIn, request: Request, response: Response):
             "address": target["address"], "storey": body.storey,
             "placement": {"facade": body.facade, "stack_position": body.stack_position, "variant": body.variant, "mirrored": body.mirrored},
             "grid_spacing_m": body.grid_spacing_m, "digest": r["digest"], "method_version": r["method_version"], "timing_s": timing,
+            "budget": {"surveys_remaining_in_window": remaining, "window_s": 600},
             "radiation": {"min": rad["min"], "avg": rad["avg"], "max": rad["max"], "unit": "kWh/m2 per year", "per_room": rad.get("per_room", {})},
             "next_action": "To keep any of this, create a study for the unit you will live in and confirm it with the visible button.",
         }

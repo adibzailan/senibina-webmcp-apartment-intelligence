@@ -6,7 +6,7 @@ status: active-reference
 
 # Challenge submission checklist
 
-- [x] Working public HTTPS URL: https://apartment-intelligence.onrender.com (Chrome WebMCP verified via Playwright; ChatGPT in-app browser not yet checked).
+- [x] Working public HTTPS URL: https://apartments.senibina.com.sg (Chrome WebMCP verified via Playwright; ChatGPT desktop in-app browser verified by Adib, 3 Sep ~21:10 SGT: nine tools discovered, three surveys run, study created and staged, CONFIRMATION_REQUIRED refusal captured, human click accepted, confirmed 0.5 m analysis and evidence retrieved, GPT-5.6 Sol).
 - [x] Public repository with source baseline and visible AGPL-3.0 licence.
 - [ ] Public repository final revision with all source, assets, build instructions,
   licence, and visible WebMCP registration code.
@@ -17,6 +17,8 @@ status: active-reference
   then shows the agent retry succeeding.
 - [ ] Devpost fields and every submitted URL are read back before the
   4 September 2026, 04:00 SGT deadline.
+
+- [x] ChatGPT desktop run also hit the five-per-ten-minutes limit while surveying storey 30; surveys now have their own budget of thirty per window with a countdown in the refusal (3 Sep ~21:30 SGT).
 
 ## Proven local receipts
 

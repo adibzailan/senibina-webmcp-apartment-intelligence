@@ -111,6 +111,7 @@ def test_survey_is_labelled_and_never_confirms(client):
     assert body["mode"] == "survey" and body["provenance"] == "survey_unconfirmed"
     assert "unconfirmed" in body["label"].lower() and "report" in body["label"].lower()
     assert body["radiation"]["avg"] >= 0 and len(body["digest"]) == 64
+    assert body["budget"]["surveys_remaining_in_window"] == 29  # surveys have their own budget of thirty
     # a survey leaves no study behind and rejects a confirmed flag like every other tool
     assert client.post("/api/survey", json={"address": "87 Dawson Road", "storey": 12, "facade": "NE", "confirmed": True}).status_code == 422
     assert client.post("/api/survey", json={"address": "1 Nowhere Road", "storey": 12, "facade": "NE"}).status_code == 404

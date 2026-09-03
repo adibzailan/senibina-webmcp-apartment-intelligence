@@ -10,6 +10,7 @@ MAX_STUDIES = 100
 TTL_SECONDS = 1800
 CHALLENGE_TTL = 10
 ANALYSES_PER_SESSION_PER_10MIN = 5
+SURVEYS_PER_SESSION_PER_10MIN = 30  # surveys are cheaper, coarser and labelled unconfirmed; enough for one full plate of 24 slots
 
 
 @dataclass
@@ -37,6 +38,7 @@ class Store:
         self._lock = threading.Lock()
         self._studies: dict[str, Study] = {}
         self._analysis_log: dict[str, list[float]] = {}
+        self._survey_log: dict[str, list[float]] = {}
 
     def _sweep(self):
         now = time.time()
@@ -68,15 +70,23 @@ class Store:
             return st
 
     def allow_analysis(self, session: str) -> bool:
+        return self._allow(self._analysis_log, session, ANALYSES_PER_SESSION_PER_10MIN)[0]
+
+    def allow_survey(self, session: str) -> tuple[bool, int, int]:
+        """(allowed, remaining after this call, seconds until the oldest entry expires)."""
+        return self._allow(self._survey_log, session, SURVEYS_PER_SESSION_PER_10MIN)
+
+    def _allow(self, book: dict[str, list[float]], session: str, limit: int) -> tuple[bool, int, int]:
         with self._lock:
             now = time.time()
-            log = [t for t in self._analysis_log.get(session, []) if now - t < 600]
-            if len(log) >= ANALYSES_PER_SESSION_PER_10MIN:
-                self._analysis_log[session] = log
-                return False
+            log = [t for t in book.get(session, []) if now - t < 600]
+            reset = int(600 - (now - log[0])) + 1 if log else 0
+            if len(log) >= limit:
+                book[session] = log
+                return False, 0, reset
             log.append(now)
-            self._analysis_log[session] = log
-            return True
+            book[session] = log
+            return True, limit - len(log), reset
 
     def count(self) -> int:
         with self._lock:

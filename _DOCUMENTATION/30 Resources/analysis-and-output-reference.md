@@ -70,6 +70,7 @@ The page offers the PDF, GLB, OBJ, 3DM and ZIP as buttons; `evidence.json`, `car
 
 - Unconfirmed or stale placement returns `CONFIRMATION_REQUIRED` or
   `STALE_CONFIRMATION`; analysis never runs on it.
+- Studies allow five analyses per session per ten minutes; surveys allow thirty and every survey reply carries `budget.surveys_remaining_in_window`. A refusal says when the window frees.
 - A busy engine returns `ANALYSIS_BUSY`; a run over 15 s returns
   `ANALYSIS_TIMEOUT` with the advice to use a coarser grid.
 - Every displayed number sits beside a disclosure of method, sources and

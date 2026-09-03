@@ -62,7 +62,7 @@ Before public exposure, the implemented application must enforce:
   contents.
 
 The public runtime additionally enforces a 256 KB request limit, one concurrent
-analysis, five analyses per session per ten minutes, a terminating 15-second
+analysis, five confirmed analyses and thirty surveys per session per ten minutes (separate budgets; a full plate of 24 slots fits one survey window), a terminating 15-second
 worker timeout, 100 live studies, and 20 MB export bundles.
 
 ## Deployment boundary
