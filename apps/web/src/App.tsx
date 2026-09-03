@@ -166,7 +166,7 @@ export default function App() {
     <div className="container">
       <header className="masthead">
         <div><h1>Apartment Intelligence</h1><div className="masthead-sub">Version 0, built for the OpenAI WebMCP Challenge, September 2026.</div></div>
-        {mcp && <span className={"mcp-label" + (mcp.registered ? " on" : "")} title={mcp.registered ? `Eight tools on ${mcp.where}` : "Enable chrome://flags/#enable-webmcp-testing in Chrome 152"}>{mcp.registered ? "WebMCP tools registered" : "WebMCP off in this browser"}</span>}
+        {mcp && <span className={"mcp-label" + (mcp.registered ? " on" : "")} title={mcp.registered ? `Nine tools on ${mcp.where}` : "Enable chrome://flags/#enable-webmcp-testing in Chrome 152"}>{mcp.registered ? "WebMCP tools registered" : "WebMCP off in this browser"}</span>}
       </header>
 
       {state.screen === "locate" && <h2 className="question">Will this apartment get the sun you expect?</h2>}

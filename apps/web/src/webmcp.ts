@@ -1,4 +1,4 @@
-/** WebMCP registry: eight tools on document.modelContext (navigator.modelContext fallback for
+/** WebMCP registry: nine tools on document.modelContext (navigator.modelContext fallback for
  *  Chrome < 152). No confirmation tool exists; a `confirmed` argument is rejected. */
 import { surveyUnit, Ctx, createStudy, explainEvidence, proposePlacement, runAnalysis, showAnalysis } from "./actions";
 import { summarise } from "./state";
