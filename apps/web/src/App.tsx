@@ -146,7 +146,6 @@ export default function App() {
 
       {state.screen === "locate" && <h2 className="question">Will this apartment get the sun you expect?</h2>}
       {state.screen === "locate" && <section className="projects" aria-label="Developments">
-        <p className="lede" style={{ marginBottom: 12 }}>Choose the development you live in or are looking at. One is ready today; the others are being traced.</p>
         <div className="project-grid">
           {PROJECTS.map((p) => <button key={p.slug} className={"project" + (p.live ? " live" : "")} disabled={!p.live} aria-pressed={p.live && state.address === p.address} onClick={() => p.live && dispatch({ type: "set_address", address: p.address! })}>
             <span className="project-art" style={{ backgroundImage: `url(/projects/${p.slug}.png)` }} aria-hidden="true" />
