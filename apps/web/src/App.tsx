@@ -286,7 +286,7 @@ export default function App() {
           {state.screen === "export" && r && <section>
             <label>Report</label>
             <div className="toolbar">
-              {([["pdf", "PDF"], ["png", "PNG"]] as const).map(([f, l]) => <button key={f} aria-pressed={picks.includes(f)} onClick={() => togglePick(f)}>{l}</button>)}
+              <button aria-pressed={picks.includes("pdf")} onClick={() => togglePick("pdf")}>PDF report</button>
             </div>
             <label>3D model</label>
             <div className="toolbar">
@@ -297,7 +297,7 @@ export default function App() {
               <button aria-pressed={picks.includes("zip")} onClick={() => togglePick("zip")}>Full bundle, ZIP</button>
             </div>
             <div className="toolbar run-row"><button className="primary" disabled={picks.length === 0} onClick={() => exportFromPage(picks)}>{picks.length ? `Export ${picks.length} file${picks.length > 1 ? "s" : ""}` : "Export"}</button></div>
-            <p className="status">The bundle adds the raw evidence record and the drawing cards, both byte-stable and bound to the result digest. PDF and PNG are presentation renders. 3DM embeds fresh object ids.</p>
+            <p className="status">The bundle adds the raw evidence record and the drawing cards, both byte-stable and bound to the result digest. The PDF is a presentation render. 3DM embeds fresh object ids.</p>
           </section>}
 
           <p className={"status" + (state.message?.kind === "error" ? " error" : "")} role="status" aria-live="polite">{state.busy ? `${state.busy}…` : state.message?.text ?? ""}</p>
