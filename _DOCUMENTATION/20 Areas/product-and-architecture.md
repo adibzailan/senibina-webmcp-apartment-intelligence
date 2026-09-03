@@ -102,7 +102,7 @@ external binary bundled in the Docker image.
 | `propose_unit_placement` | Stage wing, stack position, layout, mirroring | Staging only |
 | `get_study_state` | Concise state and provenance summary | Read-only |
 | `run_solar_analysis` | Run the deterministic analysis; `grid_spacing_m` 0.1, 0.25 or 0.5 | Refused unless the current placement was confirmed by a click |
-| `show_analysis` | Switch study, date, hour and camera in the visible page | Presentation only |
+| `show_analysis` | Switch study, date, hour, camera (precinct, tower, home, plan, north), massing and map in the visible page | Presentation only; every visible control except free orbit, pan and zoom has a tool equivalent |
 | `explain_evidence` | Return the provenance record for an item | Read-only, numbers unaltered |
 | `export_study` | Trigger downloads from the visible page: glb, obj, 3dm, evidence.json, cards.svg, png, pdf, zip | Adds nothing to the evidence |
 | `survey_unit` | Analyse a staged placement for an address, storey, facade, stack, layout without a click | Survey mode: every number labelled `survey_unconfirmed`; no study, no report; listed in the rail as unconfirmed |

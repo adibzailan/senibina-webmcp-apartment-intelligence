@@ -16,7 +16,7 @@ export interface State {
   confirmedRevision: number | null;
   result: any | null;
   digest: string | null;
-  view: { preset: Preset; date: string; hour: number; camera: "precinct" | "tower" | "home" | "plan" };
+  view: { preset: Preset; date: string; hour: number; camera: "precinct" | "tower" | "home" | "plan" | "north"; massing: boolean; map: boolean };
   busy: string | null;
   message: { kind: "info" | "error"; text: string } | null;
   lastActor: "ui" | "webmcp" | null;
@@ -35,7 +35,7 @@ export const initialState: State = {
   confirmedRevision: null,
   result: null,
   digest: null,
-  view: { preset: "radiation", date: "06-21", hour: 12, camera: "precinct" },
+  view: { preset: "radiation", date: "06-21", hour: 12, camera: "precinct", massing: true, map: true },
   busy: null,
   message: null,
   lastActor: null,

@@ -58,9 +58,11 @@ export default function App() {
     if (lastScreen.current !== state.screen && state.screen !== "locate") stepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     lastScreen.current = state.screen;
   }, [state.screen]);
-  const [basemap, setBasemap] = useState(true);
-  const [massing, setMassing] = useState(true);
+  const basemap = state.view.map, massing = state.view.massing;
   useEffect(() => { viewerRef.current?.setMassingVisible(massing); }, [massing]);
+  // a camera chosen by a tool moves the viewer exactly as the buttons do
+  const cameraSeen = useRef(state.view.camera);
+  useEffect(() => { if (cameraSeen.current !== state.view.camera) { cameraSeen.current = state.view.camera; viewerRef.current?.preset(state.view.camera, focus); } }, [state.view.camera]);
   const [hoverShot, setHoverShot] = useState<string | null>(null);
 
   useEffect(() => { liveApi.context().then(setContext).catch(() => setContext({ supported: [] })); }, []);
@@ -202,8 +204,8 @@ export default function App() {
             </span>
             <span className="control-group" role="group" aria-label="View">
               <span className="control-label">View</span>
-              <button aria-pressed={basemap} onClick={() => setBasemap(!basemap)}>Map</button>
-              <button aria-pressed={massing} onClick={() => setMassing(!massing)}>Massing</button>
+              <button aria-pressed={basemap} onClick={() => dispatch({ type: "set_view", view: { map: !basemap } })}>Map</button>
+              <button aria-pressed={massing} onClick={() => dispatch({ type: "set_view", view: { massing: !massing } })}>Massing</button>
               <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
             </span>
           </div>
