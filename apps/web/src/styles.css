@@ -13,6 +13,7 @@ header.masthead { display: flex; align-items: baseline; justify-content: space-b
 .mcp-label.on { color: var(--ink); border-color: var(--ink); }
 .mcp-label.on::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--go); margin-right: 6px; vertical-align: 1px; }
 header.masthead h1 { font-family: var(--serif); font-weight: 500; font-size: 32px; letter-spacing: 0.02em; margin: 0; }
+header.masthead .masthead-sub { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
 header.masthead .index { color: var(--ink-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 .question { font-family: var(--serif); font-size: clamp(38px, 5vw, 64px); line-height: 1.0; font-weight: 400; margin: 40px 0 32px; max-width: 26ch; text-wrap: balance; }
 .lede { font-family: var(--serif); font-size: 19px; line-height: 1.5; max-width: 66ch; color: var(--ink); margin: 0 0 24px; }

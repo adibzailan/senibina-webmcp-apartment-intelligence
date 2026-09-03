@@ -164,7 +164,7 @@ export default function App() {
   return (
     <div className="container">
       <header className="masthead">
-        <h1>Apartment Intelligence</h1>
+        <div><h1>Apartment Intelligence</h1><div className="masthead-sub">Version 0, built for the OpenAI WebMCP Challenge, September 2026.</div></div>
         {mcp && <span className={"mcp-label" + (mcp.registered ? " on" : "")} title={mcp.registered ? `Eight tools on ${mcp.where}` : "Enable chrome://flags/#enable-webmcp-testing in Chrome 152"}>{mcp.registered ? "WebMCP tools registered" : "WebMCP off in this browser"}</span>}
       </header>
 
@@ -338,7 +338,6 @@ export default function App() {
         <div className="colophon-brand">Apartment Intelligence</div>
         <div className="colophon-line">A public-interest study by <a className="colophon-link" href="https://senibina.com.sg" target="_blank" rel="noopener noreferrer">Senibina</a> for apartment living. Singapore now, the region next.</div>
         <div className="status">Built with Ladybug and Radiance, the same daylight engines architects use in practice, so the study a practice would run for a client is now open to the people who live there.</div>
-        <div className="status">Version 0, built for the OpenAI WebMCP Challenge, September 2026.</div>
         <div className="status">Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification.</div>
       </footer>
     </div>
