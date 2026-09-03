@@ -31,9 +31,9 @@ Python: Ladybug and Radiance run headless on Render (one Docker container, Singa
 ## Challenges
 
 - Getting the practice capability out of Rhino at all. In practice these studies live inside Grasshopper on a licensed desktop, driven by hand. Our first attempt kept that shape: a Windows machine at home, a tunnel to the internet, a custom analysis loop that only imitated the real one. It worked once and taught us it could not be the product. The rebuild threw it away: Ladybug and Radiance run headless in one Docker container on Render, geometry is a coordinate recipe instead of a CAD file, and no Rhino, Grasshopper or Revit is in the runtime. That is what let a consumer page run a practice-grade study in ten seconds.
+- Choosing where it could live. Our web work normally ships on Vercel, and the first plan put the page there with the analysis somewhere else. It cannot work that way: Radiance is a native x86-64 binary that has to sit on disk next to Python, run for several seconds per study, and keep a warm sky matrix between requests. Vercel's static and serverless model has no place for that. Render runs the whole thing as one Docker web service in Singapore, page and engine from one origin, rebuilt from the repo on every push, for about US$25 a month. Radiance ships Linux x86-64 only, so the image is amd64 and the analysis has a 15-second budget on one CPU; the fine 0.1 m grid runs in 10.6 s live.
 - Making a confirmation that a tool cannot fake without making the product tedious. The answer was two modes with different labels, not a switch.
 - A race that only showed on the live host: the page re-sent a placement an agent had staged, and on a slower network the re-send landed after the click and made the confirmation stale. Found by running the browser journeys against production, not localhost.
-- Radiance ships x86-64 Linux only, so the image is amd64 and the analysis has to fit a 15-second budget on one CPU. Fine 0.1 m runs in 10.6 s live.
 
 ## Accomplishments
 
