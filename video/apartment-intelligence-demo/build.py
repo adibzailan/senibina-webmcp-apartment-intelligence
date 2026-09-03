@@ -30,8 +30,8 @@ def card(out, sec, lines, size=84, sub=None, fade=False, gap=None, subsize=26):
 # The presentation frame for act three, after Adib's sketch: paper ground, the live product recording in a
 # large box on the right labelled "Agent via WebMCP", the desk recording in a small box top-left labelled
 # "Real life demo", and the caption in the left column beneath it.
-BW, BH, BX, BY = 1392, 783, 480, 176          # product box (16:9)
-SW, SH, SX, SY = 384, 216, 48, 176            # founder box
+BW, BH, BX, BY = 1392, 783, 480, 140          # product box (16:9)
+SW, SH, SX, SY = 384, 216, 48, 140            # founder box
 def cut(out, t0, t1, speed=1.0, cap=None, pip=2.0):
     dur = (t1 - t0) / speed
     fc = (f"color=c={PAPER}:s={W}x{H}:r={FPS}:d={dur:.3f}[bg];"
@@ -77,12 +77,45 @@ def concat(out, segs):
 # ---------- content ----------
 PRACTICE = ["wall-panorama.jpg", "wall-front.jpg", "desk-rhino-grasshopper.jpg", "light-and-shadow-sheet.jpg", "sightlines-sheet.jpg", "wind-and-temperature-site.jpg",
             "room-radiation-l1-l3.jpg"]
-PCAPS = ["How practitioners answer it."] + [None] * 6
+PCAPS = [None] * 7
 # sales cards timed to the pauses in the narration (measured with silencedetect); durations in seconds
 SALES_LONG = [(["When a home is sold,", "it gets a sentence."], 4.1), (["Bright and airy."], 1.4), (["Afternoon sun."], 1.6), (["High floor, unblocked."], 2.7), (["Every word is a guess about light."], 2.6), (["None of it is measured."], 3.0)]
 SALES_SHORT = [(["When a home is sold,", "it gets a sentence."], 4.35), (["Bright and airy."], 2.05), (["Afternoon sun."], 2.3), (["None of it is measured."], 3.3)]
 QUOTES = [["“This is what the sustainability consultant", "claims takes weeks to do.”"], ["“They always say four weeks,", "and the model must be simple, simple.”"], ["“Someone cracked his brain for two weeks", "to get our whole model into Rhino.”"]]
 QSUB = "A practitioner, Singapore, on reading the report, 3 September 2026"
+SUBS = {
+ "b01": ["Will this apartment get the sun you expect?"],
+ "b02": ["In practice, and in school before it, we answer it with instruments.", "A wall of trace.", "A model of the site.", "Light and shadow, room by room.", "Sightlines.", "Wind and heat.", "Radiation on every floor.", "Hours of direct sun in June, drawn over and argued over.", "All of it measured, before anyone commits."],
+ "b02s": ["In practice we answer it with instruments.", "Trace, models, light and shadow, sightlines, wind, radiation, hours of sun.", "All of it measured, before anyone commits."],
+ "b04": ["Apartment Intelligence takes the practice instruments, Ladybug and Radiance,", "and hands them to the person who will live there."],
+ "b05": ["Start with a real block.", "Eighty-seven Dawson Road, storey thirty."],
+ "b06": ["An agent working through WebMCP can open the study and stage a placement.", "It can ask for the analysis.", "It will be refused."],
+ "b07": ["Confirmation is a visible click, and it belongs to a person."],
+ "b08": ["Now the agent runs it.", "Annual radiation on the floor, room by room.", "Every number comes back with its method and its digest,", "and the agent can explain any of them without changing one."],
+ "b09": ["Ask about three units and it surveys them in a row, no click needed,", "every number labelled unconfirmed.", "The report belongs to the one you confirm."],
+ "b10": ["Then keep the evidence.", "A report with the cover, the plans, the digest on every page."],
+ "b12": ["We built this for residents.", "Then practitioners read the report and saw their own four-week study in it.", "The same engine that answers one resident can answer a practice,", "and that is the door this challenge opened."],
+ "b11": ["The same engines.", "Now for the people who live there.", "Apartment Intelligence, built for the OpenAI WebMCP Challenge."],
+}
+def speech_segments(f):
+    """Speech runs in a narration file, from silencedetect."""
+    out = subprocess.run(f"ffmpeg -v info -i {f} -af silencedetect=noise=-32dB:d=0.22 -f null -", shell=True, capture_output=True, text=True).stderr
+    import re
+    sil = [(float(a), float(b)) for a, b in zip(re.findall(r"silence_start: ([0-9.]+)", out), re.findall(r"silence_end: ([0-9.]+)", out))]
+    total = alen(f); segs, cur = [], 0.0
+    for a, b in sil:
+        if a - cur > 0.15: segs.append((cur, a))
+        cur = b
+    if total - cur > 0.15: segs.append((cur, total))
+    return segs
+def phrase_times(f, phrases):
+    """Map phrases to speech runs; if the counts differ, spread boundaries by character length."""
+    segs = speech_segments(f)
+    if len(segs) == len(phrases): return [(a, b) for (a, b) in segs]
+    start, end = (segs[0][0], segs[-1][1]) if segs else (0.0, alen(f)); span = end - start
+    n = sum(len(x) for x in phrases); t, out = start, []
+    for x in phrases: d = span * len(x) / n; out.append((t, t + d)); t += d
+    return out
 THESIS = ["Built with Ladybug and Radiance,", "the same engines architects use in practice,", "so the study a practice would run for a client", "is now open to the people who live there."]
 INTRO = dict(lines=["Apartment Intelligence"], sub=["Version 0, built for the OpenAI WebMCP Challenge", "September 2026"], size=72)
 
@@ -137,7 +170,15 @@ for i, (kind, a, beat) in enumerate(timeline(V)):
     if beat and beat not in ("b02", "b03", "b12"): dur = hold(out, dur, BEATLEN[beat] + 0.35 + 0.7)
     if beat: cues.append((beat, t + 0.35))
     segs.append(out); t += dur
-video = f"{R}/_video.mp4"; concat(video, segs); total = t
+video0 = f"{R}/_video0.mp4"; concat(video0, segs); total = t
+subs = []
+for b, at in cues:
+    key = "b02s" if (b == "b02" and BEATNAME["b02"] == "practice-short") else b
+    if key not in SUBS or b == "b03": continue   # the sales cards are their own captions
+    for (a, z), text in zip(phrase_times(f"{BEATS}/{b}-{BEATNAME[b]}.mp3", SUBS[key]), SUBS[key]):
+        subs.append((at + a, at + z + 0.25, text))
+chain = ",".join(f"drawtext=fontfile={SANS}:text='{esc(txt)}':fontsize=34:fontcolor={INK}:box=1:boxcolor={PAPER}@0.94:boxborderw=16:x=(w-text_w)/2:y=h-96:enable='between(t,{a:.2f},{z:.2f})'" for a, z, txt in subs)
+video = f"{R}/_video.mp4"; run(f"ffmpeg -v error -y -i {video0} -vf \"{chain}\" -c:v libx264 -crf 18 -pix_fmt yuv420p -r {FPS} {video}")
 inputs = f"-i {video} -i {MUSIC} " + " ".join(f"-i {BEATS}/{b}-{BEATNAME[b]}.mp3" for b, _ in cues)
 fc = f"[1:a]atrim=0:{total},afade=t=in:st=0:d=2,afade=t=out:st={total-4}:d=4,volume=0.11[m];"
 fc += "".join(f"[{i+2}:a]adelay={int(at*1000)}|{int(at*1000)}[n{i}];" for i, (_, at) in enumerate(cues))
