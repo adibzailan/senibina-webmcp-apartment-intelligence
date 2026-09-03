@@ -142,9 +142,9 @@ def build_block87_plate(building: dict, height_published_m: float = 147.8) -> Pl
         overhang_depth_m=1.5,
         source=Source(state="inferred", document="HDB Existing Building d_16b157c52ed637edd6ba1232e026258d + HDB Property Information d_17f5382f26140b1fdae0ba2ef6239d2f + HDB press release 3 Nov 2016 (sky gardens 3/14/25/36)", confidence_m=0.5),
         limitations=[
-            "Upper-storey plate is the ground footprint extruded; no storey-30 plan is published.",
-            "Which wing end holds the 4-room stack is unknown; the resident chooses a slot and it is labelled assumed.",
-            "Sky-garden storeys are modelled as core-only voids with a slab overhang of assumed depth.",
-            "Storey heights are an assumed model (3.6 / 2.8 / 5.6 m) reconciled to the published 147.8 m.",
+            "The tower above ground is the published ground outline repeated on every floor; no plan of storey 30 has been published.",
+            "HDB has not published which end of each wing is the 4-room flat, so you choose and it stays marked as an assumption.",
+            "The sky-garden floors (3, 14, 25, 36) are treated as open decks around the lift core.",
+            "Floor heights are estimated (3.6 m ground, 2.8 m typical, 5.6 m sky gardens) so that the tower reaches its published 147.8 m.",
         ],
     )

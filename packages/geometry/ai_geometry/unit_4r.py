@@ -186,8 +186,8 @@ def build_4r(variant: str) -> UnitRecipe:
         rooms=rooms(variant),
         source=PUB,
         limitations=[
-            "Published typical 4-room plan; not a verified plan for any particular Block 87 dwelling or for storey 30.",
-            "Window sill 1.0 m and head 2.4 m, side windows, kitchen window, balcony and railings are assumed.",
-            "Wall positions carry +-0.25 m tolerance from raster tracing.",
+            "The apartment is HDB's published typical 4-room plan, not a survey of your particular flat.",
+            "Window heights (sill 1.0 m, head 2.4 m), the side windows, kitchen window, balcony and railings are assumptions you can switch off.",
+            "Walls were traced from the brochure and may be out by about 25 cm.",
         ],
     )

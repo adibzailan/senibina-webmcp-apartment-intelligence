@@ -1095,10 +1095,10 @@
  "height_published_m": 147.8,
  "id": "skyville-block87-plate",
  "limitations": [
-  "Upper-storey plate is the ground footprint extruded; no storey-30 plan is published.",
-  "Which wing end holds the 4-room stack is unknown; the resident chooses a slot and it is labelled assumed.",
-  "Sky-garden storeys are modelled as core-only voids with a slab overhang of assumed depth.",
-  "Storey heights are an assumed model (3.6 / 2.8 / 5.6 m) reconciled to the published 147.8 m."
+  "The tower above ground is the published ground outline repeated on every floor; no plan of storey 30 has been published.",
+  "HDB has not published which end of each wing is the 4-room flat, so you choose and it stays marked as an assumption.",
+  "The sky-garden floors (3, 14, 25, 36) are treated as open decks around the lift core.",
+  "Floor heights are estimated (3.6 m ground, 2.8 m typical, 5.6 m sky gardens) so that the tower reaches its published 147.8 m."
  ],
  "overhang_depth_m": 1.5,
  "postal_code": "141087",

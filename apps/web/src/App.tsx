@@ -12,6 +12,18 @@ const DATES = ["03-21", "06-21", "09-22", "12-21"];
 const STATE_WORDS: Record<string, string> = { created: "started", placed: "placement staged", needs_confirmation: "awaiting your confirmation", ready: "confirmed, ready to analyse", analysing: "analysing", analysed: "analysed" };
 const ELEMENT_LABELS: Record<string, string> = { "win-mainbed": "Main bedroom window", "win-bed2": "Bedroom 2 window", "win-bed3": "Bedroom 3 window", "win-living": "Living room window", "win-living-side": "Living room side window", "win-mainbed-side": "Main bedroom side window", "win-kitchen": "Kitchen window", "railing-serviceyard": "Service yard railing", "balcony-living": "Living room balcony", "railing-balcony": "Balcony railing" };
 const labelOf = (id: string) => ELEMENT_LABELS[id] ?? id.replace(/[-_]/g, " ");
+const ROOM_LABELS: Record<string, string> = { main_bedroom: "Main bedroom", bedroom_2: "Bedroom 2", bedroom_3: "Bedroom 3", living_dining: "Living and dining", corridor: "Corridor", bath_1: "Bathroom 1", bath_2: "Bathroom 2", kitchen: "Kitchen", service_yard: "Service yard", entrance: "Entrance", shelter: "Household shelter", ac_ledge: "AC ledge" };
+const STATE_PLAIN: Record<string, string> = { sourced: "from public data", inferred: "estimated from public data", reconstructed: "traced from a published drawing", assumed: "an assumption you can change", computed: "computed", resident_confirmed: "confirmed by you" };
+const roomOf = (id: string) => ROOM_LABELS[id] ?? id.replace(/_/g, " ");
+
+function finding(r: any): string {
+  const rooms = Object.entries(r.radiation.per_room as Record<string, any>).filter(([k]) => !["corridor", "entrance"].includes(k));
+  const sorted = [...rooms].sort((a, b) => b[1].avg - a[1].avg);
+  const top = sorted[0], none = rooms.filter(([, v]) => v.max === 0).map(([k]) => roomOf(k));
+  const sunny = top ? `${roomOf(top[0])} receives the most sunlight over a year, about ${Math.round(top[1].avg)} kWh per square metre on average at table height.` : "";
+  const dark = none.length ? ` ${none.join(", ")} ${none.length > 1 ? "receive" : "receives"} no direct sky at all, because ${none.length > 1 ? "they face" : "it faces"} into the block.` : "";
+  return sunny + dark;
+}
 
 /** A step is reachable only when the state behind it exists; confirmation still needs the click. */
 function canAdvance(s: State): boolean {
@@ -207,13 +219,7 @@ export default function App() {
               <div className="numbers" style={{ marginTop: 12 }}>
                 <div><span>minimum</span><strong>{r.radiation.min}</strong></div><div><span>average</span><strong>{r.radiation.avg}</strong></div><div><span>maximum</span><strong>{r.radiation.max}</strong></div>
               </div>
-              <p className="status">kWh/m² per year on the 0.8 m plane · {r.sky.discretisation} sky, {r.sky.patches} patches · {r.weather.station} TMYx · digest {r.digest.slice(0, 12)}</p>
-              <details><summary>Method, sources and limitations</summary>
-                <table className="evidence"><tbody>
-                  {r.provenance.map((p: any, i: number) => <tr key={i}><td>{String(p.value)}</td><td>{p.state}</td><td>{p.method}</td><td>{p.limitation ?? ""}</td></tr>)}
-                  {r.radiation.limitations.map((l: string, i: number) => <tr key={"l" + i}><td colSpan={4}>{l}</td></tr>)}
-                </tbody></table>
-              </details>
+              <p className="status">Sunlight over a typical year, in kWh per square metre, measured at table height. Details are under the table below.</p>
               <div className="toolbar"><button className="primary" onClick={() => dispatch({ type: "go", screen: "export" })}>Keep the evidence</button></div>
             </>}
           </section>}
@@ -231,10 +237,34 @@ export default function App() {
       </div>
 
       {r && <section className="chapter">
-        <h2>Per room</h2>
-        <table className="evidence"><tbody>{Object.entries(r.radiation.per_room).map(([k, v]: any) => <tr key={k}><td>{k}</td><td>{v.sensors} sensors</td><td>min {v.min}</td><td>avg {v.avg}</td><td>max {v.max}</td></tr>)}</tbody></table>
-        <details style={{ marginTop: 8 }}><summary>Explain evidence (same record a tool receives)</summary><pre style={{ fontSize: 11, whiteSpace: "pre-wrap" }}>{JSON.stringify(explainEvidence(ctx, "digest"), null, 1)}</pre></details>
+        <h2>Room by room</h2>
+        <p className="lede">{finding(r)}</p>
+        <table className="evidence rooms"><thead><tr><th>Room</th><th>Points measured</th><th>Least</th><th>Average</th><th>Most</th></tr></thead><tbody>
+          {Object.entries(r.radiation.per_room).sort((a: any, b: any) => b[1].avg - a[1].avg).map(([k, v]: any) => <tr key={k}><td>{roomOf(k)}</td><td>{v.sensors}</td><td>{v.min.toFixed(0)}</td><td>{v.avg.toFixed(0)}</td><td>{v.max.toFixed(0)}</td></tr>)}
+        </tbody></table>
+        <p className="status">kWh per square metre over a typical year, on a surface 0.8 m above the floor, {r.sensors.count} points at {r.sensors.grid.spacing_m} m spacing.</p>
       </section>}
+
+      {r && <section className="chapter">
+        <details>
+          <summary>Method, sources and limitations</summary>
+          <h3>What the analysis used</h3>
+          <table className="evidence"><tbody>
+            <tr><td>Weather</td><td>A typical year for Singapore Changi airport built from 2011–2025 records ({r.weather.period}); {r.weather.annual_ghi_kwh_m2.toFixed(0)} kWh/m² falls on open ground in that year.</td></tr>
+            <tr><td>Sky model</td><td>The sky is split into {r.sky.patches} patches and each patch's yearly sunlight is computed by Radiance, the same engine architects use.</td></tr>
+            <tr><td>Blocking</td><td>Every wall, floor, column and neighbouring block that can block the sky is included; light bouncing off surfaces is not.</td></tr>
+            <tr><td>Measuring points</td><td>{r.sensors.count} points on a {r.sensors.grid.spacing_m} m grid, {r.sensors.grid.offset_m} m above the floor, inside the rooms.</td></tr>
+          </tbody></table>
+          <h3>What is known and what is assumed</h3>
+          <table className="evidence"><tbody>
+            {r.provenance.map((p: any, i: number) => <tr key={i}><td>{p.method}</td><td>{STATE_PLAIN[p.state] ?? p.state}</td><td>{p.limitation ?? ""}</td></tr>)}
+          </tbody></table>
+          <h3>Limits to keep in mind</h3>
+          <ul className="limits">{r.radiation.limitations.map((l: string, i: number) => <li key={i}>{l}</li>)}</ul>
+          <p className="status">Record: method {r.method_version} · result digest {r.digest.slice(0, 16)} · weather file {r.weather.sha256.slice(0, 16)}. The same record is what an agent receives from the explain_evidence tool and what every export carries.</p>
+        </details>
+      </section>}
+
       <footer className="colophon">
         <div className="colophon-brand">Apartment Intelligence</div>
         <div className="colophon-line">A Senibina public-interest study · Singapore first</div>

@@ -44,10 +44,10 @@ def run_analysis(precinct: dict, plate: PlateRecipe, unit: UnitRecipe, placement
     wr = weather_record(epw_path)
     recipe_digest = sha256_canonical({"plate": plate.digest(), "unit": unit.digest()})
     limitations = [
-        "No inter-reflections: radiation counts sky and ground patches reaching the sensor directly (Ladybug incident-radiation convention).",
-        "Glazing is transparent in the analysis (no transmittance, frames or blinds).",
-        "Sensor plane at 0.8 m above finished floor; a floor-level plane reads lower near the frontage.",
-        "Upper-storey plate and neighbour heights are inferred; window sizes and balcony are assumed.",
+        "Sunlight is counted only when it reaches a point directly from the sky; light bouncing off walls, floors or neighbouring buildings is not included.",
+        "Windows are treated as fully open to light; glass, frames, curtains and blinds would reduce the numbers.",
+        "Numbers are measured on an imaginary surface 0.8 m above the floor, about table height, not on the floor itself.",
+        "The shape of the tower above ground level and the heights of neighbouring blocks are estimated; window sizes and the balcony are assumptions you can change.",
     ] + list(unit.limitations) + list(plate.limitations)
     result = {
         "schema": RESULT_SCHEMA,
@@ -64,10 +64,10 @@ def run_analysis(precinct: dict, plate: PlateRecipe, unit: UnitRecipe, placement
         "solar_access": sun,
         "radiation": {"sensor_kwh_m2": rad["total_kwh_m2"], "components": {"direct": rad["direct_kwh_m2"], "diffuse": rad["diffuse_kwh_m2"], "ground": rad["ground_kwh_m2"]}, "per_room": per_room, "min": round(float(total.min()), 3), "avg": round(float(total.mean()), 3), "max": round(float(total.max()), 3), "unit": "kWh/m2 per year", "limitations": limitations},
         "provenance": [
-            evidence(wr["annual_ghi_kwh_m2"], "sourced", wr["source"], "EPW global horizontal radiation sum", "high", "TMYx typical year, not a forecast"),
-            evidence(placement.storey, "resident_confirmed", "resident selection", "storey chosen in the visible interface", "high", None),
-            evidence(placement.facade, "assumed", plate.wings[0].source.document, "wing chosen by resident; 4R stack end assumed", "medium", "which wing end is 4-room is not published"),
-            evidence(round(float(total.mean()), 3), "computed", METHOD_VERSION, "rcontrib intersection x gendaymtx sky", "medium", limitations[0]),
+            evidence(wr["annual_ghi_kwh_m2"], "sourced", wr["source"], "Yearly sunlight on open ground at Changi, from the typical-year weather file", "high", "A typical year assembled from 2011-2025 records, not a forecast"),
+            evidence(placement.storey, "resident_confirmed", "resident selection", "Storey you chose in the page", "high", None),
+            evidence(placement.facade, "assumed", plate.wings[0].source.document, "Wing you chose; which end of the wing is the 4-room flat is an assumption", "medium", "HDB has not published which end of each wing is the 4-room flat"),
+            evidence(round(float(total.mean()), 3), "computed", METHOD_VERSION, "Average yearly sunlight across the sensor points, computed with Ladybug and Radiance", "medium", limitations[0]),
         ],
         "analytical_mesh": {"faces": int(len(amesh.faces)), "watertight": bool(amesh.is_watertight)},
     }

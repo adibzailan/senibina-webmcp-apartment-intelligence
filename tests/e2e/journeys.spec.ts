@@ -19,10 +19,12 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   await page.getByTestId("confirm-button").click();
   await expect(page.getByRole("heading", { name: /Sun, shade and radiation/ })).toBeVisible();
   await page.getByRole("button", { name: "Fast (0.5 m)" }).click();
-  await expect(page.getByText(/digest [0-9a-f]{12}/)).toBeVisible({ timeout: 60_000 });
-  // every displayed number in the numbers block sits next to provenance disclosure
+  await expect(page.getByRole("heading", { name: "Room by room" })).toBeVisible({ timeout: 60_000 });
+  // every displayed number sits with its provenance: the numbers block, the room table, and the closed method disclosure
   await expect(page.locator(".numbers strong")).toHaveCount(3);
   await expect(page.getByText("Method, sources and limitations")).toBeVisible();
+  await page.locator("summary", { hasText: "Method, sources" }).click();
+  await expect(page.getByText(/result digest [0-9a-f]{16}/)).toBeVisible();
   for (const preset of ["Sunpath", "Shadow", "Solar access", "Radiation"]) await page.getByRole("button", { name: preset, exact: true }).click();
   for (const cam of ["Precinct", "Tower", "Home", "Plan", "North", "Reset", "Map"]) await page.getByRole("button", { name: cam, exact: true }).click();
   // orbit, pan, zoom on the live canvas must not throw
