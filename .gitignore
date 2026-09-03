@@ -19,3 +19,12 @@ web/vite.config.d.ts
 .compiler-venv/
 __pycache__/
 *.py[cod]
+# v2 clean-room
+/.tools/
+/apps/web/dist/
+/apps/web/node_modules/
+/tests/e2e/test-results/
+/tests/e2e/playwright-report/
+/.cache/
+/var/
+*.egg-info/

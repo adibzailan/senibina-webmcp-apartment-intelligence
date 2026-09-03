@@ -1,0 +1,1268 @@
+{
+ "address": "87 Dawson Road",
+ "bands": [
+  {
+   "base_m": 0.0,
+   "id": "s1-1",
+   "kind": "podium",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 3.6,
+   "storeys": [
+    1,
+    1
+   ],
+   "top_m": 3.6
+  },
+  {
+   "base_m": 3.6,
+   "id": "s2-2",
+   "kind": "typical",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 2.8,
+   "storeys": [
+    2,
+    2
+   ],
+   "top_m": 6.4
+  },
+  {
+   "base_m": 6.4,
+   "id": "s3-3",
+   "kind": "sky_garden",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 5.6,
+   "storeys": [
+    3,
+    3
+   ],
+   "top_m": 12.0
+  },
+  {
+   "base_m": 12.0,
+   "id": "s4-13",
+   "kind": "typical",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 2.8,
+   "storeys": [
+    4,
+    13
+   ],
+   "top_m": 40.0
+  },
+  {
+   "base_m": 40.0,
+   "id": "s14-14",
+   "kind": "sky_garden",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 5.6,
+   "storeys": [
+    14,
+    14
+   ],
+   "top_m": 45.6
+  },
+  {
+   "base_m": 45.6,
+   "id": "s15-24",
+   "kind": "typical",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 2.8,
+   "storeys": [
+    15,
+    24
+   ],
+   "top_m": 73.6
+  },
+  {
+   "base_m": 73.6,
+   "id": "s25-25",
+   "kind": "sky_garden",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 5.6,
+   "storeys": [
+    25,
+    25
+   ],
+   "top_m": 79.2
+  },
+  {
+   "base_m": 79.2,
+   "id": "s26-35",
+   "kind": "typical",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 2.8,
+   "storeys": [
+    26,
+    35
+   ],
+   "top_m": 107.2
+  },
+  {
+   "base_m": 107.2,
+   "id": "s36-36",
+   "kind": "sky_garden",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 5.6,
+   "storeys": [
+    36,
+    36
+   ],
+   "top_m": 112.8
+  },
+  {
+   "base_m": 112.8,
+   "id": "s37-47",
+   "kind": "typical",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 2.8,
+   "storeys": [
+    37,
+    47
+   ],
+   "top_m": 143.6
+  },
+  {
+   "base_m": 143.6,
+   "id": "roof",
+   "kind": "roof",
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 1.5,
+    "document": "HDB Precast Pictorial Guide 2014 (2.8 m typical, 3.6 m first); sky-garden storeys double height reconciles to 147.8 m published",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "storey_height_m": 4.0,
+   "storeys": [
+    48,
+    48
+   ],
+   "top_m": 147.6
+  }
+ ],
+ "block": "87",
+ "core": [
+  [
+   10.431,
+   0.202
+  ],
+  [
+   15.813,
+   -0.573
+  ],
+  [
+   15.361,
+   -3.751
+  ],
+  [
+   9.991,
+   -2.978
+  ],
+  [
+   11.372,
+   -7.195
+  ],
+  [
+   11.248,
+   -7.205
+  ],
+  [
+   10.951,
+   -7.241
+  ],
+  [
+   10.66,
+   -7.307
+  ],
+  [
+   10.376,
+   -7.401
+  ],
+  [
+   10.103,
+   -7.522
+  ],
+  [
+   9.843,
+   -7.669
+  ],
+  [
+   9.84,
+   -7.671
+  ],
+  [
+   9.729,
+   -7.741
+  ],
+  [
+   8.994,
+   -5.496
+  ],
+  [
+   7.552,
+   -5.974
+  ],
+  [
+   7.143,
+   -4.725
+  ],
+  [
+   -8.155,
+   -2.459
+  ],
+  [
+   -8.883,
+   -3.503
+  ],
+  [
+   -10.102,
+   -2.642
+  ],
+  [
+   -11.465,
+   -4.598
+  ],
+  [
+   -11.552,
+   -4.497
+  ],
+  [
+   -11.758,
+   -4.28
+  ],
+  [
+   -11.985,
+   -4.084
+  ],
+  [
+   -12.23,
+   -3.911
+  ],
+  [
+   -12.491,
+   -3.763
+  ],
+  [
+   -12.765,
+   -3.642
+  ],
+  [
+   -12.883,
+   -3.596
+  ],
+  [
+   -10.361,
+   0.021
+  ],
+  [
+   -15.729,
+   0.795
+  ],
+  [
+   -15.278,
+   3.973
+  ],
+  [
+   -9.915,
+   3.201
+  ],
+  [
+   -11.304,
+   7.444
+  ],
+  [
+   -11.18,
+   7.454
+  ],
+  [
+   -10.883,
+   7.49
+  ],
+  [
+   -10.591,
+   7.556
+  ],
+  [
+   -10.307,
+   7.65
+  ],
+  [
+   -10.033,
+   7.772
+  ],
+  [
+   -9.772,
+   7.92
+  ],
+  [
+   -9.664,
+   7.988
+  ],
+  [
+   -8.006,
+   2.926
+  ],
+  [
+   -1.461,
+   1.983
+  ],
+  [
+   -1.762,
+   -0.136
+  ],
+  [
+   1.672,
+   -0.63
+  ],
+  [
+   1.964,
+   1.422
+  ],
+  [
+   8.488,
+   0.482
+  ],
+  [
+   11.496,
+   4.796
+  ],
+  [
+   11.582,
+   4.695
+  ],
+  [
+   11.789,
+   4.477
+  ],
+  [
+   12.016,
+   4.28
+  ],
+  [
+   12.262,
+   4.106
+  ],
+  [
+   12.523,
+   3.957
+  ],
+  [
+   12.798,
+   3.835
+  ],
+  [
+   12.809,
+   3.831
+  ],
+  [
+   12.929,
+   3.785
+  ]
+ ],
+ "footprint": [
+  [
+   15.813,
+   -0.573
+  ],
+  [
+   10.431,
+   0.202
+  ],
+  [
+   12.961,
+   3.83
+  ],
+  [
+   14.035,
+   3.07
+  ],
+  [
+   13.869,
+   2.831
+  ],
+  [
+   14.853,
+   2.135
+  ],
+  [
+   15.02,
+   2.374
+  ],
+  [
+   18.328,
+   0.036
+  ],
+  [
+   19.795,
+   2.139
+  ],
+  [
+   20.869,
+   1.379
+  ],
+  [
+   20.666,
+   1.088
+  ],
+  [
+   21.321,
+   0.625
+  ],
+  [
+   21.524,
+   0.916
+  ],
+  [
+   21.616,
+   0.851
+  ],
+  [
+   22.626,
+   2.3
+  ],
+  [
+   23.258,
+   1.853
+  ],
+  [
+   24.649,
+   3.847
+  ],
+  [
+   23.925,
+   4.359
+  ],
+  [
+   25.121,
+   6.074
+  ],
+  [
+   24.439,
+   6.556
+  ],
+  [
+   24.837,
+   7.126
+  ],
+  [
+   8.786,
+   18.47
+  ],
+  [
+   8.388,
+   17.9
+  ],
+  [
+   7.693,
+   18.391
+  ],
+  [
+   4.966,
+   14.482
+  ],
+  [
+   5.838,
+   13.866
+  ],
+  [
+   4.967,
+   12.618
+  ],
+  [
+   5.88,
+   11.973
+  ],
+  [
+   5.677,
+   11.681
+  ],
+  [
+   6.306,
+   11.237
+  ],
+  [
+   6.509,
+   11.529
+  ],
+  [
+   7.759,
+   10.645
+  ],
+  [
+   6.293,
+   8.542
+  ],
+  [
+   9.974,
+   5.941
+  ],
+  [
+   9.807,
+   5.702
+  ],
+  [
+   10.792,
+   5.006
+  ],
+  [
+   10.958,
+   5.245
+  ],
+  [
+   11.528,
+   4.842
+  ],
+  [
+   8.488,
+   0.482
+  ],
+  [
+   1.964,
+   1.422
+  ],
+  [
+   1.672,
+   -0.63
+  ],
+  [
+   -1.762,
+   -0.136
+  ],
+  [
+   -1.461,
+   1.983
+  ],
+  [
+   -8.006,
+   2.926
+  ],
+  [
+   -9.681,
+   8.041
+  ],
+  [
+   -9.033,
+   8.256
+  ],
+  [
+   -8.937,
+   7.965
+  ],
+  [
+   -7.799,
+   8.343
+  ],
+  [
+   -7.894,
+   8.634
+  ],
+  [
+   -3.591,
+   10.062
+  ],
+  [
+   -4.37,
+   12.44
+  ],
+  [
+   -3.002,
+   12.893
+  ],
+  [
+   -2.92,
+   12.641
+  ],
+  [
+   -2.08,
+   12.92
+  ],
+  [
+   -2.163,
+   13.172
+  ],
+  [
+   -1.249,
+   13.475
+  ],
+  [
+   -1.73,
+   14.943
+  ],
+  [
+   -0.702,
+   15.284
+  ],
+  [
+   -2.2,
+   19.859
+  ],
+  [
+   -2.918,
+   19.621
+  ],
+  [
+   -3.152,
+   20.336
+  ],
+  [
+   -21.861,
+   14.129
+  ],
+  [
+   -21.627,
+   13.414
+  ],
+  [
+   -22.454,
+   13.139
+  ],
+  [
+   -21.772,
+   11.057
+  ],
+  [
+   -22.488,
+   10.819
+  ],
+  [
+   -21.764,
+   8.607
+  ],
+  [
+   -21.048,
+   8.845
+  ],
+  [
+   -20.475,
+   7.096
+  ],
+  [
+   -20.335,
+   7.142
+  ],
+  [
+   -20.253,
+   6.89
+  ],
+  [
+   -19.514,
+   7.135
+  ],
+  [
+   -19.596,
+   7.387
+  ],
+  [
+   -18.316,
+   7.812
+  ],
+  [
+   -17.538,
+   5.434
+  ],
+  [
+   -13.66,
+   6.721
+  ],
+  [
+   -13.565,
+   6.43
+  ],
+  [
+   -12.426,
+   6.808
+  ],
+  [
+   -12.522,
+   7.099
+  ],
+  [
+   -11.321,
+   7.497
+  ],
+  [
+   -9.915,
+   3.201
+  ],
+  [
+   -15.278,
+   3.973
+  ],
+  [
+   -15.729,
+   0.795
+  ],
+  [
+   -10.361,
+   0.021
+  ],
+  [
+   -12.915,
+   -3.641
+  ],
+  [
+   -14.049,
+   -2.84
+  ],
+  [
+   -13.899,
+   -2.625
+  ],
+  [
+   -14.853,
+   -1.951
+  ],
+  [
+   -15.003,
+   -2.166
+  ],
+  [
+   -18.284,
+   0.153
+  ],
+  [
+   -19.717,
+   -1.901
+  ],
+  [
+   -20.801,
+   -1.136
+  ],
+  [
+   -20.622,
+   -0.879
+  ],
+  [
+   -21.356,
+   -0.36
+  ],
+  [
+   -21.535,
+   -0.616
+  ],
+  [
+   -21.644,
+   -0.539
+  ],
+  [
+   -22.653,
+   -1.985
+  ],
+  [
+   -23.276,
+   -1.545
+  ],
+  [
+   -24.641,
+   -3.501
+  ],
+  [
+   -23.908,
+   -4.019
+  ],
+  [
+   -25.155,
+   -5.807
+  ],
+  [
+   -24.458,
+   -6.299
+  ],
+  [
+   -24.929,
+   -6.974
+  ],
+  [
+   -8.769,
+   -18.396
+  ],
+  [
+   -8.298,
+   -17.721
+  ],
+  [
+   -7.673,
+   -18.163
+  ],
+  [
+   -4.904,
+   -14.192
+  ],
+  [
+   -5.793,
+   -13.564
+  ],
+  [
+   -4.942,
+   -12.344
+  ],
+  [
+   -5.775,
+   -11.755
+  ],
+  [
+   -5.596,
+   -11.499
+  ],
+  [
+   -6.299,
+   -11.002
+  ],
+  [
+   -6.478,
+   -11.259
+  ],
+  [
+   -7.693,
+   -10.4
+  ],
+  [
+   -6.26,
+   -8.345
+  ],
+  [
+   -9.951,
+   -5.736
+  ],
+  [
+   -9.801,
+   -5.521
+  ],
+  [
+   -10.755,
+   -4.847
+  ],
+  [
+   -10.905,
+   -5.062
+  ],
+  [
+   -11.497,
+   -4.643
+  ],
+  [
+   -10.102,
+   -2.642
+  ],
+  [
+   -8.883,
+   -3.503
+  ],
+  [
+   -8.155,
+   -2.459
+  ],
+  [
+   7.143,
+   -4.725
+  ],
+  [
+   7.552,
+   -5.974
+  ],
+  [
+   8.994,
+   -5.496
+  ],
+  [
+   9.746,
+   -7.794
+  ],
+  [
+   8.99,
+   -8.044
+  ],
+  [
+   8.886,
+   -7.726
+  ],
+  [
+   7.777,
+   -8.094
+  ],
+  [
+   7.881,
+   -8.412
+  ],
+  [
+   3.634,
+   -9.821
+  ],
+  [
+   4.406,
+   -12.179
+  ],
+  [
+   2.98,
+   -12.652
+  ],
+  [
+   2.893,
+   -12.387
+  ],
+  [
+   2.131,
+   -12.64
+  ],
+  [
+   2.218,
+   -12.905
+  ],
+  [
+   1.327,
+   -13.201
+  ],
+  [
+   1.82,
+   -14.708
+  ],
+  [
+   0.762,
+   -15.059
+  ],
+  [
+   2.25,
+   -19.603
+  ],
+  [
+   3.012,
+   -19.35
+  ],
+  [
+   3.253,
+   -20.084
+  ],
+  [
+   21.869,
+   -13.907
+  ],
+  [
+   21.628,
+   -13.173
+  ],
+  [
+   22.495,
+   -12.886
+  ],
+  [
+   21.791,
+   -10.734
+  ],
+  [
+   22.533,
+   -10.488
+  ],
+  [
+   21.804,
+   -8.261
+  ],
+  [
+   21.061,
+   -8.507
+  ],
+  [
+   20.514,
+   -6.834
+  ],
+  [
+   20.376,
+   -6.88
+  ],
+  [
+   20.289,
+   -6.615
+  ],
+  [
+   19.561,
+   -6.856
+  ],
+  [
+   19.647,
+   -7.122
+  ],
+  [
+   18.358,
+   -7.55
+  ],
+  [
+   17.586,
+   -5.192
+  ],
+  [
+   13.754,
+   -6.464
+  ],
+  [
+   13.65,
+   -6.145
+  ],
+  [
+   12.541,
+   -6.513
+  ],
+  [
+   12.646,
+   -6.831
+  ],
+  [
+   11.389,
+   -7.248
+  ],
+  [
+   9.991,
+   -2.978
+  ],
+  [
+   15.361,
+   -3.751
+  ],
+  [
+   15.813,
+   -0.573
+  ]
+ ],
+ "height_published_m": 147.8,
+ "id": "skyville-block87-plate",
+ "limitations": [
+  "Upper-storey plate is the ground footprint extruded; no storey-30 plan is published.",
+  "Which wing end holds the 4-room stack is unknown; the resident chooses a slot and it is labelled assumed.",
+  "Sky-garden storeys are modelled as core-only voids with a slab overhang of assumed depth.",
+  "Storey heights are an assumed model (3.6 / 2.8 / 5.6 m) reconciled to the published 147.8 m."
+ ],
+ "overhang_depth_m": 1.5,
+ "postal_code": "141087",
+ "project": "SkyVille @ Dawson",
+ "schema": "apartment-intelligence.recipe.v1",
+ "sky_garden_storeys": [
+  3,
+  14,
+  25,
+  36
+ ],
+ "source": {
+  "calibration_id": null,
+  "confidence_m": 0.5,
+  "document": "HDB Existing Building d_16b157c52ed637edd6ba1232e026258d + HDB Property Information d_17f5382f26140b1fdae0ba2ef6239d2f + HDB press release 3 Nov 2016 (sky gardens 3/14/25/36)",
+  "note": null,
+  "page": null,
+  "state": "inferred"
+ },
+ "storeys": 47,
+ "wings": [
+  {
+   "axis_deg": -215.251,
+   "depth_m": 9.678,
+   "id": "NE",
+   "inward_deg": -125.251,
+   "label": "Wing NE",
+   "length_m": 21.623,
+   "origin": [
+    16.935,
+    12.711
+   ],
+   "slots": [
+    {
+     "id": "end",
+     "start_m": 0.0,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    },
+    {
+     "id": "inner",
+     "start_m": 9.113,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    }
+   ],
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "HDB Existing Building footprint decomposed; slot split inferred from 160x3R+160x4R and WOHA plan 16-24",
+    "note": null,
+    "page": null,
+    "state": "reconstructed"
+   }
+  },
+  {
+   "axis_deg": -161.646,
+   "depth_m": 9.741,
+   "id": "NW",
+   "inward_deg": -71.646,
+   "label": "Wing NW",
+   "length_m": 21.58,
+   "origin": [
+    -12.686,
+    17.173
+   ],
+   "slots": [
+    {
+     "id": "end",
+     "start_m": 0.0,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    },
+    {
+     "id": "inner",
+     "start_m": 9.07,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    }
+   ],
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "HDB Existing Building footprint decomposed; slot split inferred from 160x3R+160x4R and WOHA plan 16-24",
+    "note": null,
+    "page": null,
+    "state": "reconstructed"
+   }
+  },
+  {
+   "axis_deg": -35.253,
+   "depth_m": 9.785,
+   "id": "SW",
+   "inward_deg": 54.747,
+   "label": "Wing SW",
+   "length_m": 21.66,
+   "origin": [
+    -17.003,
+    -12.576
+   ],
+   "slots": [
+    {
+     "id": "end",
+     "start_m": 0.0,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    },
+    {
+     "id": "inner",
+     "start_m": 9.15,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    }
+   ],
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "HDB Existing Building footprint decomposed; slot split inferred from 160x3R+160x4R and WOHA plan 16-24",
+    "note": null,
+    "page": null,
+    "state": "reconstructed"
+   }
+  },
+  {
+   "axis_deg": 18.356,
+   "depth_m": 9.748,
+   "id": "SE",
+   "inward_deg": 108.356,
+   "label": "Wing SE",
+   "length_m": 21.561,
+   "origin": [
+    12.733,
+    -16.938
+   ],
+   "slots": [
+    {
+     "id": "end",
+     "start_m": 0.0,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    },
+    {
+     "id": "inner",
+     "start_m": 9.051,
+     "state": "assumed",
+     "unit_type": "4R",
+     "width_m": 12.51
+    }
+   ],
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "HDB Existing Building footprint decomposed; slot split inferred from 160x3R+160x4R and WOHA plan 16-24",
+    "note": null,
+    "page": null,
+    "state": "reconstructed"
+   }
+  }
+ ]
+}

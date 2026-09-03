@@ -1,0 +1,2163 @@
+{
+ "elements": [
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-0",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -6.255,
+     0.0
+    ],
+    [
+     6.255,
+     0.0
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.25,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "published"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-1",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     6.255,
+     0.0
+    ],
+    [
+     6.255,
+     6.05
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-2",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     6.255,
+     6.05
+    ],
+    [
+     5.65,
+     6.05
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-3",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     5.65,
+     6.05
+    ],
+    [
+     5.65,
+     6.95
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-4",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     5.65,
+     6.95
+    ],
+    [
+     3.72,
+     6.95
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-5",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     3.72,
+     6.95
+    ],
+    [
+     3.72,
+     8.78
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-6",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     3.72,
+     8.78
+    ],
+    [
+     -1.81,
+     8.78
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-7",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -1.81,
+     8.78
+    ],
+    [
+     -1.81,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-8",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -1.81,
+     6.33
+    ],
+    [
+     -6.255,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "ext-9",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -6.255,
+     6.33
+    ],
+    [
+     -6.255,
+     0.0
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-corridor-south",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -5.18,
+     4.49
+    ],
+    [
+     0.44,
+     4.49
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-acledge-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -4.26,
+     4.49
+    ],
+    [
+     -4.26,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-bath1-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -2.12,
+     4.49
+    ],
+    [
+     -2.12,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-shaft-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -1.51,
+     4.49
+    ],
+    [
+     -1.51,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-bath2-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     0.13,
+     4.49
+    ],
+    [
+     0.13,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-shelter-west",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     0.44,
+     4.49
+    ],
+    [
+     0.44,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.3
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-shelter-north",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     0.44,
+     4.49
+    ],
+    [
+     2.78,
+     4.49
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.3
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-shelter-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     2.78,
+     4.49
+    ],
+    [
+     2.78,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.3
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-shelter-south",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     0.44,
+     6.33
+    ],
+    [
+     2.78,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.3
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-wet-south",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -4.26,
+     6.33
+    ],
+    [
+     0.44,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-living-south",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     2.78,
+     6.33
+    ],
+    [
+     3.72,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-serviceyard-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     0.74,
+     6.33
+    ],
+    [
+     0.74,
+     8.78
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-kitchen-corridor",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     3.72,
+     6.33
+    ],
+    [
+     3.72,
+     6.95
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-mainbed-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -2.93,
+     0.0
+    ],
+    [
+     -2.93,
+     4.39
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-mainbed-south",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -6.255,
+     4.39
+    ],
+    [
+     -2.93,
+     4.39
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-bed2-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     0.03,
+     0.0
+    ],
+    [
+     0.03,
+     3.47
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-bed2-south",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -2.93,
+     3.47
+    ],
+    [
+     0.03,
+     3.47
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-bed3-east",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     2.78,
+     0.0
+    ],
+    [
+     2.78,
+     3.47
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "w-bed3-south",
+   "kind": "wall",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     0.03,
+     3.47
+    ],
+    [
+     2.78,
+     3.47
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.1
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-front-0",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    -5.65,
+    -0.35,
+    -5.15,
+    0.15
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-front-1",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    -3.1,
+    -0.35,
+    -2.6,
+    0.15
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-front-2",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    -0.65,
+    -0.35,
+    -0.15000000000000002,
+    0.15
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-front-3",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    2.0,
+    -0.35,
+    2.5,
+    0.15
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-front-4",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    5.3,
+    -0.35,
+    5.8,
+    0.15
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-rear-0",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    -2.035,
+    8.555,
+    -1.585,
+    9.004999999999999
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-rear-1",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    3.495,
+    8.555,
+    3.9450000000000003,
+    9.004999999999999
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-rear-2",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    -6.4799999999999995,
+    6.105,
+    -6.03,
+    6.555
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 2.6,
+   "host_wall": null,
+   "id": "col-rear-3",
+   "kind": "column",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    6.03,
+    5.825,
+    6.4799999999999995,
+    6.2749999999999995
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    1.28,
+    2.7
+   ],
+   "base_m": 1.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.4,
+   "host_wall": "ext-0",
+   "id": "win-mainbed",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.25,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "published"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    4.03,
+    5.46
+   ],
+   "base_m": 1.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.4,
+   "host_wall": "ext-0",
+   "id": "win-bed2",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.25,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "published"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    7.09,
+    8.42
+   ],
+   "base_m": 1.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.4,
+   "host_wall": "ext-0",
+   "id": "win-bed3",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.25,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "published"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    9.85,
+    11.79
+   ],
+   "base_m": 1.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.4,
+   "host_wall": "ext-0",
+   "id": "win-living",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.25,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "published"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    0.5,
+    4.1
+   ],
+   "base_m": 1.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.4,
+   "host_wall": "ext-1",
+   "id": "win-living-side",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "typical HDB detailing; not on the published plan",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    2.1,
+    5.6
+   ],
+   "base_m": 1.0,
+   "blocks_sun": false,
+   "enabled_by_default": false,
+   "height_m": 1.4,
+   "host_wall": "ext-9",
+   "id": "win-mainbed-side",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "typical HDB detailing; not on the published plan",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    0.5,
+    2.6
+   ],
+   "base_m": 1.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.4,
+   "host_wall": "ext-6",
+   "id": "win-kitchen",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "typical HDB detailing; not on the published plan",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    0.1,
+    1.0
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "ext-3",
+   "id": "door-entrance",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    3.3,
+    4.2
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "w-mainbed-east",
+   "id": "door-mainbed",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    1.9,
+    2.8
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "w-bed2-south",
+   "id": "door-bed2",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    0.2,
+    1.1
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "w-bed3-south",
+   "id": "door-bed3",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    1.2,
+    2.0
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "w-corridor-south",
+   "id": "door-bath1",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    3.9,
+    4.7
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "w-corridor-south",
+   "id": "door-bath2",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    0.5,
+    1.3
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "w-shelter-north",
+   "id": "door-shelter",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": [
+    0.05,
+    0.6
+   ],
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 2.1,
+   "host_wall": "w-kitchen-corridor",
+   "id": "door-kitchen",
+   "kind": "opening",
+   "opacity_token": "glass",
+   "polyline": null,
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": -0.2,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 0.2,
+   "host_wall": null,
+   "id": "slab-floor",
+   "kind": "slab",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -6.255,
+     0.0
+    ],
+    [
+     6.255,
+     0.0
+    ],
+    [
+     6.255,
+     6.05
+    ],
+    [
+     5.65,
+     6.05
+    ],
+    [
+     5.65,
+     6.95
+    ],
+    [
+     3.72,
+     6.95
+    ],
+    [
+     3.72,
+     8.78
+    ],
+    [
+     -1.81,
+     8.78
+    ],
+    [
+     -1.81,
+     6.33
+    ],
+    [
+     -6.255,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 2.6,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 0.2,
+   "host_wall": null,
+   "id": "slab-ceiling",
+   "kind": "slab",
+   "opacity_token": "home",
+   "polyline": [
+    [
+     -6.255,
+     0.0
+    ],
+    [
+     6.255,
+     0.0
+    ],
+    [
+     6.255,
+     6.05
+    ],
+    [
+     5.65,
+     6.05
+    ],
+    [
+     5.65,
+     6.95
+    ],
+    [
+     3.72,
+     6.95
+    ],
+    [
+     3.72,
+     8.78
+    ],
+    [
+     -1.81,
+     8.78
+    ],
+    [
+     -1.81,
+     6.33
+    ],
+    [
+     -6.255,
+     6.33
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 0.1,
+   "host_wall": null,
+   "id": "ledge-ac",
+   "kind": "ledge",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    -5.18,
+    4.49,
+    -4.26,
+    6.33
+   ],
+   "room": "ac_ledge",
+   "source": {
+    "calibration_id": "cal-4r-brochure-p5",
+    "confidence_m": 0.3,
+    "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+    "note": null,
+    "page": 5,
+    "state": "reconstructed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.0,
+   "host_wall": null,
+   "id": "railing-serviceyard",
+   "kind": "railing",
+   "opacity_token": "glass",
+   "polyline": [
+    [
+     -1.81,
+     8.78
+    ],
+    [
+     0.74,
+     8.78
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "typical HDB detailing; not on the published plan",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "thickness_m": 0.05
+  },
+  {
+   "along_m": null,
+   "base_m": -0.15,
+   "blocks_sun": true,
+   "enabled_by_default": true,
+   "height_m": 0.15,
+   "host_wall": null,
+   "id": "balcony-living",
+   "kind": "balcony",
+   "opacity_token": "home",
+   "polyline": null,
+   "rect": [
+    3.4,
+    -1.3,
+    5.9,
+    0.0
+   ],
+   "room": null,
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "typical HDB detailing; not on the published plan",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "thickness_m": 0.2
+  },
+  {
+   "along_m": null,
+   "base_m": 0.0,
+   "blocks_sun": false,
+   "enabled_by_default": true,
+   "height_m": 1.0,
+   "host_wall": null,
+   "id": "railing-balcony",
+   "kind": "railing",
+   "opacity_token": "glass",
+   "polyline": [
+    [
+     3.4,
+     -1.3
+    ],
+    [
+     5.9,
+     -1.3
+    ]
+   ],
+   "rect": null,
+   "room": null,
+   "source": {
+    "calibration_id": null,
+    "confidence_m": 0.5,
+    "document": "typical HDB detailing; not on the published plan",
+    "note": null,
+    "page": null,
+    "state": "assumed"
+   },
+   "thickness_m": 0.05
+  }
+ ],
+ "envelope": [
+  [
+   -6.255,
+   0.0
+  ],
+  [
+   6.255,
+   0.0
+  ],
+  [
+   6.255,
+   6.05
+  ],
+  [
+   5.65,
+   6.05
+  ],
+  [
+   5.65,
+   6.95
+  ],
+  [
+   3.72,
+   6.95
+  ],
+  [
+   3.72,
+   8.78
+  ],
+  [
+   -1.81,
+   8.78
+  ],
+  [
+   -1.81,
+   6.33
+  ],
+  [
+   -6.255,
+   6.33
+  ]
+ ],
+ "frame_note": "x along frontage (metres, centred), y from frontage into the unit; z up from finished floor",
+ "frontage_edge": [
+  0,
+  1
+ ],
+ "id": "skyville-4r-type-a",
+ "label": "4R Type A - Base option (3 bedrooms)",
+ "limitations": [
+  "Published typical 4-room plan; not a verified plan for any particular Block 87 dwelling or for storey 30.",
+  "Window sill 1.0 m and head 2.4 m, side windows, kitchen window, balcony and railings are assumed.",
+  "Wall positions carry +-0.25 m tolerance from raster tracing."
+ ],
+ "project": "SkyVille @ Dawson",
+ "rooms": [
+  {
+   "id": "corridor",
+   "label": "Corridor",
+   "polygon": [
+    [
+     -2.93,
+     3.47
+    ],
+    [
+     2.78,
+     3.47
+    ],
+    [
+     2.78,
+     4.49
+    ],
+    [
+     -2.93,
+     4.49
+    ]
+   ]
+  },
+  {
+   "id": "ac_ledge",
+   "label": "AC ledge",
+   "polygon": [
+    [
+     -5.18,
+     4.49
+    ],
+    [
+     -4.26,
+     4.49
+    ],
+    [
+     -4.26,
+     6.33
+    ],
+    [
+     -5.18,
+     6.33
+    ]
+   ]
+  },
+  {
+   "id": "bath_1",
+   "label": "Bath / WC 1",
+   "polygon": [
+    [
+     -4.26,
+     4.49
+    ],
+    [
+     -2.12,
+     4.49
+    ],
+    [
+     -2.12,
+     6.33
+    ],
+    [
+     -4.26,
+     6.33
+    ]
+   ]
+  },
+  {
+   "id": "bath_2",
+   "label": "Bath / WC 2",
+   "polygon": [
+    [
+     -1.51,
+     4.49
+    ],
+    [
+     0.13,
+     4.49
+    ],
+    [
+     0.13,
+     6.33
+    ],
+    [
+     -1.51,
+     6.33
+    ]
+   ]
+  },
+  {
+   "id": "shelter",
+   "label": "Household shelter",
+   "polygon": [
+    [
+     0.44,
+     4.49
+    ],
+    [
+     2.78,
+     4.49
+    ],
+    [
+     2.78,
+     6.33
+    ],
+    [
+     0.44,
+     6.33
+    ]
+   ]
+  },
+  {
+   "id": "service_yard",
+   "label": "Service yard",
+   "polygon": [
+    [
+     -1.81,
+     6.33
+    ],
+    [
+     0.74,
+     6.33
+    ],
+    [
+     0.74,
+     8.78
+    ],
+    [
+     -1.81,
+     8.78
+    ]
+   ]
+  },
+  {
+   "id": "kitchen",
+   "label": "Kitchen",
+   "polygon": [
+    [
+     0.74,
+     6.33
+    ],
+    [
+     3.72,
+     6.33
+    ],
+    [
+     3.72,
+     8.78
+    ],
+    [
+     0.74,
+     8.78
+    ]
+   ]
+  },
+  {
+   "id": "entrance",
+   "label": "Entrance",
+   "polygon": [
+    [
+     3.72,
+     6.33
+    ],
+    [
+     5.65,
+     6.33
+    ],
+    [
+     5.65,
+     6.95
+    ],
+    [
+     3.72,
+     6.95
+    ]
+   ]
+  },
+  {
+   "id": "main_bedroom",
+   "label": "Main bedroom",
+   "polygon": [
+    [
+     -6.255,
+     0.0
+    ],
+    [
+     -2.93,
+     0.0
+    ],
+    [
+     -2.93,
+     4.39
+    ],
+    [
+     -6.255,
+     4.39
+    ]
+   ]
+  },
+  {
+   "id": "bedroom_2",
+   "label": "Bedroom 2",
+   "polygon": [
+    [
+     -2.93,
+     0.0
+    ],
+    [
+     0.03,
+     0.0
+    ],
+    [
+     0.03,
+     3.47
+    ],
+    [
+     -2.93,
+     3.47
+    ]
+   ]
+  },
+  {
+   "id": "bedroom_3",
+   "label": "Bedroom 3",
+   "polygon": [
+    [
+     0.03,
+     0.0
+    ],
+    [
+     2.78,
+     0.0
+    ],
+    [
+     2.78,
+     3.47
+    ],
+    [
+     0.03,
+     3.47
+    ]
+   ]
+  },
+  {
+   "id": "living_dining",
+   "label": "Living / dining",
+   "polygon": [
+    [
+     2.78,
+     0.0
+    ],
+    [
+     6.255,
+     0.0
+    ],
+    [
+     6.255,
+     6.05
+    ],
+    [
+     5.65,
+     6.05
+    ],
+    [
+     5.65,
+     6.33
+    ],
+    [
+     2.78,
+     6.33
+    ]
+   ]
+  }
+ ],
+ "schema": "apartment-intelligence.recipe.v1",
+ "source": {
+  "calibration_id": "cal-4r-brochure-p5",
+  "confidence_m": 0.25,
+  "document": "HDB SkyVille @ Dawson BTO Dec 2009 sales brochure, Flexi-Layout Scheme, 4R Type A/B/C",
+  "note": null,
+  "page": 5,
+  "state": "published"
+ },
+ "storey_height_m": 2.8,
+ "unit_type": "4R",
+ "variant": "A"
+}

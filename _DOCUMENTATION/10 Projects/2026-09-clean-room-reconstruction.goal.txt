@@ -1,0 +1,34 @@
+Rebuild Apartment Intelligence as a clean-room v2: a resident picks 87 Dawson Road storey 30, places a published 4-room plan with real walls, openings and balcony inside a reconstructed Block 87 plate among the Dawson precinct, confirms by a visible click, and gets deterministic Ladybug + Radiance sunpath, shadow, direct-sun and radiation evidence on a 0.25 m grid, driven by UI or WebMCP, exported as GLB, 3DM, SVG cards, PDF, evidence.json and ZIP, from one Docker image run locally.
+
+First read:
+- _DOCUMENTATION/10 Projects/2026-09-clean-room-reconstruction.md (handoff: architecture, contracts, recipe schema, research register, tests, dependency versions, recorded decisions)
+- AGENTS.md, DESIGN.md, _DOCUMENTATION/README.md
+- data/fixtures, data/unit-plans, output/research/skyville-dawson-floorplans-2026-09-02 (local rasters; never commit)
+
+Working scope:
+- Branch v2-clean-room in this repo; new tree per handoff section 8; old server/ and web/ may be removed on the branch.
+- Python 3.13: FastAPI, Ladybug core/geometry/radiance, Radiance gendaymtx, shapely, trimesh, rhino3dm. Node 22: React 19, TypeScript, Vite, Three.js, vitest, Playwright. Docker.
+
+Not doing:
+- No Rhino, Grasshopper, Revit or Rhino.Compute. No LLM in the analytical runtime. No live OneMap or listing scraping. No accounts or database. No UI redesign beyond DESIGN.md. No Render deploy, only the doc and a local Docker proof. No committing HDB or WOHA rasters. No push.
+
+Allowed actions:
+- Read, research, write code/docs/tests on the branch; install only from pinned locks after same-day dependency intake; run tests, builds, local Docker, Playwright in Chrome 152 with --enable-features=WebMCP; commit on the branch.
+
+Subagent delegation:
+- Optional. The main agent owns this goal, integration, writer lock and completion. Subagents are read-only specialists that ignore the parent goal, report, and stop. No nested fan-out.
+
+Decision boundaries:
+- You may choose module layout, grid defaults (0.25 m floor, 0.5 m fast), opacity tokens (context .16, tower .28, home 1.0), and window/balcony/overhang defaults labelled assumed.
+- Ask before committing any raster or derivative you cannot label, changing licence, adding a dependency outside the handoff list, any push/publish/deploy, or presenting storey 30 as verified.
+
+Definition of done:
+- Gate 1: tower plate and 4R Type A/B/C recipes overlaid on the rasters, founder accepted.
+- Builders emit a watertight analytical mesh and provenance-tagged GLB with walls, columns, openings, balcony, ledge, overhang.
+- Solar matches pvlib SPA within 0.05 deg; unobstructed annual radiation within 3% of EPW GHI; identical inputs give identical digest, GLB and SVG bytes.
+- API, 8 WebMCP tools with no confirm tool, UI parity, exports, and Playwright human + WebMCP journeys at 1440/1024/390 pass.
+- docker compose up, healthz, kill, restart, healthz pass; RUNBOOK and Render doc written.
+- Gate 2: local readback reported as Where it stands / What you can do now / What I need from you, with unrun checks named.
+
+Stop conditions:
+- Radiance or ladybug-radiance fails intake or install; overlay rejected twice; a source contradicts the handoff; any credential, paid service or network approval needed; scope growth beyond the handoff.
