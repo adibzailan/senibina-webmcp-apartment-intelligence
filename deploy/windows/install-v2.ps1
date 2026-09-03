@@ -1,7 +1,8 @@
 # Apartment Intelligence v2 on the Windows VM (dev sprint host). Run from an elevated PowerShell:
 #   Set-ExecutionPolicy -Scope Process Bypass; .\deploy\windows\install-v2.ps1
 # Installs Python deps, Radiance (pinned), builds the web bundle, and restarts the scheduled task.
-# Requires: Git, CPython 3.13 x86-64 (py -3.13-64), Node 22, an existing checkout at C:\ApartmentIntelligence\app.
+# Requires: CPython 3.13 x86-64 (py -3.13-64), Node 22, and the source at C:\ApartmentIntelligence\app
+# (a git checkout, or a main.zip extract placed by bootstrap-v2.ps1 when git is not installed).
 $ErrorActionPreference = "Stop"
 $Root = "C:\ApartmentIntelligence"
 $App = Join-Path $Root "app"
@@ -12,9 +13,11 @@ $RadianceUrl = "https://github.com/LBNL-ETA/Radiance/releases/download/39b99660/
 $RadianceSha = "ab6858c6b4bfa71bf73d4a0979408a33307f8b7142585a1e64884957494290a5"
 
 Set-Location $App
-git fetch origin
-git checkout main
-git pull --ff-only origin main
+if ((Test-Path (Join-Path $App ".git")) -and (Get-Command git -ErrorAction SilentlyContinue)) {
+  git fetch origin; git checkout main; git pull --ff-only origin main
+} else {
+  Write-Host "No git checkout; using the source already in $App (see bootstrap-v2.ps1 to refresh from main.zip)"
+}
 
 # Python environment (x86-64 CPython under ARM emulation, as in v1)
 if (-not (Test-Path (Join-Path $Venv "Scripts\python.exe"))) { py -3.13-64 -m venv $Venv }
