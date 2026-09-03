@@ -15,8 +15,8 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   await expect(page.getByRole("heading", { name: /Choose the wing|Confirm the placement/ })).toBeVisible();
   // click a slot on the tower picker list (the 3D outlines are also clickable)
   await page.getByRole("button", { name: /SE Wing, Near the Core/ }).click();
-  await page.getByRole("button", { name: "Type B, larger living" }).click();
-  await expect(page.getByText(/SE wing, inner stack, Type B/)).toBeVisible();
+  await page.getByRole("button", { name: "Type B, Larger Living" }).click();
+  await expect(page.getByText(/SE Wing, Near the Core, Type B/)).toBeVisible();
   await expect(page.getByTestId("confirm-button")).toBeEnabled({ timeout: 15_000 });
   await page.getByTestId("confirm-button").click();
   await expect(page.getByRole("heading", { name: /Sun, shade and radiation/ })).toBeVisible();

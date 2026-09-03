@@ -37,7 +37,8 @@ label { display: block; font-size: 13px; color: var(--ink-muted); margin: 8px 0 
 .rail details + .toolbar { margin-top: 20px; }
 .rail .run-row { margin-top: 20px; }
 .rail .run-row + .status { margin-top: 12px; }
-.field select, .field input { flex: 1 1 140px; }
+.field select, .field input { flex: 1 1 140px; min-width: 0; max-width: 100%; }
+.rail, .rail > section, .canvas-col { min-width: 0; }
 section.chapter { border-top: 1px solid var(--rule); padding: 16px 0; }
 section.chapter h2 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin: 0 0 8px; }
 .numbers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-variant-numeric: tabular-nums; }
