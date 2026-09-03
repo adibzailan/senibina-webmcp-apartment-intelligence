@@ -14,7 +14,7 @@ export function plateSlots(plate: any, storey: number): Slot[] {
     const P = (c: number, d: number): [number, number] => [w.origin[0] + c * Math.cos(ax) + d * Math.cos(inw), w.origin[1] + c * Math.sin(ax) + d * Math.sin(inw)];
     for (const s of w.slots) {
       const c0 = s.start_m - w.length_m / 2, c1 = c0 + s.width_m;
-      out.push({ id: `${w.id}:${s.id}`, facade: w.id, stack_position: s.id, z, corners: [P(c0, 0), P(c1, 0), P(c1, w.depth_m), P(c0, w.depth_m)], label: `${w.id} wing, ${s.id === "end" ? "wing tip" : "near the core"}` });
+      out.push({ id: `${w.id}:${s.id}`, facade: w.id, stack_position: s.id, z, corners: [P(c0, 0), P(c1, 0), P(c1, w.depth_m), P(c0, w.depth_m)], label: `${w.id} Wing, ${s.id === "end" ? "Wing Tip" : "Near the Core"}` });
     }
   }
   return out;

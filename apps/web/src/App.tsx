@@ -192,7 +192,7 @@ export default function App() {
         <aside className="rail">
           <section className="study-card" aria-label="Study">
             <div className="study-line"><strong>{home?.development ?? state.address}</strong></div>
-            <div className="study-sub">{home ? `Block ${home.block}, ${home.address}` : ""}{state.studyId ? (home ? `, storey ${state.storey}` : `Storey ${state.storey}`) : ""}</div>
+            <div className="study-sub">{home ? `Block ${home.block}` : ""}{state.studyId ? (home ? `, Storey ${state.storey}` : `Storey ${state.storey}`) : ""}</div>
             <div className="study-meta steps" aria-live="polite">
               <button className="step-arrow" aria-label="Previous step" disabled={stepIndex <= 1} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex - 2] })}>←</button>
               <span>Step {stepIndex} of 5</span>
@@ -217,19 +217,20 @@ export default function App() {
           </section>}
 
           {(state.screen === "place" || state.screen === "confirm") && <section>
-            <label>Your slot on storey {state.storey}</label>
+            <label>Your slot on Storey {state.storey}</label>
             <p className="status" style={{ padding: 0 }}>Click one of the eight outlined 4-room slots on the tower, or pick it here. Which end of each wing is 4-room is not published, so both are offered.</p>
             <div className="slot-grid">{slots.map((sl) => <button key={sl.id} aria-pressed={state.placement.facade === sl.facade && state.placement.stack_position === sl.stack_position} onClick={() => dispatch({ type: "set_placement", placement: { facade: sl.facade as any, stack_position: sl.stack_position as any } })}>{sl.label}</button>)}</div>
             <label>Published layout</label>
-            <div className="toolbar">{([["A", "Type A, three bedrooms"], ["B", "Type B, larger living"], ["C", "Type C, master suite"]] as const).map(([v, l]) => <button key={v} aria-pressed={state.placement.variant === v} onClick={() => dispatch({ type: "set_placement", placement: { variant: v } })}>{l}</button>)}</div>
-            <label className="checks" style={{ marginTop: 8 }}><input type="checkbox" checked={state.placement.mirrored} onChange={(e) => dispatch({ type: "set_placement", placement: { mirrored: e.target.checked } })} /> Mirrored plan</label>
+            <div className="toolbar">{([["A", "Type A, Three Bedrooms"], ["B", "Type B, Larger Living"], ["C", "Type C, Master Suite"]] as const).map(([v, l]) => <button key={v} aria-pressed={state.placement.variant === v} onClick={() => dispatch({ type: "set_placement", placement: { variant: v } })}>{l}</button>)}</div>
+            <label>Mirrored plan</label>
+            <div className="toolbar"><button aria-pressed={state.placement.mirrored} onClick={() => dispatch({ type: "set_placement", placement: { mirrored: !state.placement.mirrored } })}>{state.placement.mirrored ? "Mirrored" : "As Published"}</button></div>
             <details><summary>Windows, balcony and railings (assumed unless published)</summary>
               <div className="checks" style={{ marginTop: 8 }}>{toggles.map((e: any) => <label key={e.id}><input type="checkbox" checked={state.placement.openings[e.id] ?? e.enabled_by_default} onChange={(ev) => dispatch({ type: "set_placement", placement: { openings: { [e.id]: ev.target.checked } } })} /> {labelOf(e.id)} <span style={{ color: "var(--ink-muted)", fontSize: 12 }}>{e.source.state}</span></label>)}</div>
             </details>
             <div className="toolbar">
               <button className="confirm" data-testid="confirm-button" disabled={!!state.busy || state.placementRevision === 0} onClick={(ev) => confirmFromClick(ctx, ev.isTrusted && (navigator as any).userActivation?.isActive !== false).catch(() => {})}>I confirm this is my apartment</button>
             </div>
-            <p className="confirm-sentence">You are confirming the {state.placement.facade} wing, {state.placement.stack_position === "end" ? "wing-tip" : "inner"} stack, Type {state.placement.variant}{state.placement.mirrored ? ", mirrored" : ""}, on storey {state.storey}. A tool cannot do this for you.</p>
+            <p className="confirm-sentence">You are confirming the {state.placement.facade} Wing, {state.placement.stack_position === "end" ? "Wing Tip" : "Near the Core"}, Type {state.placement.variant}{state.placement.mirrored ? ", mirrored" : ""}, on Storey {state.storey}. A tool cannot do this for you.</p>
           </section>}
 
           {(state.screen === "analysis" || state.screen === "export") && <section>

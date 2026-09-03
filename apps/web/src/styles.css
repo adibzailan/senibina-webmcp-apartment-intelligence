@@ -1,6 +1,6 @@
 :root {
   --paper: #f5f2e9; --paper-white: #fbfaf6; --ink: #18211d; --ink-muted: #5f665f; --rule: #b9b7ae;
-  --sourced: #d9ddd5; --inferred: #e7e1d4; --precinct: #bfc9bf; --solar: #f2c230; --home: #c8472d; --shaded: #45534d;
+  --sourced: #d9ddd5; --inferred: #e7e1d4; --precinct: #bfc9bf; --solar: #f2c230; --home: #c8472d; --shaded: #45534d; --go: #2f6b4f;
   --serif: "Newsreader", "Iowan Old Style", "Palatino", Georgia, serif;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -28,7 +28,7 @@ header.masthead .index { color: var(--ink-muted); font-size: 13px; font-variant-
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 button, select, input { font-family: var(--sans); font-size: 14px; min-height: 44px; border: 1px solid var(--ink); background: var(--paper-white); color: var(--ink); padding: 0 14px; border-radius: 2px; }
 button.primary { background: var(--ink); color: var(--paper-white); }
-button.confirm { background: var(--home); color: #fff; border-color: var(--home); }
+button.confirm { background: var(--go); color: #fff; border-color: var(--go); }
 button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 button[disabled] { opacity: .5; }
 label { display: block; font-size: 13px; color: var(--ink-muted); margin: 8px 0 4px; }

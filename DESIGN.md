@@ -38,7 +38,7 @@ The apartment question and evidence come before branding. The interface should r
 
 - Paper `#f5f2e9`; white paper `#fbfaf6`; ink `#18211d`; muted ink `#5f665f`; rule `#b9b7ae`.
 - Sourced context `#d9ddd5`; inferred massing `#e7e1d4`; selected precinct `#bfc9bf`.
-- Solar yellow `#f2c230`; confirmed home red `#c8472d`; shaded `#45534d`.
+- Solar yellow `#f2c230`; confirmed home red `#c8472d`; shaded `#45534d`; go green `#2f6b4f` (the confirm action button only).
 - Radiation scale: `#183f5a → #2b8c86 → #e3c946 → #c8472d`.
 - Colour is semantic. Never use gradients, badges, or accent fills as decoration.
 
@@ -62,7 +62,7 @@ The apartment question and evidence come before branding. The interface should r
 
 - Sourced: quiet solid neutral fill and solid rule.
 - Inferred: warm neutral fill and fine dashed annotation.
-- Human-confirmed: confirmed-home red, solid rule, and explicit confirmation sentence.
+- Human-confirmed: confirmed-home red on the geometry, solid rule, and explicit confirmation sentence. The confirm button itself is go green, since red reads as "stop" to a person about to commit.
 - Generated/calculated: analysis scale plus method caption.
 - Provenance lives in a disclosure and in report captions. Do not repeat large state labels across every surface.
 
