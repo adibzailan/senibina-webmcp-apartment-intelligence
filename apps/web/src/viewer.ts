@@ -324,5 +324,22 @@ export class Viewer {
     r.setScissorTest(false); r.setViewport(0, 0, w, h); r.autoClear = true;
   }
 
+  /** Fixed report views rendered offscreen: an apartment isometric with massing off, and the tower in its precinct. The user's camera is restored. */
+  captureReportViews(focus: "home" | "tower" = "home"): { apartment: string; tower: string } {
+    const pos = this.camera.position.clone(), tgt = this.controls.target.clone(), fov = this.camera.fov, massing = this.massing;
+    const basemapVisible = this.basemap ? this.basemap.visible : true;
+    this.setMassingVisible(false);
+    if (this.basemap) this.basemap.visible = false;
+    this.preset("home", focus);
+    const apartment = this.snapshot();
+    this.setMassingVisible(true);
+    if (this.basemap) this.basemap.visible = basemapVisible;
+    this.preset("tower", focus);
+    const tower = this.snapshot();
+    this.setMassingVisible(massing);
+    this.camera.position.copy(pos); this.controls.target.copy(tgt); this.camera.fov = fov; this.camera.updateProjectionMatrix(); this.controls.update();
+    return { apartment, tower };
+  }
+
   snapshot(): string { this.renderer.render(this.scene, this.camera); this.renderGizmo(); return this.renderer.domElement.toDataURL("image/png"); }
 }

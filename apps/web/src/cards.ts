@@ -31,7 +31,7 @@ function splitCards(svgText: string): string[] {
   });
 }
 
-export async function cardsPdf(svgText: string, sceneDataUrl: string | null, digest: string, meta: PdfMeta): Promise<Blob> {
+export async function cardsPdf(svgText: string, views: { apartment: string; tower: string } | null, digest: string, meta: PdfMeta): Promise<Blob> {
   const pdf = await PDFDocument.create();
   const sans = await pdf.embedFont(StandardFonts.Helvetica), serif = await pdf.embedFont(StandardFonts.TimesRoman);
   const short = digest.slice(0, 16);
@@ -61,17 +61,24 @@ export async function cardsPdf(svgText: string, sceneDataUrl: string | null, dig
   cover.drawText(meta.placement, { x: M, y, size: 20, font: sans, color: MUTED }); y -= 60;
   const rows: [string, string][] = [["Generated", meta.generated], ["Method", meta.method], ["Weather file", meta.weather.slice(0, 16)], ["Result digest", digest]];
   for (const [k, v] of rows) { cover.drawLine({ start: { x: M, y: y + 22 }, end: { x: PW - M, y: y + 22 }, thickness: 0.6, color: RULE }); cover.drawText(k, { x: M, y, size: 13, font: sans, color: MUTED }); cover.drawText(v, { x: M + 220, y, size: 13, font: sans, color: INK }); y -= 34; }
-  cover.drawText("A public-interest study by Senibina for apartment living. Singapore now, the region next.", { x: M, y: M + 12, size: 13, font: serif, color: MUTED });
+  cover.drawText("A public-interest study by Senibina for apartment living. Singapore now, the region next.", { x: M, y: M + 32, size: 13, font: serif, color: MUTED });
+  cover.drawText("Version 0, built for the OpenAI WebMCP Challenge, September 2026.", { x: M, y: M + 12, size: 13, font: sans, color: MUTED });
 
   const pages: PDFPage[] = [];
   // site and unit
-  if (sceneDataUrl) {
-    const png = await pdf.embedPng(sceneDataUrl);
+  if (views) {
     const p = pdf.addPage([PW, PH]); masthead(p, false); pages.push(p);
     p.drawText("Site and unit", { x: M, y: PH - M - 80, size: 34, font: serif, color: INK });
-    const s = Math.min((PW - 2 * M) / png.width, (PH - 2 * M - 260) / png.height);
-    p.drawImage(png, { x: M, y: PH - M - 110 - png.height * s, width: png.width * s, height: png.height * s });
-    p.drawText("The confirmed apartment on its storey, with room names, inside the translucent tower and its neighbours.", { x: M, y: PH - M - 130 - png.height * s, size: 13, font: sans, color: MUTED });
+    const place = async (dataUrl: string, top: number, caption: string) => {
+      const png = await pdf.embedPng(dataUrl);
+      const s = Math.min((PW - 2 * M) / png.width, 560 / png.height);
+      p.drawImage(png, { x: M, y: top - png.height * s, width: png.width * s, height: png.height * s });
+      p.drawText(caption, { x: M, y: top - png.height * s - 20, size: 13, font: sans, color: MUTED });
+      return top - png.height * s - 56;
+    };
+    let top = PH - M - 110;
+    top = await place(views.apartment, top, "The confirmed apartment on its storey, room by room, with the massing switched off.");
+    await place(views.tower, top, "The tower and its neighbours, with the apartment in place.");
   }
   // one card at a time; a card that does not fit the remaining page starts a new page
   let page: PDFPage | null = null; let cursor = 0;
@@ -93,6 +100,7 @@ export async function cardsPdf(svgText: string, sceneDataUrl: string | null, dig
   y -= 14;
   const legal = "Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification. Upper-storey plate inferred from the ground outline; openings assumed unless published. PDF and PNG are presentation renders of the digest-bound cards.";
   for (const line of wrap(legal, 13, sans, PW - 2 * M)) { back.drawText(line, { x: M, y, size: 13, font: sans, color: MUTED }); y -= 19; }
+  back.drawText("Version 0, built for the OpenAI WebMCP Challenge, September 2026.", { x: M, y: M + 32, size: 13, font: sans, color: MUTED });
   back.drawText("senibina.com.sg", { x: M, y: M + 12, size: 13, font: sans, color: INK });
   const total = pages.length + 2;
   pages.forEach((p, i) => footer(p, i + 2, total));
