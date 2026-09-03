@@ -1,0 +1,14 @@
+# Render blueprint (documented, not deployed by the v2 goal). One Docker web service.
+services:
+  - type: web
+    name: apartment-intelligence
+    runtime: docker
+    dockerfilePath: deploy/Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /healthz
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: AI_ANALYSIS_TIMEOUT_S
+        value: "15"

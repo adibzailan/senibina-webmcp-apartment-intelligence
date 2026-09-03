@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: apartment-intelligence:v2
+    ports:
+      - "8000:8000"
+    environment:
+      AI_ANALYSIS_TIMEOUT_S: "15"
+    restart: unless-stopped
