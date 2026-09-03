@@ -16,10 +16,10 @@ inside a reconstructed Block 87 plate, and Ladybug + Radiance produce
 deterministic sunpath, shadow, direct-sun and radiation evidence on a 0.25 m
 floor grid.
 
-Status (3 September 2026): the v2 clean-room rebuild is on `main`. It runs
-locally and as one Docker image. The public hostname
-<https://apartment.senibina.com.sg> still serves the earlier v1 build from the
-Windows VM; v2 has not been deployed anywhere yet. See
+Status (3 September 2026): the v2 clean-room rebuild is on `main` and live at
+<https://apartment-intelligence.onrender.com> (Render, Singapore, built from
+`deploy/render.yaml` on every push). The earlier v1 Windows VM host is shut
+down. See
 [`_DOCUMENTATION/10 Projects/2026-09-clean-room-reconstruction.md`](_DOCUMENTATION/10%20Projects/2026-09-clean-room-reconstruction.md).
 
 ## Public-interest research
@@ -124,7 +124,7 @@ docker compose -f deploy/compose.yaml up -d
 Radiance publishes x86-64 Linux binaries only, so the image is linux/amd64 and
 runs under emulation on Apple silicon. Full procedure and limits:
 [`deploy/RUNBOOK.md`](deploy/RUNBOOK.md). The Render blueprint in
-`deploy/render.yaml` is documented, not deployed. The v1 Windows VM procedure in
+`deploy/render.yaml` is the live deployment. The v1 Windows VM procedure in
 [`WINDOWS_DEPLOYMENT.md`](WINDOWS_DEPLOYMENT.md) is retained for the live v1
 host and is superseded for new deployments.
 

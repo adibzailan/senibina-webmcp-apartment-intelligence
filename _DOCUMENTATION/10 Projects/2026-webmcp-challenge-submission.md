@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: active
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Adib decides whether the submission URL serves v1 (live now) or v2 (needs a deployment), then records the demo video.
+next_action: Adib records the demo video against https://apartment-intelligence.onrender.com and submits on Devpost before 04:00 SGT on 4 September 2026.
 ---
 
 # WebMCP Challenge submission
@@ -27,7 +27,10 @@ the submitted URLs are read back successfully.
   Radiance, 0.25 m grid, eight WebMCP tools, Docker image) is merged to `main`
   with Gate 1 accepted by Adib. It is not deployed; see
   [`2026-09-clean-room-reconstruction.md`](2026-09-clean-room-reconstruction.md).
-- The public hostname still serves the v1 build below from the Windows VM.
+- 3 September 2026, afternoon: v2 is live at <https://apartment-intelligence.onrender.com>
+  (Render blueprint, Singapore, 1 CPU / 2 GB). Public readback: six Playwright journeys pass,
+  a 0.25 m analysis completes in 6.2 s, all six exports download. The Windows VM is shut down;
+  `apartments.senibina.com.sg` is not yet pointed at Render.
 - v1: the public baseline, dependency locks, Dawson fixture, application,
   analysis engine, export pipeline, and six WebMCP tools were implemented and
   published on 1 September 2026.

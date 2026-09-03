@@ -73,14 +73,16 @@ Two runtimes exist on 3 September 2026:
   Windows VM behind a named Cloudflare Tunnel, serving
   `apartment.senibina.com.sg`. Its source trees were removed from `main` in
   commit `461e344`; the VM runs its own earlier checkout.
-- **v2 (main, not deployed):** one Docker image (`deploy/Dockerfile`,
+- **v2 (live at https://apartment-intelligence.onrender.com since 3 September 2026):** one Docker image (`deploy/Dockerfile`,
   linux/amd64) holding Python 3.13, Radiance 6.1a, the API, the data and the
   built web bundle; one Uvicorn worker; `/healthz`. Radiance is invoked as a
   subprocess with fixed arguments on server-generated geometry only. Studies
   are in memory and lost on restart, which the page reports as
   `STUDY_EXPIRED` with a next action.
 
-Deployment credentials remain host-local in both cases.
+Deployment credentials remain host-local in both cases. On Render the service sets
+`AI_EXPECTED_ORIGINS` (its own origin and `apartments.senibina.com.sg`) so state-changing API
+calls from other origins receive 403, and `AI_COOKIE_SECURE=true`.
 
 ### Proposed managed deployment
 

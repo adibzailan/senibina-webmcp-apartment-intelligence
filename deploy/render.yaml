@@ -14,3 +14,7 @@ services:
     envVars:
       - key: AI_ANALYSIS_TIMEOUT_S
         value: "15"
+      - key: AI_EXPECTED_ORIGINS
+        value: "https://apartment-intelligence.onrender.com,https://apartments.senibina.com.sg"
+      - key: AI_COOKIE_SECURE
+        value: "true"

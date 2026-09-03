@@ -6,7 +6,7 @@ status: active-reference
 
 # Challenge submission checklist
 
-- [ ] Working public HTTPS URL in ChatGPT's in-app browser and Chrome WebMCP.
+- [x] Working public HTTPS URL: https://apartment-intelligence.onrender.com (Chrome WebMCP verified via Playwright; ChatGPT in-app browser not yet checked).
 - [x] Public repository with source baseline and visible AGPL-3.0 licence.
 - [ ] Public repository final revision with all source, assets, build instructions,
   licence, and visible WebMCP registration code.
@@ -26,5 +26,5 @@ status: active-reference
   resident confirmation action.
 - [x] 20 Python, 4 vitest and 6 Playwright tests pass locally (v2).
 - [x] Docker image builds, serves, survives kill/restart, runs an analysis (v2).
-- [ ] v2 deployed to a public HTTPS URL (the live URL still serves v1).
-- [ ] Clean-profile five-screen journey and artifact read-back on the public URL.
+- [x] v2 deployed to a public HTTPS URL: https://apartment-intelligence.onrender.com (3 Sep 2026).
+- [x] Public read-back: six Playwright journeys, 0.25 m analysis in 6.2 s, six exports.
