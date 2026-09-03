@@ -221,6 +221,7 @@ export class Viewer {
     if (!box) return;
     const c = box.getCenter(new THREE.Vector3()); const size = box.getSize(new THREE.Vector3());
     const radius = size.length() / 2;
+    this.camera.fov = name === "plan" ? 12 : 38; // a long lens for the plan so towers do not splay
     const fit = radius / Math.sin((this.camera.fov * Math.PI) / 360) * 1.05; // distance that fits the bounding sphere
     if (name === "plan") {
       const h = Math.max(30, fit * 0.9);
