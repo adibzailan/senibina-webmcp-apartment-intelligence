@@ -186,13 +186,13 @@ export default function App() {
             <span className="control-group" role="group" aria-label="Look at">
               <span className="control-label">Look at</span>
               {(["precinct", "tower", "home", "plan"] as const).filter((c) => c !== "home" || state.placementRevision > 0).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c, focus); }}>{({ precinct: "Precinct", tower: "Tower", home: "Apartment", plan: "From above" } as any)[c]}</button>)}
+              <button onClick={() => viewerRef.current?.preset("north")}>Face north</button>
             </span>
             <span className="control-group" role="group" aria-label="View">
               <span className="control-label">View</span>
-              <button onClick={() => viewerRef.current?.preset("north")}>Face north</button>
-              <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
               <button aria-pressed={basemap} onClick={() => setBasemap(!basemap)}>Map</button>
               <button aria-pressed={massing} onClick={() => setMassing(!massing)}>Massing</button>
+              <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
             </span>
           </div>
         </div>
