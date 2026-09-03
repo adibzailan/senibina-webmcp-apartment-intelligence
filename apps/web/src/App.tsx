@@ -4,6 +4,7 @@ import { confirmFromClick, createStudy, proposePlacement, runAnalysis, showAnaly
 import { cardsPdf, download, svgToPng, zipBlob } from "./cards";
 import { initialState, reducer, State } from "./state";
 import { Viewer } from "./viewer";
+import { plateSlots } from "./slots";
 import { registerWebMcp, toolDefinitions } from "./webmcp";
 
 const STEPS: State["screen"][] = ["locate", "place", "confirm", "analysis", "export"];
@@ -47,6 +48,24 @@ export default function App() {
 
   useEffect(() => { viewerRef.current?.preset(state.view.camera); }, [state.view.camera, glbKey]);
 
+  // live staging: any placement change on the Place/Confirm screens re-stages after a short pause
+  const placementKey = JSON.stringify(state.placement);
+  const stagedKey = useRef<string>("");
+  useEffect(() => {
+    if (!state.studyId || !(state.screen === "place" || state.screen === "confirm")) return;
+    if (stagedKey.current === placementKey) return;
+    const t = setTimeout(() => { stagedKey.current = placementKey; proposePlacement(ctx, {}).catch(() => {}); }, 250);
+    return () => clearTimeout(t);
+  }, [placementKey, state.studyId, state.screen]);
+
+  // pickable slots on the tower while placing
+  const slots = useMemo(() => (context?.plate ? plateSlots(context.plate, state.storey) : []), [context, state.storey]);
+  useEffect(() => {
+    const v = viewerRef.current; if (!v) return;
+    const placing = state.screen === "place" || state.screen === "confirm";
+    v.setSlots(placing ? slots : [], `${state.placement.facade}:${state.placement.stack_position}`, placing ? (id) => { const [facade, stack_position] = id.split(":"); dispatch({ type: "set_placement", placement: { facade: facade as any, stack_position: stack_position as any } }); } : null);
+  }, [slots, state.screen, state.placement.facade, state.placement.stack_position, glbKey]);
+
   async function exportFromPage(formats: string[]) {
     const s = stateRef.current; if (!s.studyId || !s.result) return { error: "EXPORT_NOT_READY", next_action: "Run the analysis first." };
     const done: string[] = [];
@@ -71,13 +90,13 @@ export default function App() {
   const unit = context?.units?.[state.placement.variant];
   const toggles = unit ? unit.elements.filter((e: any) => ["opening", "balcony", "railing"].includes(e.kind) && (e.kind !== "opening" || e.base_m > 0)) : [];
   const r = state.result;
-  const stepIndex = STEPS.indexOf(state.screen) + 1;
+  const stepIndex = Math.max(1, STEPS.indexOf(state.screen) + 1);
 
   return (
     <div className="container">
       <header className="masthead">
         <h1>Apartment Intelligence</h1>
-        <span className="index" aria-live="polite">Step {stepIndex} of 5 · {state.address}, storey {state.storey}{mcp ? ` · WebMCP ${mcp.registered ? "on " + mcp.where : "not exposed by this browser"}` : ""}</span>
+        <span className="index">Senibina · public-interest study</span>
       </header>
 
       {state.screen === "locate" && <h2 className="question">Will this apartment get the sun you expect?</h2>}
@@ -104,6 +123,11 @@ export default function App() {
         </div>
 
         <aside className="rail">
+          <section className="study-card" aria-label="Study">
+            <div className="study-line"><strong>{state.address}</strong>{state.studyId ? `, storey ${state.storey}` : ""}</div>
+            <div className="study-meta" aria-live="polite">Step {stepIndex} of 5 · {({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyId ? ` · ${state.studyState}` : ""}</div>
+            <div className="study-meta">{mcp ? (mcp.registered ? `WebMCP tools registered on ${mcp.where}` : "WebMCP not enabled in this browser (chrome://flags/#enable-webmcp-testing)") : ""}</div>
+          </section>
           {state.screen === "locate" && <section>
             <label htmlFor="address">Address or postal code</label>
             <div className="field"><input id="address" list="homes" value={state.address} onChange={(e) => dispatch({ type: "set_address", address: e.target.value })} /></div>
@@ -115,21 +139,19 @@ export default function App() {
           </section>}
 
           {(state.screen === "place" || state.screen === "confirm") && <section>
-            <label>Wing (facade)</label>
-            <div className="field"><select value={state.placement.facade} onChange={(e) => dispatch({ type: "set_placement", placement: { facade: e.target.value as any } })}>{["NE", "NW", "SW", "SE"].map((f) => <option key={f}>{f}</option>)}</select></div>
-            <label>4-room stack position in the wing (assumed)</label>
-            <div className="field"><select value={state.placement.stack_position} onChange={(e) => dispatch({ type: "set_placement", placement: { stack_position: e.target.value as any } })}><option value="end">wing tip</option><option value="inner">near the core</option></select></div>
+            <label>Your slot on storey {state.storey}</label>
+            <p className="status" style={{ padding: 0 }}>Click one of the eight outlined 4-room slots on the tower, or pick it here. Which end of each wing is 4-room is not published, so both are offered.</p>
+            <div className="slot-grid">{slots.map((sl) => <button key={sl.id} aria-pressed={state.placement.facade === sl.facade && state.placement.stack_position === sl.stack_position} onClick={() => dispatch({ type: "set_placement", placement: { facade: sl.facade as any, stack_position: sl.stack_position as any } })}>{sl.label}</button>)}</div>
             <label>Published layout</label>
-            <div className="field"><select value={state.placement.variant} onChange={(e) => dispatch({ type: "set_placement", placement: { variant: e.target.value as any } })}><option value="A">Type A, three bedrooms</option><option value="B">Type B, larger living</option><option value="C">Type C, master suite</option></select></div>
+            <div className="toolbar">{([["A", "Type A, three bedrooms"], ["B", "Type B, larger living"], ["C", "Type C, master suite"]] as const).map(([v, l]) => <button key={v} aria-pressed={state.placement.variant === v} onClick={() => dispatch({ type: "set_placement", placement: { variant: v } })}>{l}</button>)}</div>
             <label className="checks" style={{ marginTop: 8 }}><input type="checkbox" checked={state.placement.mirrored} onChange={(e) => dispatch({ type: "set_placement", placement: { mirrored: e.target.checked } })} /> Mirrored plan</label>
             <details><summary>Windows, balcony and railings (assumed unless published)</summary>
               <div className="checks" style={{ marginTop: 8 }}>{toggles.map((e: any) => <label key={e.id}><input type="checkbox" checked={state.placement.openings[e.id] ?? e.enabled_by_default} onChange={(ev) => dispatch({ type: "set_placement", placement: { openings: { [e.id]: ev.target.checked } } })} /> {e.id} <span style={{ color: "var(--ink-muted)" }}>({e.source.state})</span></label>)}</div>
             </details>
             <div className="toolbar">
-              <button className="primary" disabled={!!state.busy} onClick={() => proposePlacement(ctx, {}).catch(() => {})}>Stage this placement</button>
-              {state.screen === "confirm" && <button className="confirm" data-testid="confirm-button" disabled={!!state.busy || state.placementRevision === 0} onClick={(ev) => confirmFromClick(ctx, ev.isTrusted && (navigator as any).userActivation?.isActive !== false).catch(() => {})}>I confirm this is my apartment</button>}
+              <button className="confirm" data-testid="confirm-button" disabled={!!state.busy || state.placementRevision === 0} onClick={(ev) => confirmFromClick(ctx, ev.isTrusted && (navigator as any).userActivation?.isActive !== false).catch(() => {})}>I confirm this is my apartment</button>
             </div>
-            {state.screen === "confirm" && <p className="confirm-sentence">You are confirming the {state.placement.facade} wing, {state.placement.stack_position === "end" ? "wing-tip" : "inner"} stack, Type {state.placement.variant}{state.placement.mirrored ? ", mirrored" : ""}, on storey {state.storey}. A tool cannot do this for you.</p>}
+            <p className="confirm-sentence">You are confirming the {state.placement.facade} wing, {state.placement.stack_position === "end" ? "wing-tip" : "inner"} stack, Type {state.placement.variant}{state.placement.mirrored ? ", mirrored" : ""}, on storey {state.storey}. A tool cannot do this for you.</p>
           </section>}
 
           {(state.screen === "analysis" || state.screen === "export") && <section>

@@ -49,3 +49,8 @@ table.evidence td { border-top: 1px solid var(--rule); padding: 4px 6px; vertica
 @media (max-width: 1100px) { .canvas-col { grid-column: span 12; } .rail { grid-column: span 12; display: grid; grid-template-columns: 1fr 1fr; } .container { width: min(100% - 32px, 1440px); } }
 @media (max-width: 640px) { .container { width: min(100% - 20px, 1440px); } .workbench { gap: 12px; } .rail { grid-template-columns: 1fr; } .numbers { grid-template-columns: 1fr; } .checks { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.study-card { border-top: 1px solid var(--ink); padding-top: 8px; }
+.study-line { font-family: var(--serif); font-size: 20px; }
+.study-meta { font-size: 12px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.slot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.slot-grid button[aria-pressed="true"], .toolbar button[aria-pressed="true"] { background: var(--ink); color: var(--paper-white); }

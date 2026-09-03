@@ -59,7 +59,7 @@ export function reducer(s: State, a: Action): State {
     case "set_storey": return { ...s, storey: a.storey };
     case "study_created": return { ...s, studyId: a.studyId, studyState: a.studyState, screen: "place", placementRevision: 0, confirmedRevision: null, result: null, digest: null, message: null };
     case "set_placement": return { ...s, placement: { ...s.placement, ...a.placement, openings: { ...s.placement.openings, ...(a.placement.openings || {}) } }, result: null, digest: null };
-    case "placement_staged": return { ...s, placementRevision: a.revision, studyState: a.studyState, screen: "confirm", result: null, digest: null };
+    case "placement_staged": return { ...s, placementRevision: a.revision, studyState: a.studyState, screen: s.screen === "locate" || s.screen === "place" ? "confirm" : s.screen === "confirm" ? "confirm" : s.screen, result: null, digest: null };
     case "confirmed": return { ...s, confirmedRevision: a.revision, studyState: a.studyState, screen: "analysis" };
     case "analysed": return { ...s, result: a.result, digest: a.digest, studyState: a.studyState, screen: "analysis" };
     case "set_view": return { ...s, view: { ...s.view, ...a.view } };

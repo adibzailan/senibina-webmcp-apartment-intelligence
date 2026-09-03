@@ -22,6 +22,10 @@ export class Viewer {
   model: THREE.Group | null = null;
   heat: THREE.Group | null = null;
   sun: THREE.Group | null = null;
+  slots: THREE.Group | null = null;
+  private slotMeshes: THREE.Mesh[] = [];
+  private onPick: ((id: string) => void) | null = null;
+  private downAt: [number, number] | null = null;
   home = new THREE.Box3();
   tower = new THREE.Box3();
   precinct = new THREE.Box3();
@@ -42,6 +46,19 @@ export class Viewer {
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshBasicMaterial({ color: 0xf5f2e9 }));
     ground.position.z = -0.05; this.scene.add(ground);
     const grid = new THREE.GridHelper(1200, 24, 0xb9b7ae, 0xe2e0d8); grid.rotation.x = Math.PI / 2; grid.position.z = -0.04; this.scene.add(grid);
+    const dom = this.renderer.domElement;
+    dom.addEventListener("pointerdown", (e) => { this.downAt = [e.clientX, e.clientY]; });
+    dom.addEventListener("pointerup", (e) => {
+      if (!this.downAt || !this.onPick || !this.slotMeshes.length) return;
+      const moved = Math.hypot(e.clientX - this.downAt[0], e.clientY - this.downAt[1]);
+      this.downAt = null;
+      if (moved > 4) return;
+      const r = dom.getBoundingClientRect();
+      const ndc = new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      const rc = new THREE.Raycaster(); rc.setFromCamera(ndc, this.camera);
+      const hit = rc.intersectObjects(this.slotMeshes, false)[0];
+      if (hit) this.onPick((hit.object as any).userData.slotId);
+    });
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(el);
     this.resize();
@@ -136,6 +153,25 @@ export class Viewer {
     g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([from, c]), new THREE.LineBasicMaterial({ color: 0xf2c230 })));
     const sphere = new THREE.Mesh(new THREE.SphereGeometry(2.5, 12, 8), new THREE.MeshBasicMaterial({ color: 0xf2c230 })); sphere.position.copy(from); g.add(sphere);
     this.sun = g; this.scene.add(g);
+  }
+
+  /** Draw pickable slot outlines at one storey. Each slot: id, corners [[x,y]x4] in world XY, z. */
+  setSlots(slots: { id: string; corners: [number, number][]; z: number }[], selectedId: string | null, onPick: ((id: string) => void) | null) {
+    if (this.slots) { this.scene.remove(this.slots); this.slots = null; this.slotMeshes = []; }
+    this.onPick = onPick;
+    if (!slots.length) return;
+    const g = new THREE.Group();
+    for (const s of slots) {
+      const pts = s.corners.map(([x, y]) => new THREE.Vector3(x, y, s.z + 0.05));
+      const selected = s.id === selectedId;
+      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([...pts, pts[0]]), selected ? new THREE.LineBasicMaterial({ color: 0xc8472d, linewidth: 2 }) : new THREE.LineDashedMaterial({ color: 0x18211d, dashSize: 0.6, gapSize: 0.4, transparent: true, opacity: 0.9 }));
+      line.computeLineDistances(); line.renderOrder = 6; g.add(line);
+      const shape = new THREE.Shape(s.corners.map(([x, y]) => new THREE.Vector2(x, y)));
+      const fill = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({ color: selected ? 0xc8472d : 0xbfc9bf, transparent: true, opacity: selected ? 0.35 : 0.18, depthWrite: false, side: THREE.DoubleSide }));
+      fill.position.z = s.z + 0.04; fill.renderOrder = 5; (fill as any).userData.slotId = s.id;
+      this.slotMeshes.push(fill); g.add(fill);
+    }
+    this.slots = g; this.scene.add(g);
   }
 
   preset(name: "precinct" | "tower" | "home" | "plan" | "reset" | "north") {
