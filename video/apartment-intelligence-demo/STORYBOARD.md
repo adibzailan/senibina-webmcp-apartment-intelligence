@@ -32,9 +32,9 @@ burned-in captions, cursor).
 | # | Time | Picture | Caption | Narration |
 |---|---|---|---|---|
 | 1 | 0:00–0:07 | Paper card. Serif question: "Will this apartment get the sun you expect?" | none | (music alone, then) Will this apartment get the sun you expect? |
-| 2 | 0:07–0:34 | Practice supercut from Adib's own studio wall: wide shot of the wardrobe doors covered in taped trace, sticky notes and heat maps (hold 5 s, slow push); the "Radiation Benefit" trace with red pen over pencil (4 s); the "Sunlight Hours + Overshadowing, June" plan with the hand-drawn section and hours scale (5 s); the annotated version, "giving neighbours a view of trees" (4 s); then two engine cards, the Dawson radiation floor and the direct-sun hours by date (4 s each). Each still gets a 2 to 4 percent push, hard cuts on full stops. | "How architects answer it." then "Radiation on the site." "Hours of sun, June." "Drawn over, argued over." "Then on every square metre of floor." | In practice, and in school before it, we answer it with instruments. A wall of trace. Radiation across the site. Hours of direct sun in June, drawn over and argued over. Then the same numbers on every square metre of floor, before anyone commits. |
-| 3 | 0:34–0:52 | Paper cards in sequence, each a phrase a listing might carry: "Bright and airy." "Gets the afternoon sun." "Unblocked, high floor." Then one card: "None of it is measured." | the phrases themselves | When a home is sold, the same question gets a sentence. Bright and airy. Afternoon sun. High floor, unblocked. Every word is a guess about light. None of it is measured. |
-| 4 | 0:52–1:00 | Paper card: "Apartment Intelligence" masthead, sub "Version 0, built for the OpenAI WebMCP Challenge". Cut to the live page: the grid of ten drawn developments. | "The same instruments, for the person who will live there." | Apartment Intelligence takes the practice instruments, Ladybug and Radiance, and hands them to the person who will live there. |
+| 2 | 0:07–0:40 | Practice supercut, twelve of Adib's own studio images, cut on the beat: the wall panorama (hold 5 s, slow push); the wall front-on (3 s); the desk with Rhino and Grasshopper on two screens (3 s); the light-and-shadow sheet with yellow pools (3 s); the sightlines sheet (2.5 s); the wind and temperature site plan (2 s); the room-by-room radiation print, L1 and L3 (3 s); the exterior-walls study (2.5 s); the "Radiation Benefit" trace (3 s); the "Sunlight Hours + Overshadowing, June" plan (3 s); the annotated version (3 s). Each still gets a 2 to 4 percent push, hard cuts on full stops. | "How architects answer it." "A wall of trace." "Modelled." "Light, room by room." "Sightlines." "Wind and heat." "Radiation, floor by floor." "Hours of sun, June." "Drawn over, argued over." | In practice, and in school before it, we answer it with instruments. A wall of trace. A model of the site. Light and shadow, room by room. Sightlines. Wind and heat. Radiation on every floor. Hours of direct sun in June, drawn over and argued over. All of it measured, before anyone commits. |
+| 3 | 0:40–0:54 | Paper cards in sequence, each a phrase a listing might carry: "Bright and airy." "Gets the afternoon sun." "Unblocked, high floor." Then one card: "None of it is measured." | the phrases themselves | When a home is sold, the same question gets a sentence. Bright and airy. Afternoon sun. High floor, unblocked. Every word is a guess about light. None of it is measured. |
+| 4 | 0:54–1:00 | Paper card: "Apartment Intelligence" masthead, sub "Version 0, built for the OpenAI WebMCP Challenge". Cut to the live page: the grid of ten drawn developments. | "The same instruments, for the person who will live there." | Apartment Intelligence takes the practice instruments, Ladybug and Radiance, and hands them to the person who will live there. |
 | 5 | 1:00–1:12 | Human beat. Cursor clicks SkyVille @ Dawson; page lands on "Start with your block and storey." Storey set to 30. Start the study. | "A real block. A real storey." | Start with a real block. Eighty-seven Dawson Road, storey thirty. |
 | 6 | 1:12–1:30 | Agent beat. A dark console panel slides in bottom-right and prints calls as they run: `create_apartment_study`, `propose_unit_placement`. The page follows: slots outline on the tower, one turns red. Then `run_solar_analysis` prints and the page answers CONFIRMATION_REQUIRED inline. | "An agent can stage a placement." then "It cannot confirm one." | An agent working through WebMCP can open the study and stage a placement. It can ask for the analysis. It will be refused. |
 | 7 | 1:30–1:38 | Human beat. Cursor reads the confirm sentence, clicks the green button. Step moves to Analyse. | "That click belongs to a person." | Confirmation is a visible click, and it belongs to a person. |
@@ -47,15 +47,13 @@ Word count of the narration column: about 300. Room to breathe; full stops land 
 
 ## Practice supercut sources (act one)
 
-Own material only, no search-engine images. Adib's academic studio photographs and study
-sheets go in `video/apartment-intelligence-demo/footage/practice/` (ignored by Git; they are
-personal originals). Needed at full resolution:
-
-- `wall-wide.jpg`: the wardrobe wall with trace, notes and heat maps.
-- `radiation-benefit.jpg`: the "Radiation Benefit" trace with red pen.
-- `sunlight-hours-june.png`: the "Sunlight Hours + Overshadowing, June" plan.
-- `sunlight-hours-june-annotated.png`: the same plan with the pink annotations.
-- Engine cards for the Dawson study are rendered fresh by the capture script.
+Own material only, no search-engine images. Twelve of Adib's academic-studio originals are in
+`video/apartment-intelligence-demo/footage/practice/` (ignored by Git): `wall-panorama.jpg`,
+`wall-front.jpg`, `desk-rhino-grasshopper.jpg`, `light-and-shadow-sheet.jpg`,
+`sightlines-sheet.jpg`, `wind-and-temperature-site.jpg`, `room-radiation-l1-l3.jpg` and its
+print, `exterior-walls-study.jpg`, `radiation-benefit-trace.jpg`, `sunlight-hours-june.jpg`,
+`sunlight-hours-june-annotated.jpg`. All are 2,800 px wide or more except the wind plan
+(1,289 px), which holds 2 s without a push.
 
 ## Split screen convention (act three)
 
