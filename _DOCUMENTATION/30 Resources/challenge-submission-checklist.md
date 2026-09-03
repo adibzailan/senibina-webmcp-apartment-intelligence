@@ -10,7 +10,7 @@ status: active-reference
 - [x] Public repository with source baseline and visible AGPL-3.0 licence.
 - [ ] Public repository final revision with all source, assets, build instructions,
   licence, and visible WebMCP registration code.
-- [x] Public YouTube demo shorter than three minutes with audio: https://youtu.be/pkn1xDclVq8 (2:03, Public, uploaded by Codex 3 Sep ~22:00 SGT). Master: `video/apartment-intelligence-demo/renders/Apartment-Intelligence-Demo-v1.mp4`, 2:03, -16.1 LUFS.
+- [x] Public YouTube demo shorter than three minutes with audio: https://youtu.be/pkn1xDcIVq8 (2:03, Public, uploaded by Codex 3 Sep ~22:00 SGT). Master: `video/apartment-intelligence-demo/renders/Apartment-Intelligence-Demo-v1.mp4`, 2:03, -16.1 LUFS.
 - [x] Description drafted: `10 Projects/2026-webmcp-devpost-writeup.md` (WebMCP fit, two modes, human-agent boundary, build, lessons).
 - [x] Demo shows the refusal, the visible click, the agent retry succeeding, and survey mode.
 - [ ] Devpost fields and every submitted URL are read back before the
