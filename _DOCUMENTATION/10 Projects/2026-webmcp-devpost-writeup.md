@@ -10,7 +10,7 @@ status: ready to paste
 
 ## Inspiration
 
-Architects answer that question with instruments: sun paths, radiation on every square metre of floor, hours of direct sun on the days that matter. When a home is sold, the same question gets a sentence. "Bright and airy." "Afternoon sun." Nobody measures it. We wanted the instruments architects use in practice in the hands of the person who will live there.
+Will this apartment get the sun you expect? Architects answer that question with instruments: sun paths, radiation on every square metre of floor, hours of direct sun on the days that matter. When a home is sold, the same question gets a sentence. "Bright and airy." "Afternoon sun." Nobody measures it. We wanted the instruments architects use in practice in the hands of the person who will live there.
 
 ## What it does
 
