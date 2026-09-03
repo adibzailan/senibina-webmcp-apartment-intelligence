@@ -18,7 +18,7 @@ def still(out, f, sec, cap=None, push=1.04):
     vf = (f"scale={W*2}:{H*2}:force_original_aspect_ratio=increase,crop={W*2}:{H*2},"
           f"zoompan=z='1+({push}-1)*on/{n}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={n}:s={W}x{H}:fps={FPS},eq=saturation=0.92:contrast=1.02{caption(cap)}")
     run(f"ffmpeg -v error -y -loop 1 -t {sec} -i {shlex.quote(f)} -vf \"{vf}\" -frames:v {n} -c:v libx264 -pix_fmt yuv420p -r {FPS} {out}")
-def card(out, sec, lines, size=84, sub=None, fade=True, gap=None, subsize=26):
+def card(out, sec, lines, size=84, sub=None, fade=False, gap=None, subsize=26):
     gap = gap or int(size * 1.12); subs = [sub] if isinstance(sub, str) else (sub or [])
     total = len(lines) * gap + (len(subs) * (subsize + 12) + 30 if subs else 0); y0 = H / 2 - total / 2
     parts = [dt(l, SERIF, size, INK, "(w-text_w)/2", int(y0 + i * gap + (gap - size) / 2)) for i, l in enumerate(lines)]
