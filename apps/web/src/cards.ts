@@ -18,7 +18,7 @@ export async function cardsPdf(svgText: string, sceneDataUrl: string | null, dig
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   if (sceneDataUrl) {
-    const png = await pdf.embedPng(await (await fetch(sceneDataUrl)).arrayBuffer());
+    const png = await pdf.embedPng(sceneDataUrl); // data URL straight in; a fetch of it is blocked by the page CSP
     const p = pdf.addPage([1600, 2400]);
     p.drawText("Site & Unit", { x: 80, y: 2280, size: 48, font });
     const s = Math.min(1440 / png.width, 1800 / png.height);

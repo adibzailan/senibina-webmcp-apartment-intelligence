@@ -19,7 +19,7 @@ def colour_ramp(t: float) -> str:
     return "#000000"
 
 
-def heatmap_card(result: dict, unit_envelope, key: str = "radiation", title: str = "Annual incident radiation, sensor plane 0.8 m", unit_label: str = "kWh/m² per year", values=None, north=None) -> str:
+def heatmap_card(result: dict, unit_envelope, key: str = "radiation", title: str = "Annual incident radiation, sensor plane 0.8 m", unit_label: str = "kWh/m² per year", values=None, north=None, rooms=None) -> str:
     s = result["sensors"]
     vals = values if values is not None else result["radiation"]["sensor_kwh_m2"]
     sp = s["grid"]["spacing_m"]
@@ -43,6 +43,14 @@ def heatmap_card(result: dict, unit_envelope, key: str = "radiation", title: str
         out.append(f'<rect x="{lx}" y="{_f(oy + i * 8)}" width="18" height="8" fill="{colour_ramp(1 - i / 19)}"/>')
     out.append(f'<text x="{lx + 24}" y="{_f(oy + 8)}" font-size="11" fill="#111">{_f(vmax, 1)}</text>')
     out.append(f'<text x="{lx + 24}" y="{_f(oy + 160)}" font-size="11" fill="#111">{_f(vmin, 1)}</text>')
+    for r in rooms or []:
+        poly = r["polygon"] if isinstance(r, dict) else r.polygon
+        label = r["label"] if isinstance(r, dict) else r.label
+        cx = sum(p[0] for p in poly) / len(poly); cy = sum(p[1] for p in poly) / len(poly)
+        px, py = ox + (cx - minx) * scale, oy + (cy - miny) * scale
+        tw = 6.2 * len(label) + 10
+        out.append(f'<rect x="{_f(px - tw / 2)}" y="{_f(py - 8)}" width="{_f(tw)}" height="16" fill="#ffffff" fill-opacity="0.85" stroke="#111" stroke-width="0.6"/>')
+        out.append(f'<text x="{_f(px)}" y="{_f(py + 4)}" font-size="10" text-anchor="middle" fill="#111">{label}</text>')
     if north is not None:
         out.append(north_arrow(W - 50, H - 60, north))
     out.append(f'<text x="20" y="{H - 16}" font-size="10" fill="#555">Computed evidence; upper-storey plate inferred, openings assumed. Not a daylight certification.</text>')
@@ -103,11 +111,11 @@ def shadow_card(result: dict) -> str:
     return "\n".join(out)
 
 
-def cards_bundle(result: dict, unit_envelope, north=None) -> str:
+def cards_bundle(result: dict, unit_envelope, north=None, rooms=None) -> str:
     """Single SVG document stacking the four cards (byte-deterministic)."""
-    parts = [heatmap_card(result, unit_envelope, north=north)]
+    parts = [heatmap_card(result, unit_envelope, north=north, rooms=rooms)]
     for date, rec in sorted(result.get("solar_access", {}).items()):
-        parts.append(heatmap_card(result, unit_envelope, title=f"Direct sun hours on {date}", unit_label="hours", values=rec["sun_hours"], north=north))
+        parts.append(heatmap_card(result, unit_envelope, title=f"Direct sun hours on {date}", unit_label="hours", values=rec["sun_hours"], north=north, rooms=rooms))
     parts += [sunpath_card(result), shadow_card(result)]
     y = 0
     inner = []

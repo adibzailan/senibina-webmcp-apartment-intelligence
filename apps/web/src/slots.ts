@@ -6,6 +6,29 @@ export function storeyFloor(plate: any, storey: number): number {
   return 0;
 }
 
+/** Mirror of ai_geometry.build.unit_frame: plan frame (x along frontage, y inward) to world ENU. */
+export function unitToWorld(plate: any, placement: { facade: string; stack_position: string; mirrored?: boolean }): ((x: number, y: number) => [number, number]) | null {
+  const w = plate.wings.find((w: any) => w.id === placement.facade); if (!w) return null;
+  const s = w.slots.find((s: any) => s.id === placement.stack_position); if (!s) return null;
+  const ax = (w.axis_deg * Math.PI) / 180, inw = (w.inward_deg * Math.PI) / 180;
+  const centre = s.start_m + s.width_m / 2 - w.length_m / 2;
+  const ox = w.origin[0] + centre * Math.cos(ax), oy = w.origin[1] + centre * Math.sin(ax);
+  return (x, y) => { if (placement.mirrored) x = -x; return [ox + x * Math.cos(ax) + y * Math.cos(inw), oy + x * Math.sin(ax) + y * Math.sin(inw)]; };
+}
+
+export interface RoomLabel { id: string; text: string; x: number; y: number; z: number }
+
+/** One label per room at the polygon centroid, 1.2 m above the floor. */
+export function roomLabels(plate: any, unit: any, placement: { facade: string; stack_position: string; mirrored?: boolean }, storey: number): RoomLabel[] {
+  const to = unitToWorld(plate, placement); if (!to || !unit?.rooms) return [];
+  const z = storeyFloor(plate, storey) + 1.2;
+  return unit.rooms.map((r: any) => {
+    const cx = r.polygon.reduce((a: number, p: number[]) => a + p[0], 0) / r.polygon.length;
+    const cy = r.polygon.reduce((a: number, p: number[]) => a + p[1], 0) / r.polygon.length;
+    const [x, y] = to(cx, cy); return { id: r.id, text: r.label, x, y, z };
+  });
+}
+
 export function plateSlots(plate: any, storey: number): Slot[] {
   const z = storeyFloor(plate, storey);
   const out: Slot[] = [];

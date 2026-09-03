@@ -4,7 +4,7 @@ import { confirmFromClick, createStudy, proposePlacement, runAnalysis, showAnaly
 import { cardsPdf, download, svgToPng, zipBlob } from "./cards";
 import { initialState, reducer, State } from "./state";
 import { Viewer } from "./viewer";
-import { plateSlots } from "./slots";
+import { plateSlots, roomLabels } from "./slots";
 import { PROJECTS } from "./projects";
 import { registerWebMcp, toolDefinitions } from "./webmcp";
 
@@ -122,6 +122,13 @@ export default function App() {
     const placing = state.screen === "place" || state.screen === "confirm";
     v.setSlots(placing ? slots : [], `${state.placement.facade}:${state.placement.stack_position}`, placing ? (id) => { const [facade, stack_position] = id.split(":"); dispatch({ type: "set_placement", placement: { facade: facade as any, stack_position: stack_position as any } }); } : null);
   }, [slots, state.screen, state.placement.facade, state.placement.stack_position, glbKey]);
+
+  useEffect(() => {
+    const v = viewerRef.current; if (!v || !context?.plate) return;
+    const unit = context.units?.[state.placement.variant];
+    const show = state.studyId && state.placementRevision > 0 && state.screen !== "locate";
+    v.setRoomLabels(show ? roomLabels(context.plate, unit, state.placement, state.storey) : []);
+  }, [context, state.studyId, state.placementRevision, state.screen, state.placement.facade, state.placement.stack_position, state.placement.variant, state.placement.mirrored, state.storey, glbKey]);
 
   async function exportFromPage(formats: string[]) {
     const s = stateRef.current; if (!s.studyId || !s.result) return { error: "EXPORT_NOT_READY", next_action: "Run the analysis first." };

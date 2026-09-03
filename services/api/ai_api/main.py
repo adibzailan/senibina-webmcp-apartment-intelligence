@@ -173,7 +173,7 @@ def build_exports(st: Study) -> None:
     glb = write_glb(scene)
     obj = write_obj(scene.analytical_mesh())
     evidence = (canonical_json(st.result) + "\n").encode("utf-8")
-    cards = cards_bundle(st.result, unit.envelope, north=plan_north(unit_frame(PLATE, pl))).encode("utf-8")
+    cards = cards_bundle(st.result, unit.envelope, north=plan_north(unit_frame(PLATE, pl)), rooms=unit.rooms).encode("utf-8")
     st.scene_glb = glb
     st.exports = {"scene.glb": glb, "analytical.obj": obj, "evidence.json": evidence, "cards.svg": cards}
 

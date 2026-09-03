@@ -33,6 +33,7 @@ export class Viewer {
   private ro: ResizeObserver;
   basemap: THREE.Mesh | null = null;
   massing = true;
+  private labels: THREE.Group | null = null;
   onFrame: ((azimuthDeg: number) => void) | null = null;
   private gizmo = new THREE.Scene();
   private gizmoCam = new THREE.OrthographicCamera(-2.1, 2.1, 2.1, -2.1, 0.1, 20);
@@ -123,6 +124,26 @@ export class Viewer {
   }
 
   setBasemapVisible(v: boolean) { if (this.basemap) this.basemap.visible = v; }
+
+  /** Room name tags floating above each room, always facing the camera. */
+  setRoomLabels(labels: { id: string; text: string; x: number; y: number; z: number }[]) {
+    if (this.labels) { this.scene.remove(this.labels); this.labels = null; }
+    if (!labels.length) return;
+    const g = new THREE.Group();
+    for (const l of labels) {
+      const c = document.createElement("canvas"); const ctx = c.getContext("2d")!;
+      ctx.font = "500 40px Inter, system-ui, sans-serif";
+      const w = Math.ceil(ctx.measureText(l.text).width) + 40; c.width = w; c.height = 64;
+      ctx.fillStyle = "rgba(251,250,246,0.92)"; ctx.fillRect(0, 0, w, 64);
+      ctx.strokeStyle = "#18211d"; ctx.lineWidth = 3; ctx.strokeRect(1.5, 1.5, w - 3, 61);
+      ctx.font = "500 40px Inter, system-ui, sans-serif"; ctx.fillStyle = "#18211d"; ctx.textBaseline = "middle"; ctx.fillText(l.text, 20, 34);
+      const tex = new THREE.CanvasTexture(c); tex.anisotropy = 4;
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+      const h = 0.55; sp.scale.set((w / 64) * h, h, 1); sp.position.set(l.x, l.y, l.z); sp.renderOrder = 20;
+      g.add(sp);
+    }
+    this.labels = g; this.scene.add(g);
+  }
 
   /** Massing on or off. Off keeps only faint edges of the tower and context so the apartment and its heat reads clean. */
   setMassingVisible(v: boolean) {
