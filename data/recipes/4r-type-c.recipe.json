@@ -1495,7 +1495,7 @@
    "host_wall": null,
    "id": "slab-ceiling",
    "kind": "slab",
-   "opacity_token": "home",
+   "opacity_token": "glass",
    "polyline": [
     [
      -6.255,

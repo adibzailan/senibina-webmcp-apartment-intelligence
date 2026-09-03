@@ -128,7 +128,7 @@ def columns():
 def slabs_and_extras():
     return [
         Element(id="slab-floor", kind="slab", polyline=ENVELOPE, base_m=-0.2, height_m=0.2, opacity_token="home", source=REC),
-        Element(id="slab-ceiling", kind="slab", polyline=ENVELOPE, base_m=WALL_H, height_m=0.2, opacity_token="home", source=REC),
+        Element(id="slab-ceiling", kind="slab", polyline=ENVELOPE, base_m=WALL_H, height_m=0.2, opacity_token="glass", source=REC),
         Element(id="ledge-ac", kind="ledge", rect=(-5.18, 4.49, -4.26, 6.33), base_m=0.0, height_m=0.1, blocks_sun=False, opacity_token="home", source=REC, room="ac_ledge"),
         Element(id="railing-serviceyard", kind="railing", polyline=[(-1.81, 8.78), (0.74, 8.78)], thickness_m=0.05, base_m=0.0, height_m=1.0, blocks_sun=False, opacity_token="glass", source=ASSUMED),
         Element(id="balcony-living", kind="balcony", rect=(3.4, -1.3, 5.9, 0.0), base_m=-0.15, height_m=0.15, blocks_sun=True, opacity_token="home", source=ASSUMED, enabled_by_default=True),
