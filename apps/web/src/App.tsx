@@ -138,6 +138,7 @@ export default function App() {
   const r = state.result;
   const stepIndex = Math.max(1, STEPS.indexOf(state.screen) + 1);
 
+  const home = (context?.supported ?? []).find((h: any) => h.address === state.address || h.postal_code === state.address.trim());
   return (
     <div className="container">
       <header className="masthead">
@@ -190,11 +191,13 @@ export default function App() {
 
         <aside className="rail">
           <section className="study-card" aria-label="Study">
-            <div className="study-line"><strong>{state.address}</strong>{state.studyId ? `, storey ${state.storey}` : ""}</div>
+            <div className="study-line"><strong>{home?.development ?? state.address}</strong></div>
+            <div className="study-sub">{home ? `Block ${home.block}, ${home.address}` : ""}{state.studyId ? (home ? `, storey ${state.storey}` : `Storey ${state.storey}`) : ""}</div>
             <div className="study-meta steps" aria-live="polite">
               <button className="step-arrow" aria-label="Previous step" disabled={stepIndex <= 1} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex - 2] })}>←</button>
-              <span>Step {stepIndex} of 5 · {({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyState ? ` · ${STATE_WORDS[state.studyState] ?? state.studyState}` : ""}</span>
+              <span>Step {stepIndex} of 5</span>
               <button className="step-arrow" aria-label="Next step" disabled={!canAdvance(state)} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex] })}>→</button>
+              <span className="step-name">{({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyState ? `, ${STATE_WORDS[state.studyState] ?? state.studyState}` : ""}</span>
             </div>
           </section>
           {state.screen === "locate" && <section>

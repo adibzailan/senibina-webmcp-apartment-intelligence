@@ -58,6 +58,7 @@ table.evidence td { border-top: 1px solid var(--rule); padding: 4px 6px; vertica
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 .study-card { border-top: 1px solid var(--ink); padding-top: 8px; }
 .study-line { font-family: var(--serif); font-size: 20px; }
+.study-sub { font-size: 13px; color: var(--ink-muted); margin: 2px 0 10px; }
 .study-meta { font-size: 12px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
 .slot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .slot-grid button[aria-pressed="true"], .toolbar button[aria-pressed="true"] { background: var(--ink); color: var(--paper-white); }
@@ -67,6 +68,7 @@ table.evidence td { border-top: 1px solid var(--rule); padding: 4px 6px; vertica
 .colophon-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .colophon-link:hover { text-decoration-thickness: 2px; }
 .steps { display: flex; align-items: center; gap: 8px; }
+.step-name { margin-left: 8px; padding-left: 12px; border-left: 1px solid var(--rule); color: var(--ink); }
 .step-arrow { min-height: 28px; padding: 0 8px; font-size: 14px; line-height: 1; }
 table.evidence th { text-align: left; font-weight: 500; font-size: 12px; color: var(--ink-muted); padding: 4px 6px; border-bottom: 1px solid var(--ink); }
 table.rooms td:not(:first-child), table.rooms th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
