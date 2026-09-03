@@ -8,7 +8,7 @@ MUSIC = f"{F}/music/music__20260903_191426.mp3"; BEATS = f"{F}/audio/beats"
 W, H, FPS = 1920, 1080, 30
 marks = {m["name"]: m["t"] for m in json.load(open(f"{F}/product/timing.json"))["marks"]}
 def esc(t): return t.replace("\\", "\\\\").replace("'", "’").replace(":", "\\:").replace("%", "\\%")
-def caption(t): return (f",drawtext=fontfile={SANS}:text='{esc(t)}':fontsize=34:fontcolor=0x18211d:box=1:boxcolor=0xf5f2e9@0.94:boxborderw=16:x=(w-text_w)/2:y=h-120") if t else ""
+def caption(t, left=False): return (f",drawtext=fontfile={SANS}:text='{esc(t)}':fontsize=34:fontcolor=0x18211d:box=1:boxcolor=0xf5f2e9@0.94:boxborderw=16:x={'48' if left else '(w-text_w)/2'}:y=h-120") if t else ""
 def run(cmd): subprocess.run(cmd, shell=True, check=True)
 
 # ---------- clip builders (each writes a silent 1920x1080 mp4 of exactly `sec` seconds) ----------
@@ -21,7 +21,7 @@ def card(out, sec, lines, size=84, sub=None, fade=True, cap=None, gap=None):
     gap = gap or int(size * 1.12); total = len(lines) * gap; y0 = H / 2 - total / 2 + (gap - size) / 2
     dt = ",".join(f"drawtext=fontfile={SERIF}:text='{esc(l)}':fontsize={size}:fontcolor=0x18211d:x=(w-text_w)/2:y={int(y0 + i*gap)}" for i, l in enumerate(lines))
     if sub: dt += f",drawtext=fontfile={SANS}:text='{esc(sub)}':fontsize=26:fontcolor=0x5f665f:x=(w-text_w)/2:y={int(y0 + total + 36)}"
-    fd = f",fade=t=in:st=0:d=0.5,fade=t=out:st={sec-0.5}:d=0.5" if fade else ""
+    fd = f",fade=t=in:st=0:d=0.5:color=0xf5f2e9,fade=t=out:st={sec-0.5}:d=0.5:color=0xf5f2e9" if fade else ""
     run(f"ffmpeg -v error -y -f lavfi -i color=c=0xf5f2e9:s={W}x{H}:r={FPS}:d={sec} -vf \"{dt}{caption(cap)}{fd}\" -c:v libx264 -pix_fmt yuv420p -r {FPS} {out}")
 def cut(out, src, t0, t1, speed=1.0, cap=None, pip=None, sec=None):
     """Product footage from t0 to t1, played at `speed`; optional founder pip (src_t0) top-left."""
@@ -33,7 +33,7 @@ def cut(out, src, t0, t1, speed=1.0, cap=None, pip=None, sec=None):
         vf += f";[1:v]scale=520:-2,pad=iw+8:ih+8:4:4:0xf5f2e9,setpts=PTS-STARTPTS[p];[base][p]overlay=48:48:shortest=0[v0]"
     else:
         vf += ";[base]null[v0]"
-    vf += f";[v0]null{caption(cap)}[v]" if cap else ";[v0]null[v]"
+    vf += f";[v0]null{caption(cap, left=True)}[v]" if cap else ";[v0]null[v]"
     run(f"ffmpeg -v error -y {inputs} -filter_complex \"{vf}\" -map \"[v]\" -t {dur} -c:v libx264 -pix_fmt yuv420p -r {FPS} {out}")
     return dur
 def pdfpages(out, pages, each, cap=None):
