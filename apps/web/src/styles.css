@@ -36,6 +36,7 @@ label { display: block; font-size: 13px; color: var(--ink-muted); margin: 8px 0 
 .rail details { margin-top: 16px; }
 .rail details + .toolbar { margin-top: 20px; }
 .rail .run-row { margin-top: 20px; }
+.rail .run-row + .status { margin-top: 12px; }
 .field select, .field input { flex: 1 1 140px; }
 section.chapter { border-top: 1px solid var(--rule); padding: 16px 0; }
 section.chapter h2 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin: 0 0 8px; }

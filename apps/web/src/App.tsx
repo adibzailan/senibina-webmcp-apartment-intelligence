@@ -259,10 +259,10 @@ export default function App() {
             {r && <>
               <label>Study</label>
               <div className="toolbar">{(["sunpath", "shadow", "solar_access", "radiation"] as const).map((p) => <button key={p} aria-pressed={state.view.preset === p} onClick={() => showAnalysis(ctx, { preset: p })}>{(p[0].toUpperCase() + p.slice(1)).replace("_", " ")}</button>)}</div>
-              <label>Date and hour</label>
-              <div className="field">
-                <select value={state.view.date} onChange={(e) => showAnalysis(ctx, { date: e.target.value })}>{DATES.map((d) => <option key={d}>{d}</option>)}</select>
-                <select value={state.view.hour} onChange={(e) => showAnalysis(ctx, { hour: Number(e.target.value) })}>{[9, 12, 15, 17].map((h) => <option key={h} value={h}>{h}:00</option>)}</select>
+              <label>Date and hour{state.view.preset === "radiation" ? ", not used: radiation is the whole-year total" : ""}</label>
+              <div className="field" style={state.view.preset === "radiation" ? { opacity: 0.45 } : undefined}>
+                <select value={state.view.date} disabled={state.view.preset === "radiation"} onChange={(e) => showAnalysis(ctx, { date: e.target.value })}>{DATES.map((d) => <option key={d}>{d}</option>)}</select>
+                <select value={state.view.hour} disabled={state.view.preset === "radiation"} onChange={(e) => showAnalysis(ctx, { hour: Number(e.target.value) })}>{[9, 12, 15, 17].map((h) => <option key={h} value={h}>{h}:00</option>)}</select>
               </div>
               <div className="numbers" style={{ marginTop: 12 }}>
                 <div><span>minimum</span><strong>{r.radiation.min}</strong></div><div><span>average</span><strong>{r.radiation.avg}</strong></div><div><span>maximum</span><strong>{r.radiation.max}</strong></div>
@@ -273,10 +273,20 @@ export default function App() {
           </section>}
 
           {state.screen === "export" && r && <section>
+            <label>Report</label>
             <div className="toolbar">
-              {["glb", "obj", "3dm", "evidence.json", "cards.svg", "png", "pdf", "zip"].map((f) => <button key={f} onClick={() => exportFromPage([f])}>{f}</button>)}
+              <button onClick={() => exportFromPage(["pdf"])}>PDF</button>
+              <button onClick={() => exportFromPage(["png"])}>PNG</button>
             </div>
-            <p className="status">SVG, GLB, OBJ and evidence.json are byte-stable and bound to the digest. PNG and PDF are presentation renders. 3DM embeds fresh object ids.</p>
+            <label>3D model</label>
+            <div className="toolbar">
+              <button onClick={() => exportFromPage(["glb"])}>GLB</button>
+              <button onClick={() => exportFromPage(["obj"])}>OBJ</button>
+              <button onClick={() => exportFromPage(["3dm"])}>3DM, for Rhino</button>
+            </div>
+            <label>Everything</label>
+            <div className="toolbar run-row"><button className="primary" onClick={() => exportFromPage(["zip"])}>Download the full bundle, ZIP</button></div>
+            <p className="status">The bundle adds the raw evidence record and the drawing cards, both byte-stable and bound to the result digest. PDF and PNG are presentation renders. 3DM embeds fresh object ids.</p>
           </section>}
 
           <p className={"status" + (state.message?.kind === "error" ? " error" : "")} role="status" aria-live="polite">{state.busy ? `${state.busy}…` : state.message?.text ?? ""}</p>

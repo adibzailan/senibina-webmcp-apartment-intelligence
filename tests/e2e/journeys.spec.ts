@@ -38,8 +38,8 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   await page.mouse.wheel(0, -200);
   await page.getByRole("button", { name: "Keep the evidence", exact: true }).click();
   const dl = page.waitForEvent("download");
-  await page.getByRole("button", { name: "cards.svg", exact: true }).click();
-  expect((await dl).suggestedFilename()).toContain("cards.svg");
+  await page.getByRole("button", { name: "GLB", exact: true }).click();
+  expect((await dl).suggestedFilename()).toContain(".glb");
   await noHorizontalOverflow(page);
   await page.screenshot({ path: `test-results/journey-${test.info().project.name}.png`, fullPage: true });
 });

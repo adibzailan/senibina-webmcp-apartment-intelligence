@@ -52,7 +52,7 @@ Guaranteed input:
    for a ten-second single-use server challenge.
 4. **Analyse:** run Ladybug + Radiance on a 0.1, 0.25 or 0.5 m floor grid and
    inspect sunpath, shadow, solar access and radiation in the same scene.
-5. **Export:** download GLB, OBJ, 3DM, SVG cards, evidence.json, ZIP, and
+5. **Export:** the page offers PDF and PNG reports, GLB, OBJ and 3DM models, and a ZIP bundle that also carries the SVG cards and evidence.json (agents can still request any format by name), and
    presentation PNG/PDF renders.
 
 ## Information states
