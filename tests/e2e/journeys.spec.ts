@@ -28,7 +28,7 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   await page.locator("summary", { hasText: "Method, sources" }).click();
   await expect(page.getByText(/result digest [0-9a-f]{16}/)).toBeVisible();
   for (const preset of ["Sunpath", "Shadow", "Solar access", "Radiation"]) await page.getByRole("button", { name: preset, exact: true }).click();
-  for (const cam of ["Precinct", "Tower", "Home", "Plan", "North", "Reset", "Map"]) await page.getByRole("button", { name: cam, exact: true }).click();
+  for (const cam of ["Precinct", "Tower", "Apartment", "From above", "Face north", "Reset", "Map"]) await page.getByRole("button", { name: cam, exact: true }).click();
   // orbit, pan, zoom on the live canvas must not throw
   const canvas = page.locator(".canvas canvas");
   const box = (await canvas.boundingBox())!;

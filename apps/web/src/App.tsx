@@ -48,6 +48,7 @@ export default function App() {
   const [glbKey, setGlbKey] = useState<string>("");
   const framedFor = useRef<string>("");
   const [basemap, setBasemap] = useState(true);
+  const [hoverShot, setHoverShot] = useState<string | null>(null);
   const compassRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => { liveApi.context().then(setContext).catch(() => setContext({ supported: [] })); }, []);
@@ -147,8 +148,10 @@ export default function App() {
       {state.screen === "locate" && <h2 className="question">Will this apartment get the sun you expect?</h2>}
       {state.screen === "locate" && <section className="projects" aria-label="Developments">
         <div className="project-grid">
-          {PROJECTS.map((p) => <button key={p.slug} className={"project" + (p.live ? " live" : "")} disabled={!p.live} aria-pressed={p.live && state.address === p.address} onClick={() => p.live && dispatch({ type: "set_address", address: p.address! })}>
-            <span className="project-art" style={{ backgroundImage: `url(/projects/${p.slug}.png)` }} aria-hidden="true" />
+          {PROJECTS.map((p) => <button key={p.slug} className={"project" + (p.live ? " live" : "")} disabled={!p.live} aria-pressed={p.live && state.address === p.address}
+            onMouseEnter={() => { if (p.live && viewerRef.current) setHoverShot(viewerRef.current.snapshot()); }} onMouseLeave={() => setHoverShot(null)}
+            onClick={() => { if (!p.live) return; dispatch({ type: "set_address", address: p.address! }); canvasRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+            <span className="project-art" style={{ backgroundImage: p.live && hoverShot ? `url(${hoverShot})` : `url(/projects/${p.slug}.png)` }} aria-hidden="true" />
             <span className="project-name">{p.name}</span>
             <span className="project-meta">{p.town} · blocks {p.blocks} · {p.storeys} storeys</span>
             <span className="project-state">{p.live ? "Ready" : "Not yet covered"}</span>
@@ -167,11 +170,17 @@ export default function App() {
             {basemap && <span className="attribution">Map data © OpenStreetMap contributors</span>}
             <span className="edge">{state.view.camera} view · Dawson precinct, ENU metres · {state.view.preset}{r ? ` · ${state.view.date} ${state.view.hour}:00` : ""}</span>
           </div>
-          <div className="toolbar" aria-label="Canvas controls">
-            {(["precinct", "tower", "home", "plan"] as const).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c, focus); }}>{c[0].toUpperCase() + c.slice(1)}</button>)}
-            <button onClick={() => viewerRef.current?.preset("north")}>North</button>
-            <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
-            <button aria-pressed={basemap} onClick={() => setBasemap(!basemap)}>Map</button>
+          <div className="toolbar view-controls" aria-label="Canvas controls">
+            <span className="control-group" role="group" aria-label="Look at">
+              <span className="control-label">Look at</span>
+              {(["precinct", "tower", "home", "plan"] as const).filter((c) => c !== "home" || state.placementRevision > 0).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c, focus); }}>{({ precinct: "Precinct", tower: "Tower", home: "Apartment", plan: "From above" } as any)[c]}</button>)}
+            </span>
+            <span className="control-group" role="group" aria-label="View">
+              <span className="control-label">View</span>
+              <button onClick={() => viewerRef.current?.preset("north")}>Face north</button>
+              <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
+              <button aria-pressed={basemap} onClick={() => setBasemap(!basemap)}>Map</button>
+            </span>
           </div>
           {r && <div className="legend" style={{ marginTop: 8 }}>
             {state.view.preset === "shadow" ? <><span style={{ width: 12, height: 12, background: "#f2c230", display: "inline-block" }} /> lit <span style={{ width: 12, height: 12, background: "#45534d", display: "inline-block" }} /> shaded</> : <><span>{state.view.preset === "radiation" ? "0" : "0 h"}</span><span className="ramp" /><span>{state.view.preset === "radiation" ? `${r.radiation.max} kWh/m² per year` : "hours of direct sun"}</span></>}

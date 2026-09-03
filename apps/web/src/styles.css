@@ -85,3 +85,7 @@ table.coverage { margin-top: 14px; }
 table.coverage td:first-child { color: var(--ink-muted); width: 34%; }
 @media (max-width: 1100px) { .project-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 640px) { .project-grid { grid-template-columns: repeat(2, 1fr); } .mcp-label { display: none; } }
+.view-controls { align-items: center; gap: 16px; }
+.control-group { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.control-label { font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
+.project.live:hover .project-art { mix-blend-mode: normal; }
