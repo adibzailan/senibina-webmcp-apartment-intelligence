@@ -364,3 +364,9 @@ rasters never committed). Committed artefacts are coordinates only:
   under Playwright, so tool discovery was verified through the page's own registry; native
   `getTools()` is asserted whenever the API is present.
 - Docker: Radiance's Linux build is x86-64 only, so the runtime stage is pinned to linux/amd64.
+- Determinism holds per platform: the same inputs give the same digest on repeated runs, but the
+  arm64 macOS run and the amd64 Docker run produce different digests (floating-point differences
+  in Radiance and numpy). The Docker image is the reference platform for published digests.
+- Docker lifecycle (compose up, healthz, in-container 0.25 m analysis in 4.8 s under emulation,
+  kill, up, healthz) passed. Render deploy is documented in `deploy/render.yaml`, not executed.
+- Not run: axe accessibility audit, reduced-motion check, 200% zoom check, Render deploy.
