@@ -33,4 +33,4 @@ status: active-reference
 - [x] Version 0 pushed to `main` 3 Sep 17:14 SGT; six journeys pass against the live URL with `--workers=1` (the server allows one analysis at a time).
 - [x] Live grid timings on Render: 0.5 m 4.4 s, 0.25 m 5.4 s, 0.1 m 10.6 s server time, all inside the 15 s budget.
 - [x] Live run exposed and fixed a stale-confirmation race (the page re-staged a tool-staged placement after the click); pushed 17:35 SGT.
-- [ ] Attach `apartments.senibina.com.sg` and `apartment.senibina.com.sg` on Render and in Vercel DNS (founder).
+- [x] `apartments.senibina.com.sg` and `apartment.senibina.com.sg` attached on Render, CNAMEs in Vercel DNS (Codex, 3 Sep ~18:50 SGT). Six journeys pass on `apartments.`, two on `apartment.`, in Chrome. Public resolvers answer Render; one Mac still had the old Vercel answer cached, which is local, not live.

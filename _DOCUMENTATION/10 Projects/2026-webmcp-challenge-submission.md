@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: active
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Adib records the demo video against https://apartment-intelligence.onrender.com and submits on Devpost before 04:00 SGT on 4 September 2026.
+next_action: Adib records the demo video against https://apartments.senibina.com.sg and submits on Devpost before 04:00 SGT on 4 September 2026.
 ---
 
 # WebMCP Challenge submission
