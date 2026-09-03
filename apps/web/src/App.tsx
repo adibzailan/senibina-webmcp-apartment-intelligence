@@ -44,6 +44,8 @@ export default function App() {
   const ctx = useMemo(() => ({ api: liveApi, dispatch, getState: () => stateRef.current }), []);
   const [context, setContext] = useState<any>(null);
   const [grid, setGrid] = useState<0.1 | 0.25 | 0.5>(0.25);
+  const [picks, setPicks] = useState<string[]>(["pdf"]);
+  const togglePick = (f: string) => setPicks((p) => (p.includes(f) ? p.filter((x) => x !== f) : [...p, f]));
   const [mcp, setMcp] = useState<{ registered: boolean; where: string } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
@@ -275,17 +277,17 @@ export default function App() {
           {state.screen === "export" && r && <section>
             <label>Report</label>
             <div className="toolbar">
-              <button onClick={() => exportFromPage(["pdf"])}>PDF</button>
-              <button onClick={() => exportFromPage(["png"])}>PNG</button>
+              {([["pdf", "PDF"], ["png", "PNG"]] as const).map(([f, l]) => <button key={f} aria-pressed={picks.includes(f)} onClick={() => togglePick(f)}>{l}</button>)}
             </div>
             <label>3D model</label>
             <div className="toolbar">
-              <button onClick={() => exportFromPage(["glb"])}>GLB</button>
-              <button onClick={() => exportFromPage(["obj"])}>OBJ</button>
-              <button onClick={() => exportFromPage(["3dm"])}>3DM, for Rhino</button>
+              {([["glb", "GLB"], ["obj", "OBJ"], ["3dm", "3DM, for Rhino"]] as const).map(([f, l]) => <button key={f} aria-pressed={picks.includes(f)} onClick={() => togglePick(f)}>{l}</button>)}
             </div>
             <label>Everything</label>
-            <div className="toolbar run-row"><button className="primary" onClick={() => exportFromPage(["zip"])}>Download the full bundle, ZIP</button></div>
+            <div className="toolbar">
+              <button aria-pressed={picks.includes("zip")} onClick={() => togglePick("zip")}>Full bundle, ZIP</button>
+            </div>
+            <div className="toolbar run-row"><button className="primary" disabled={picks.length === 0} onClick={() => exportFromPage(picks)}>{picks.length ? `Export ${picks.length} file${picks.length > 1 ? "s" : ""}` : "Export"}</button></div>
             <p className="status">The bundle adds the raw evidence record and the drawing cards, both byte-stable and bound to the result digest. PDF and PNG are presentation renders. 3DM embeds fresh object ids.</p>
           </section>}
 
