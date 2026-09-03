@@ -51,7 +51,10 @@ Python: Ladybug and Radiance run headless on Render (one Docker container, Singa
 
 ## What's next
 
-More covered developments, a survey progress indicator ("2 of 24 surveyed"), separate badges for survey and confirmed evidence in chat, and the practice-side version of the same engine.
+- Proper base geometry. Today the tower and the apartments are coordinate recipes traced from published plans. The next step is to model the developments properly in Rhino or Revit once, keep provenance on every element, and feed that one model to everything: the 3D view, the analysis mesh, the plan cards and the exports. The engine stays headless; only the source of the geometry changes.
+- More covered developments, starting with the nine already drawn on the grid.
+- A survey progress indicator ("2 of 24 surveyed") and separate badges for survey and confirmed evidence in chat, both suggested by the ChatGPT agent that tested it.
+- The practice-side version of the same engine.
 
 ## Links
 
