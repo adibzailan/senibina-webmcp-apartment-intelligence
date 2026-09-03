@@ -4,7 +4,7 @@ para: project
 status: approved-for-goal
 decision_date: 2026-09-03
 branch: v2-clean-room
-next_action: Founder reviews the Gate 1 overlays in output/gate1 and the local readback on branch v2-clean-room, then accepts or corrects the plate and unit recipes.
+next_action: Decide whether to merge v2-clean-room into main, then plan the Rhino/Revit import path for founder-modelled tower massing.
 ---
 
 # Clean-room reconstruction handoff
@@ -331,7 +331,7 @@ Dropped: opencv-python-headless, pyembree, pygltflib, three-mesh-bvh.
 The measured copy-paste goal is stored beside this note as
 `2026-09-clean-room-reconstruction.goal.txt`.
 
-## 14. Gate 1 record (2026-09-03, awaiting founder acceptance)
+## 14. Gate 1 record (2026-09-03, founder accepted)
 
 Overlays are rendered by `tests/acceptance/gate1_overlays.py` into `output/gate1/` (ignored;
 rasters never committed). Committed artefacts are coordinates only:
@@ -370,3 +370,5 @@ rasters never committed). Committed artefacts are coordinates only:
 - Docker lifecycle (compose up, healthz, in-container 0.25 m analysis in 4.8 s under emulation,
   kill, up, healthz) passed. Render deploy is documented in `deploy/render.yaml`, not executed.
 - Not run: axe accessibility audit, reduced-motion check, 200% zoom check, Render deploy.
+- Gate 1 accepted by Adib on 2026-09-03 after viewing the 3D apartment in the page ("I accept. This is good"). Apartment and tower recipes stand with their reconstructed/assumed labels.
+- Gate 2 readback delivered 2026-09-03; goal complete on branch v2-clean-room, not pushed.
