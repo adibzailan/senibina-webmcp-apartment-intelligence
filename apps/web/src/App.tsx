@@ -96,7 +96,6 @@ export default function App() {
     <div className="container">
       <header className="masthead">
         <h1>Apartment Intelligence</h1>
-        <span className="index">Senibina · public-interest study</span>
       </header>
 
       {state.screen === "locate" && <h2 className="question">Will this apartment get the sun you expect?</h2>}
@@ -198,7 +197,11 @@ export default function App() {
         <table className="evidence"><tbody>{Object.entries(r.radiation.per_room).map(([k, v]: any) => <tr key={k}><td>{k}</td><td>{v.sensors} sensors</td><td>min {v.min}</td><td>avg {v.avg}</td><td>max {v.max}</td></tr>)}</tbody></table>
         <details style={{ marginTop: 8 }}><summary>Explain evidence (same record a tool receives)</summary><pre style={{ fontSize: 11, whiteSpace: "pre-wrap" }}>{JSON.stringify(explainEvidence(ctx, "digest"), null, 1)}</pre></details>
       </section>}
-      <footer className="status">Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification.</footer>
+      <footer className="colophon">
+        <div className="colophon-brand">Apartment Intelligence</div>
+        <div className="colophon-line">A Senibina public-interest study · Singapore first</div>
+        <div className="status">Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification.</div>
+      </footer>
     </div>
   );
 }
