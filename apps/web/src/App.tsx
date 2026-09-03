@@ -14,6 +14,7 @@ const STATE_WORDS: Record<string, string> = { created: "started", placed: "place
 const ELEMENT_LABELS: Record<string, string> = { "win-mainbed": "Main bedroom window", "win-bed2": "Bedroom 2 window", "win-bed3": "Bedroom 3 window", "win-living": "Living room window", "win-living-side": "Living room side window", "win-mainbed-side": "Main bedroom side window", "win-kitchen": "Kitchen window", "railing-serviceyard": "Service yard railing", "balcony-living": "Living room balcony", "railing-balcony": "Balcony railing" };
 const labelOf = (id: string) => ELEMENT_LABELS[id] ?? id.replace(/[-_]/g, " ");
 const ROOM_LABELS: Record<string, string> = { main_bedroom: "Main bedroom", bedroom_2: "Bedroom 2", bedroom_3: "Bedroom 3", living_dining: "Living and dining", corridor: "Corridor", bath_1: "Bathroom 1", bath_2: "Bathroom 2", kitchen: "Kitchen", service_yard: "Service yard", entrance: "Entrance", shelter: "Household shelter", ac_ledge: "AC ledge" };
+const STEP_QUESTIONS: Record<string, string> = { locate: "Start with your block and storey.", place: "Choose the wing and layout you recognise.", confirm: "Confirm the placement you see.", analysis: "Sun, shade and radiation on your floor.", export: "Keep the evidence." };
 const STATE_PLAIN: Record<string, string> = { sourced: "from public data", inferred: "estimated from public data", reconstructed: "traced from a published drawing", assumed: "an assumption you can change", computed: "computed", resident_confirmed: "confirmed by you" };
 const roomOf = (id: string) => ROOM_LABELS[id] ?? id.replace(/_/g, " ");
 
@@ -48,6 +49,13 @@ export default function App() {
   const viewerRef = useRef<Viewer | null>(null);
   const [glbKey, setGlbKey] = useState<string>("");
   const framedFor = useRef<string>("");
+  const stepRef = useRef<HTMLHeadingElement>(null);
+  const lastScreen = useRef(state.screen);
+  useEffect(() => {
+    // every step after the first brings its own heading into view, so the reader always sees what the step asks
+    if (lastScreen.current !== state.screen && state.screen !== "locate") stepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    lastScreen.current = state.screen;
+  }, [state.screen]);
   const [basemap, setBasemap] = useState(true);
   const [hoverShot, setHoverShot] = useState<string | null>(null);
 
@@ -152,7 +160,7 @@ export default function App() {
         <div className="project-grid">
           {PROJECTS.map((p) => <button key={p.slug} className={"project" + (p.live ? " live" : "")} disabled={!p.live} aria-pressed={p.live && state.address === p.address}
             onMouseEnter={() => { if (p.live && viewerRef.current) setHoverShot(viewerRef.current.snapshot()); }} onMouseLeave={() => setHoverShot(null)}
-            onClick={() => { if (!p.live) return; dispatch({ type: "set_address", address: p.address! }); canvasRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+            onClick={() => { if (!p.live) return; dispatch({ type: "set_address", address: p.address! }); stepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
             <span className="project-art" style={{ backgroundImage: p.live && hoverShot ? `url(${hoverShot})` : `url(/projects/${p.slug}.png)` }} aria-hidden="true" />
             <span className="project-name">{p.name}</span>
             <span className="project-meta">{p.town} · blocks {p.blocks} · {p.storeys} storeys</span>
@@ -160,10 +168,7 @@ export default function App() {
           </button>)}
         </div>
       </section>}
-      {state.screen === "place" && <h2 className="question">Choose the wing and layout you recognise.</h2>}
-      {state.screen === "confirm" && <h2 className="question">Confirm the placement you see.</h2>}
-      {state.screen === "analysis" && <h2 className="question">Sun, shade and radiation on your floor.</h2>}
-      {state.screen === "export" && <h2 className="question">Keep the evidence.</h2>}
+      <h2 className="question step-question" ref={stepRef}>{STEP_QUESTIONS[state.screen] ?? ""}</h2>
 
       <div className="workbench">
         <div className="canvas-col">
