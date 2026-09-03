@@ -52,7 +52,11 @@ def wrapcap(t, width=24):
 def cut_wrapped(out, t0, t1, speed=1.0, cap=None, pip=2.0):
     """cut() with the caption wrapped onto several lines in the left column."""
     dur = (t1 - t0) / speed
-    caps = "".join("," + dt(l, SERIF, 30, INK, SX, SY + SH + 70 + i * 40) for i, l in enumerate(wrapcap(cap))) if cap else ""
+    # captions: one sentence per block, wrapped at 22 characters, 44 px line pitch, a 14 px breath between sentences
+    caps, y = "", SY + SH + 70
+    for sent in ([x.strip() + "." for x in cap.rstrip(".").split(". ")] if cap else []):
+        for l in wrapcap(sent, 22): caps += "," + dt(l, SERIF, 30, INK, SX, y); y += 44
+        y += 14
     fc = (f"color=c={PAPER}:s={W}x{H}:r={FPS}:d={dur:.3f}[bg];"
           f"[0:v]trim=start={t0}:end={t1},setpts=(PTS-STARTPTS)/{speed},scale={BW}:{BH},fps={FPS},pad=iw+4:ih+4:2:2:{INK}[prod];"
           f"[1:v]scale={SW}:{SH}:force_original_aspect_ratio=increase,crop={SW}:{SH},setpts=PTS-STARTPTS,pad=iw+4:ih+4:2:2:{INK}[desk];"
