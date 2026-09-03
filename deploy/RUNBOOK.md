@@ -32,7 +32,7 @@ Studies live in memory for 30 minutes and are lost on restart; the page shows `S
 
 ## Render
 
-`deploy/render.yaml` describes one Docker web service with `/healthz`. Deploying is a founder action: connect the repo in the Render dashboard, pick the blueprint, and set no secrets (none are needed). Not executed by the v2 goal.
+`deploy/render.yaml` describes one Git-backed Docker web service in Singapore on the Standard plan (1 CPU / 2 GB) with `/healthz`. Connect the repo in the Render dashboard and pick the blueprint; no secrets are needed. After that every push to `main` rebuilds and redeploys with zero downtime and instant rollback. Free instances (0.1 CPU, spin-down after 15 min) cannot meet the 15 s analysis budget.
 
 ## Limits
 

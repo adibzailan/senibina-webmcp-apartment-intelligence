@@ -1,14 +1,18 @@
-# Render blueprint (documented, not deployed by the v2 goal). One Docker web service.
+# Render blueprint (documented, not yet deployed). One Git-backed Docker web service.
+# Connect the GitHub repo in the Render dashboard, choose "Blueprint", and Render builds
+# deploy/Dockerfile on every push to main (zero-downtime, instant rollback).
 services:
   - type: web
     name: apartment-intelligence
     runtime: docker
+    region: singapore
+    plan: standard        # 1 CPU / 2 GB: the 0.25 m analysis needs a full core to stay inside its 15 s budget; Free (0.1 CPU) will not
+    branch: main
     dockerfilePath: deploy/Dockerfile
     dockerContext: .
-    plan: starter
     healthCheckPath: /healthz
+    autoDeployTrigger: commit
     envVars:
-      - key: PORT
-        value: "8000"
       - key: AI_ANALYSIS_TIMEOUT_S
         value: "15"
+      # PORT is set by Render (10000); the Dockerfile CMD reads it.
