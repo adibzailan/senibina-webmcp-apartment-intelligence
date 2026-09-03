@@ -34,6 +34,9 @@ ANALYSIS_TIMEOUT_S = float(os.environ.get("AI_ANALYSIS_TIMEOUT_S", "15"))
 MAX_BODY = 256 * 1024
 MAX_EXPORT = 20 * 1024 * 1024
 SESSION_COOKIE = "ai_session"
+# Optional origin allow-list for state-changing requests, e.g. "https://apartments.senibina.com.sg". Empty = no check (local dev).
+EXPECTED_ORIGINS = {o.strip().rstrip("/") for o in os.environ.get("AI_EXPECTED_ORIGINS", "").split(",") if o.strip()}
+COOKIE_SECURE = os.environ.get("AI_COOKIE_SECURE", "false").lower() == "true"
 
 PRECINCT = json.loads((DATA / "precinct/dawson-v2.json").read_text())
 PLATE = PlateRecipe.model_validate(json.loads((DATA / "recipes/skyville-block87-plate.recipe.json").read_text()))
@@ -66,6 +69,10 @@ async def _limits_and_headers(request: Request, call_next):
     cl = request.headers.get("content-length")
     if cl and int(cl) > MAX_BODY:
         return JSONResponse(status_code=413, content={"error": "BODY_TOO_LARGE", "next_action": "Send a body under 256 KB."})
+    if EXPECTED_ORIGINS and request.method in ("POST", "PUT", "DELETE") and request.url.path.startswith("/api/"):
+        origin = (request.headers.get("origin") or "").rstrip("/")
+        if origin not in EXPECTED_ORIGINS:
+            return JSONResponse(status_code=403, content={"error": "ORIGIN_REJECTED", "next_action": "Use the application from its own page."})
     resp = await call_next(request)
     resp.headers["X-Content-Type-Options"] = "nosniff"
     resp.headers["Referrer-Policy"] = "no-referrer"
@@ -79,7 +86,7 @@ def session_of(request: Request, response: Response) -> str:
     tok = request.cookies.get(SESSION_COOKIE)
     if not tok or len(tok) < 16:
         tok = secrets.token_urlsafe(24)
-        response.set_cookie(SESSION_COOKIE, tok, httponly=True, samesite="strict", max_age=86400)
+        response.set_cookie(SESSION_COOKIE, tok, httponly=True, samesite="strict", secure=COOKIE_SECURE, max_age=86400)
     return tok
 
 

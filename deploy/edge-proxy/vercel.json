@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "_note": "Assign both apartments.senibina.com.sg (canonical) and apartment.senibina.com.sg to this Vercel project; both proxy to the Cloudflare tunnel hostname below.",
   "routes": [
     {
       "src": "/(.*)",

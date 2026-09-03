@@ -37,3 +37,23 @@ Studies live in memory for 30 minutes and are lost on restart; the page shows `S
 ## Limits
 
 256 KB body, one analysis at a time, five per session per ten minutes, 15 s worker budget (0.25 m grid runs in about 3 s locally), 100 live studies, 20 MB export.
+
+## Windows VM (dev-sprint host, v2)
+
+The Windows VM that served v1 can serve v2 natively (no Docker): x86-64 CPython 3.13, Node 22,
+and the pinned Windows Radiance build under ARM emulation. From an elevated PowerShell inside the
+VM, in `C:\ApartmentIntelligence\app`:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass; .\deploy\windows\install-v2.ps1
+```
+
+It pulls `main`, installs the lock, downloads and hash-checks Radiance into
+`C:\ApartmentIntelligence\radiance`, builds the web bundle, smoke-tests the sky matrix, and
+restarts the `Apartment Intelligence` scheduled task, which now runs
+`deploy\windows\run-apartment-intelligence.ps1` (v2). Re-run the same script for every update.
+If the task was never installed on this VM, run `install-apartment-intelligence-task.ps1` once
+first. Cloudflare Tunnel ingress and the Vercel proxy accept both `apartments.senibina.com.sg`
+(canonical) and the older `apartment.senibina.com.sg`; adding the new hostname needs
+`cloudflared tunnel route dns <tunnel> apartments.senibina.com.sg` once (or the Cloudflare
+dashboard) and the domain assigned to the Vercel proxy project.

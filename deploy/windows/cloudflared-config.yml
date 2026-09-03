@@ -4,6 +4,10 @@ metrics: 127.0.0.1:20241
 no-autoupdate: true
 
 ingress:
+  - hostname: apartments.senibina.com.sg
+    service: http://127.0.0.1:8000
+    originRequest:
+      connectTimeout: 5s
   - hostname: apartment.senibina.com.sg
     service: http://127.0.0.1:8000
     originRequest:

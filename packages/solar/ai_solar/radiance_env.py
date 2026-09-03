@@ -15,8 +15,9 @@ def configure() -> str | None:
     if os.environ.get("RADIANCE_PATH"):
         cands.append(Path(os.environ["RADIANCE_PATH"]))
     cands += [ROOT / ".tools/radiance", Path("/usr/local/radiance")]
+    exe = "gendaymtx.exe" if os.name == "nt" else "gendaymtx"
     for c in cands:
-        if (c / "bin" / "gendaymtx").exists():
+        if (c / "bin" / exe).exists():
             os.environ.setdefault("BINPATH", str(c / "bin"))
             os.environ["BINPATH"] = str(c / "bin")
             os.environ["RAYPATH"] = str(c / "lib")
