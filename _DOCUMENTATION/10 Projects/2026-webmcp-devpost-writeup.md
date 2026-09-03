@@ -10,11 +10,11 @@ status: ready to paste
 
 ## Inspiration
 
-Will this apartment get the sun you expect? Architects answer that question with instruments: sun paths, radiation on every square metre of floor, hours of direct sun on the days that matter. When a home is sold, the same question gets a sentence. "Bright and airy." "Afternoon sun." Nobody measures it. We wanted the instruments architects use in practice in the hands of the person who will live there.
+Will this apartment get the sun a buyer expects? An architectural practice answers that question with instruments: a 3D model of the building and its neighbours, a sun path for the site, radiation on every square metre of floor, hours of direct sun on the days that matter. When a home is sold, the same question gets a sentence. "Bright and airy." "Afternoon sun." Nobody measures it. We wanted the instruments a practice uses for a whole building in the hands of the resident of one apartment.
 
 ## What it does
 
-Pick a real block and storey (SkyVille @ Dawson, Singapore, is covered). Choose the wing and layout you recognise on a 3D model of the tower. Confirm it with one click. The engine then computes sun path, shadow at sixteen instants, direct-sun hours on four key dates and annual radiation on a 0.1 to 0.5 m floor grid, room by room, and shows it on the apartment in 3D. Export a report with the cover, the plans, a north arrow, room labels and the result digest on every page, or the model as GLB, OBJ or 3DM.
+The resident picks a real block and storey (SkyVille @ Dawson, Singapore, is covered), chooses the wing and layout they recognise on a 3D model of the tower, and confirms it with one click. The engine then computes sun path, shadow at sixteen instants, direct-sun hours on four key dates and annual radiation on a 0.1 to 0.5 m floor grid, room by room, and shows it on the apartment in 3D. The resident can export a report with the cover, the plans, a north arrow, room labels and the result digest on every page, or the model as GLB, OBJ or 3DM.
 
 ## How WebMCP fits
 
