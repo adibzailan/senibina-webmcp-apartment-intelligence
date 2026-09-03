@@ -32,6 +32,7 @@ Reusable references that advise the active owners but do not govern them.
 Superseded directions, completed work, historical context, and proof material.
 
 - [`JourneyProof pivot`](40%20Archives/journeyproof-pivot.md)
+- [`v1 runtime (Windows VM)`](40%20Archives/v1-windows-runtime.md)
 
 ## Local-only material
 

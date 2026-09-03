@@ -20,10 +20,11 @@ status: active-reference
 
 ## Proven local receipts
 
-- [x] Chrome 152 with WebMCP enabled exposed all six registered tools.
-- [x] `create_apartment_study` moved the same visible UI to Research and Verify.
+- [x] Chrome 152 with WebMCP enabled exposed all eight registered tools (v2, Playwright, 3 Sep 2026).
+- [x] `create_apartment_study` moved the same visible UI to Place.
 - [x] `run_solar_analysis` returned `CONFIRMATION_REQUIRED` before the trusted
   resident confirmation action.
-- [x] Automated server and web tests pass locally.
-- [ ] Windows x86-64 Python read/write `.3dm` gate.
-- [ ] Clean-profile five-screen journey and artifact read-back.
+- [x] 20 Python, 4 vitest and 6 Playwright tests pass locally (v2).
+- [x] Docker image builds, serves, survives kill/restart, runs an analysis (v2).
+- [ ] v2 deployed to a public HTTPS URL (the live URL still serves v1).
+- [ ] Clean-profile five-screen journey and artifact read-back on the public URL.

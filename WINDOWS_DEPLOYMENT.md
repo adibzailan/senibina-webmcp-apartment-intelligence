@@ -1,4 +1,10 @@
-# Windows deployment
+# Windows deployment (v1, superseded)
+
+> Retained for the Windows VM that still serves the v1 build at
+> `apartment.senibina.com.sg`. The `server/` and `web/` trees this procedure
+> installs were removed from `main` on 3 September 2026 (commit `461e344`);
+> check out a commit before that for a v1 redeploy. New deployments use the
+> Docker image described in `deploy/RUNBOOK.md`.
 
 This is the reproducible target procedure for the dedicated Windows 11 ARM VM.
 It contains no tunnel token, private hostname receipt, or administrator secret.

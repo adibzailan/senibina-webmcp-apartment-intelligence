@@ -1,54 +1,49 @@
-# Dawson fixture
+# Data
 
-`fixtures/dawson-v1.json` is the frozen application input. Rebuild it only when
-deliberately refreshing public source data:
+## Precinct fixture (v2)
 
-```shell
-python data/scripts/build_dawson_fixture.py
-```
-
-The script uses only the Python standard library, polls the official
-data.gov.sg download endpoints, converts WGS84 once into a local east/north
-metre frame centred on Block 87, records source hashes, and labels the
-`max_floor_level × 3.0 m` height as inferred. A refresh changes evidence and
-must be reviewed before release.
-
-## Typical unit-plan fixture
-
-`fixtures/unit-plans/skyville-dawson-4room-type-a-v1.json` is the accepted
-orthogonal boundary derived from the official SkyVille @ Dawson sales brochure,
-page 5, 4R Type A base option. It is a published typical 4-room reference,
-uniformly scaled to 87 m²; it is not a verified Block 87/storey-30 stack.
-
-The reviewed page raster is intentionally ignored and is not redistributed.
-Given that local page image, regenerate the fixture and receipt with:
+`precinct/dawson-v2.json` is the runtime precinct: thirteen sourced HDB
+footprints and storey counts around 87 Dawson Road in a local east/north metre
+frame, with SkyVille and SkyTerrace labels, sky-garden storeys for Blocks 86–88,
+and the assumed storey-height model (3.6 m first, 2.8 m typical, 5.6 m
+sky-garden storeys, 4.0 m roof structures; reconciles to the published 147.8 m).
+Rebuild it from the frozen v1 footprints with:
 
 ```shell
-python3.13 -m venv .compiler-venv
-.compiler-venv/bin/python -m pip install --require-hashes -r data/compiler-requirements.txt
-.compiler-venv/bin/python -m data.scripts.compile_unit_plan \
-  --source /path/to/reviewed-page-5.png \
-  --config data/unit-plans/skyville-dawson-4room-type-a-source.json \
-  --output data/fixtures/unit-plans/skyville-dawson-4room-type-a-v1.json \
-  --receipt data/fixtures/unit-plans/skyville-dawson-4room-type-a-v1.receipt.json \
-  --diagnostics output/research/floorplate-compiler/skyville-dawson-4r-type-a
+.venv/bin/python data/precinct/build_dawson_v2.py
 ```
 
-The compiler verifies the reviewed source hash before reading pixels. NumPy and
-OpenCV are authoring-only dependencies; `.compiler-venv` and all raster
-diagnostics remain ignored and must not be installed on the deployment VM.
+`fixtures/dawson-v1.json` and `scripts/build_dawson_fixture.py` remain the
+sourced upstream (data.gov.sg downloads, hashes recorded, Singapore Open Data
+Licence v1.0).
+
+## Geometry recipes
+
+`recipes/skyville-block87-plate.recipe.json` is the reconstructed Block 87
+plate: sourced footprint, derived core, four wings with a 4-room slot at each
+end, and storey bands. `recipes/4r-type-{a,b,c}.recipe.json` are the 4-room
+Type A/B/C plans traced from the HDB SkyVille @ Dawson brochure (Dec 2009,
+page 5) as coordinates only: exterior and interior walls, columns, windows,
+doors, slabs, AC ledge, service-yard railing and an assumed balcony, each with a
+source state and confidence. Regenerate with:
+
+```shell
+.venv/bin/python data/recipes/build_recipes.py
+```
+
+Gate 1 overlays of these recipes on the local rasters are produced by
+`tests/acceptance/gate1_overlays.py` into the ignored `output/gate1/`. No
+brochure or WOHA raster is committed; `fixtures/unit-plans/` and
+`scripts/compile_unit_plan.py` are the retained v1 outline compiler.
 
 ## Weather fixture
 
 `weather/singapore-changi-2011-2025.epw` is the frozen Singapore Changi
-International Airport 486980 TMYx file for 2011–2025. It was retrieved on
-1 September 2026 from Climate.OneBuilding.Org and has SHA-256
-`9293635032609058428c34809b0c2fa90178cb73d2aaf857f0918b46893bf60c`.
-
-The upstream authors describe TMYx as a typical year assembled from NOAA ISD
-hourly observations using TMY/ISO 15927-4:2005 methods, with ERA5 solar data
-for the 2026 release. The source asks users to cite Lawrie and Crawley (2026),
-“Development of Global Typical Meteorological Years (TMYx),”
-https://climate.onebuilding.org. The site does not publish a standalone licence
-for this file; it is redistributed here only as the frozen input needed to
-reproduce the submitted study. No ownership or endorsement is implied.
+International Airport 486980 TMYx file for 2011–2025, retrieved on
+1 September 2026 from Climate.OneBuilding.Org, SHA-256
+`9293635032609058428c34809b0c2fa90178cb73d2aaf857f0918b46893bf60c`. Cite
+Lawrie and Crawley (2026), “Development of Global Typical Meteorological Years
+(TMYx),” https://climate.onebuilding.org. The site publishes no standalone
+licence; the file is redistributed only as the frozen input needed to reproduce
+the study. The gendaymtx sky matrix derived from it is cached under the ignored
+`.cache/sky/` keyed by the file hash.

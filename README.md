@@ -11,13 +11,16 @@ provenance, and uncertainty kept visible.
 
 The guaranteed demonstration starts with 87 Dawson Road and storey 30. An
 agent resolves the bundled public context, the resident places and confirms a
-published typical 4-room reference plan and window in a visible 3D scene, and deterministic analysis
-produces sunpath, shadow, solar-access, and radiation evidence.
+published typical 4-room plan, with real walls, columns, openings and balcony,
+inside a reconstructed Block 87 plate, and Ladybug + Radiance produce
+deterministic sunpath, shadow, direct-sun and radiation evidence on a 0.25 m
+floor grid.
 
-Status: implementation gates 1–5 pass. The Windows VM, named Cloudflare Tunnel,
-public hostname, Chrome WebMCP journey, restart recovery, and complete artifact
-bundle have been exercised. Demo-video preparation and challenge submission
-remain open.
+Status (3 September 2026): the v2 clean-room rebuild is on `main`. It runs
+locally and as one Docker image. The public hostname
+<https://apartment.senibina.com.sg> still serves the earlier v1 build from the
+Windows VM; v2 has not been deployed anywhere yet. See
+[`_DOCUMENTATION/10 Projects/2026-09-clean-room-reconstruction.md`](_DOCUMENTATION/10%20Projects/2026-09-clean-room-reconstruction.md).
 
 ## Public-interest research
 
@@ -43,15 +46,31 @@ the first case study, not a claim of official status or government endorsement.
 
 - V1 is an HDB-first consumer decision aid, not a professional certification or
   statutory compliance service.
-- Public records provide contextual building information. A compiler-derived
-  SkyVille @ Dawson 4R Type A reference boundary is uniformly scaled to 87 m²;
-  facade placement, handedness, and window geometry remain human-confirmed.
-- Three.js renders the browser scene. Ladybug Core and Geometry compute the
-  bounded solar studies. `rhino3dm.py` writes the layered `.3dm` export.
-- The MVP uses a frozen, attributed Dawson fixture; it has no runtime listing
-  scraper, floorplan upload, OneMap dependency, database, account, or LLM.
-- Results must distinguish sourced, inferred, generated, and human-confirmed
-  information.
+- Public records provide footprints and storey counts. The 4-room Type A/B/C
+  plans are traced from the published SkyVille @ Dawson brochure into coordinate
+  recipes; the Block 87 upper-storey plate is reconstructed from the sourced
+  footprint. Wing, stack position, layout, mirroring and openings are chosen and
+  confirmed by the resident and labelled reconstructed or assumed.
+- Ladybug (core, geometry, radiance) drives Radiance `gendaymtx` and `rcontrib`
+  headlessly; there is no Rhino, Grasshopper, Revit or Rhino.Compute. Three.js
+  renders the browser scene. `rhino3dm` writes the `.3dm` export.
+- The runtime uses a frozen, attributed Dawson fixture and Changi TMYx weather;
+  it has no listing scraper, floorplan upload, OneMap dependency, database,
+  account, or LLM.
+- Results distinguish sourced, inferred, reconstructed, assumed, computed and
+  human-confirmed information, and every export carries the same record.
+
+## Repository map
+
+| Path | Owns |
+| --- | --- |
+| `packages/geometry/ai_geometry` | Recipe schema, plate derivation, 4R recipes, builders, GLB/OBJ/3DM writers |
+| `packages/solar/ai_solar` | Weather, sunpath, Radiance sky matrix, intersection studies, result record and digest |
+| `services/api/ai_api` | FastAPI app, session-bound studies, confirmation challenge, SVG cards, exports |
+| `apps/web` | React + TypeScript + Three.js interface and the WebMCP tool registry |
+| `data/` | Precinct fixture, recipes, weather, and the retained v1 fixtures |
+| `tests/` | Unit and oracle tests, API tests, Playwright journeys, Gate 1 overlay script |
+| `deploy/` | Dockerfile, compose, Render blueprint, runbook; v1 Windows and edge-proxy material |
 
 ## Documentation
 
@@ -66,48 +85,56 @@ are not backed up by Git.
 
 ## Local development
 
-Prerequisites are Node 22.22.3 and CPython 3.13.2. Install only from the
-committed locks after reviewing the recorded dependency decision:
+Prerequisites: CPython 3.13, Node 22, and Radiance 6.1a (LBNL-ETA release
+`39b99660`) unzipped into `.tools/radiance` (ignored) or pointed to by
+`RADIANCE_PATH`. Install only from the committed locks:
 
 ```sh
 python3.13 -m venv .venv
-.venv/bin/python -m pip install --require-hashes -r server/requirements.txt
-npm --prefix web ci --ignore-scripts
-npm --prefix web run build
+.venv/bin/pip install -r requirements.lock.txt
+.venv/bin/pip install --no-deps -e .
+npm --prefix apps/web ci
+npm --prefix apps/web run build
 ```
 
-Run the single-process local build at `http://localhost:8000`:
+Run at `http://127.0.0.1:8000`:
 
 ```sh
-COOKIE_SECURE=false EXPECTED_ORIGIN=http://localhost:8000 PYTHONPATH=server \
-  .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+.venv/bin/uvicorn ai_api.main:app --host 127.0.0.1 --port 8000
 ```
 
-Run verification with:
+Verify with:
 
 ```sh
-PYTHONPATH=server .venv/bin/python -m pytest server/tests
-npm --prefix web test -- --run
-npm --prefix web run build
+.venv/bin/python -m pytest tests/unit tests/api -q
+npm --prefix apps/web test
+(cd tests/e2e && npm ci && npx playwright test)
 ```
 
-The brochure raster is not redistributed. To regenerate the tracked unit-plan
-fixture from a locally retained reviewed page image, create the isolated
-authoring environment from `data/compiler-requirements.txt` and follow
-[`data/README.md`](data/README.md). NumPy and OpenCV are authoring-only and are
-not installed on the deployed VM.
+The Playwright journeys use installed Google Chrome 152 with
+`--enable-features=WebMCP` at 1440, 1024 and 390 px widths.
 
-To test WebMCP in Chrome, enable `chrome://flags/#enable-webmcp-testing`, visit
-the localhost URL, and inspect `document.modelContext.getTools()` in DevTools.
-The verified public deployment is <https://apartment.senibina.com.sg>. Windows
-deployment is documented in
-[`WINDOWS_DEPLOYMENT.md`](WINDOWS_DEPLOYMENT.md).
+## Docker
 
-## v2 clean room (branch `v2-clean-room`)
+```sh
+docker build --platform linux/amd64 -f deploy/Dockerfile -t apartment-intelligence:v2 .
+docker compose -f deploy/compose.yaml up -d
+```
 
-A headless rebuild on this branch: published 4-room plans traced to coordinate recipes with real
-walls, columns, openings and balcony; the Block 87 plate reconstructed from the sourced HDB
-footprint; Ladybug + Radiance (`gendaymtx`, `rcontrib`) computing sunpath, shadow, direct sun and
-annual radiation on a 0.25 m floor grid; eight WebMCP tools on `document.modelContext` with no
-confirmation tool; deterministic GLB, OBJ, SVG, evidence.json and ZIP exports; one Docker image.
-See `_DOCUMENTATION/10 Projects/2026-09-clean-room-reconstruction.md` and `deploy/RUNBOOK.md`.
+Radiance publishes x86-64 Linux binaries only, so the image is linux/amd64 and
+runs under emulation on Apple silicon. Full procedure and limits:
+[`deploy/RUNBOOK.md`](deploy/RUNBOOK.md). The Render blueprint in
+`deploy/render.yaml` is documented, not deployed. The v1 Windows VM procedure in
+[`WINDOWS_DEPLOYMENT.md`](WINDOWS_DEPLOYMENT.md) is retained for the live v1
+host and is superseded for new deployments.
+
+## WebMCP
+
+Eight tools register on `document.modelContext` (with the `navigator.modelContext`
+fallback for Chrome before 152): `list_supported_homes`, `create_apartment_study`,
+`propose_unit_placement`, `get_study_state`, `run_solar_analysis`,
+`show_analysis`, `explain_evidence`, `export_study`. There is no confirmation
+tool; a `confirmed` argument is rejected, and confirmation is a visible click
+exchanged for a ten-second single-use server challenge. Enable
+`chrome://flags/#enable-webmcp-testing` and inspect
+`document.modelContext.getTools()` in DevTools.

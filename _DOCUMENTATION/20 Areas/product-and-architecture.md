@@ -14,6 +14,10 @@ Apartment Intelligence helps a resident ask a practical question before choosing
 existing HDB apartment: what will sunlight and surrounding buildings mean for
 this particular home?
 
+It is both a WebMCP Challenge project and a Senibina goodwill project for the
+public good. It begins in Singapore, where Senibina practises, with a longer-term
+ambition to carry proven methods across ASEAN and other housing contexts.
+
 It translates professional early-stage environmental-study methods into a
 consumer journey without hiding the model's simplifications. It is a decision
 aid, not a professional, statutory, or valuation report.
@@ -39,89 +43,77 @@ Guaranteed input:
 
 ## Five-screen journey
 
-1. **Provide the apartment:** select or enter a Dawson address and storey.
-2. **Research and verify:** review candidate address, building, height basis,
-   surroundings, weather source, missing facts, and confidence.
-3. **Locate the home:** inspect translucent approximate massing and confirm the
-   published typical plan, target facade, placement, handedness, and window.
-4. **Explore the sun:** view sunpath, shadow, solar-access, and radiation studies
-   in the same scene with plain-language findings.
-5. **Keep the evidence:** export five graphics, a PDF, a ZIP, and a layered
-   `.3dm` for downstream professional use.
+1. **Locate:** enter a Dawson address and storey; the precinct opens as a
+   translucent north-west axonometric.
+2. **Place:** choose the wing, the 4-room stack position (wing tip or near the
+   core, both assumed), the published layout (Type A/B/C), mirroring, and which
+   assumed openings apply.
+3. **Confirm:** read the confirmation sentence and click; the click is exchanged
+   for a ten-second single-use server challenge.
+4. **Analyse:** run Ladybug + Radiance on a 0.25 m (or 0.5 m) floor grid and
+   inspect sunpath, shadow, solar access and radiation in the same scene.
+5. **Export:** download GLB, OBJ, 3DM, SVG cards, evidence.json, ZIP, and
+   presentation PNG/PDF renders.
 
 ## Information states
 
 | State | Meaning | Example |
 | --- | --- | --- |
-| Sourced | Directly returned by a named public source | HDB footprint polygon |
-| Inferred | Calculated from sourced facts and a disclosed assumption | Height from storeys × floor-to-floor value |
-| Generated | Produced deterministically by the application | Extruded massing or radiation mesh |
-| Human-confirmed | Explicitly checked by the resident | Typical plan placement, handedness, and window positions |
-| Missing | Not established and not safe to infer | Verified Block 87/storey-30 stack geometry |
+| Sourced | Directly returned by a named public source | HDB footprint polygon, storey count |
+| Inferred | Calculated from sourced facts and a disclosed assumption | Upper-storey plate as the footprint extruded per band |
+| Reconstructed | Traced from a published drawing with a stated tolerance | 4R Type A walls and columns (±0.25 m) |
+| Assumed | Not on any source; a labelled default the resident can change | Window sill/head, balcony, side windows, storey heights |
+| Computed | Produced deterministically by the engine | Sky matrix, intersection matrix, radiation per sensor |
+| Human-confirmed | Explicitly checked by the resident | Wing, stack, layout, mirroring, openings |
+| Missing | Not established and not safe to infer | Verified Block 87 storey-30 plan and stack |
 
-## Proposed system
+## System
 
 1. The browser or agent supplies an address and storey through a closed schema.
-2. The backend resolves these against the bundled Dawson fixture and Singapore
-   weather file; it does not scrape listings or call a runtime upstream API.
-3. A canonical scene record stores footprint rings, coordinate reference,
-   north, base elevation, height basis, source, confidence, and the derived,
-   compiler-derived typical floor plate, its resident-confirmed placement, and aperture.
-4. Three.js extrudes and renders the same verified scene record in the browser.
-5. The resident corrects and confirms the target unit geometry through a visible
-   first-party action.
-6. Ladybug's Python libraries calculate solar positions and geometry-based
-   environmental results from the confirmed scene.
-7. The application creates same-size analysis graphics and plain-language
-   findings from the deterministic result record.
-8. `rhino3dm.py` writes the massing, target annotations, metadata, analysis
-   grids, and coloured result meshes into a downloadable `.3dm`.
+2. The API resolves them against `data/precinct/dawson-v2.json`, the plate
+   recipe and the 4R recipes; it never scrapes or calls an upstream service.
+3. Builders turn recipe + placement into one geometry with two meshes: a visual
+   GLB with provenance and opacity tokens in node extras (context 0.16, tower
+   0.28, home 1.0, glass 0.35) and a watertight analytical mesh containing only
+   `blocks_sun` elements.
+4. Three.js renders the GLB; the resident confirms by a visible click.
+5. `ai_solar` runs Ladybug's Sunpath, a Radiance `gendaymtx` Reinhart sky
+   matrix, and `rcontrib` intersection matrices for radiation, direct-sun hours
+   on four key dates, and shadow instants, on 0.8 m-plane sensors.
+6. The result record (`apartment-intelligence.result.v6`) binds recipe digest,
+   placement, weather hash, method version and results into one SHA-256 digest.
+7. The API writes byte-stable SVG cards, GLB, OBJ and evidence.json; `rhino3dm`
+   writes the layered `.3dm`; the ZIP carries a manifest of hashes.
 
-Three.js is the browser renderer; Rhino is not required to display the model.
-The application has no remote CAD computation service: Three.js, Ladybug
-geometry, and `rhino3dm.py` cover the complete v1 runtime.
+Rhino, Grasshopper, Revit and Rhino.Compute are not used. Radiance is an
+external binary bundled in the Docker image.
 
-## Draft WebMCP contract
+## WebMCP contract
 
-| Tool | Purpose | State effect |
+| Tool | Purpose | Effect |
 | --- | --- | --- |
-| `create_apartment_study` | Resolve a bundled Dawson address and storey and open Research and Verify | Creates `needs_confirmation` |
-| `propose_unit_location` | Stage facade, left/centre/right placement, optional mirroring, and default opening in the visible scene | Remains `needs_confirmation` |
-| `get_study_state` | Read provenance, missing information, state, and the next human action | Read-only |
-| `run_solar_analysis` | Run selected deterministic studies over a confirmed scene and period | `ready` to `analysing` to `complete` |
-| `show_analysis` | Focus the visible interface on one completed study and date/time | Changes presentation, not evidence |
-| `export_study` | Package completed artifacts in requested supported formats | Adds export records without changing analysis |
+| `list_supported_homes` | Addresses and storey ranges this build covers | Read-only |
+| `create_apartment_study` | Open a study for an address and storey | Creates a study; nothing is confirmed |
+| `propose_unit_placement` | Stage wing, stack position, layout, mirroring | Staging only |
+| `get_study_state` | Concise state and provenance summary | Read-only |
+| `run_solar_analysis` | Run the deterministic analysis | Refused unless the current placement was confirmed by a click |
+| `show_analysis` | Switch study, date, hour and camera in the visible page | Presentation only |
+| `explain_evidence` | Return the provenance record for an item | Read-only, numbers unaltered |
+| `export_study` | Trigger downloads from the visible page | Adds nothing to the evidence |
 
-The study state is:
-
-`draft → needs_confirmation → ready → analysing → complete`
-
-`run_solar_analysis` rejects any study whose target unit has not been confirmed
-through the visible first-party interface. Confirmation is not a WebMCP tool and
-cannot be supplied as a Boolean argument. Manual UI and WebMCP actions call the
-same application functions and update the same visible state.
-
-The visible click is exchanged for a short-lived, revision-bound, single-use
-server challenge. Replays and static activation headers cannot confirm a study.
-
-Tool results stay concise and never return full geometry. Confirmation binds the
-visible proposal revision and canonical scene digest; stale confirmation is
-rejected.
-
-The tracked unit fixture is compiled offline from the published SkyVille @
-Dawson brochure page 5, 4R Type A base option. Types B and C share the published
-outer boundary. It is a published typical reference uniformly scaled to 87 m²,
-not a verified Block 87 or storey-30 stack assignment. The source raster and
-diagnostic overlays remain untracked; the accepted polygon, source hash,
-transformation metrics, and geometry digest are reproducible public evidence.
+There is no confirmation tool. A `confirmed` argument is rejected with 422.
+Tools and controls call the same actions and reducer; a Playwright test drives
+both paths and compares state. Registration is on `document.modelContext` with
+the `navigator.modelContext` fallback, `readOnlyHint` on the read tools, and
+`AbortSignal` cleanup.
 
 ## End-state artifacts
 
-- Interactive north-aligned translucent 3D context with the confirmed apartment
-  floor plate, window aperture, and horizontal analysis overlays.
-- Five 1600 × 2400 portrait PNG cards: Site & Unit, Sunpath, Shadow, Solar
-  Access, and Radiation.
-- One combined PDF containing the same five compositions.
-- One ZIP containing PNG, PDF, structured provenance, and `.3dm` outputs.
-- One metre-unit layered `.3dm` containing sourced, inferred, generated, and
-  human-confirmed geometry plus analysis meshes and object metadata.
+- Interactive north-aligned translucent 3D precinct with the confirmed apartment
+  (walls, columns, openings, balcony), the sensor grid heatmap, and the sun
+  vector for the selected instant.
+- `cards.svg`: radiation, four direct-sun-hours maps, sunpath and shadow cards,
+  byte-stable and digest-bound; PNG and PDF are browser renders of it.
+- `scene.glb`, `analytical.obj`, `scene.3dm` (layers context, tower, home,
+  glass, analysis; provenance in user strings), `evidence.json`, and
+  `bundle.zip` with `manifest.json` hashes.

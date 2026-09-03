@@ -1,7 +1,8 @@
 # Security Policy
 
-Apartment Intelligence is an in-progress hackathon implementation. It has no
-supported public release until the documented release gates pass.
+Apartment Intelligence is a hackathon implementation. The v2 build on `main`
+passes its local release checks; the public v1 host predates it. Neither is a
+supported product release.
 
 ## Intended boundary
 
@@ -12,7 +13,9 @@ not grant server authority.
 The MVP will not accept arbitrary server-side URL fetching, executable model
 content, scripts, filesystem paths, plug-ins, Grasshopper definitions, or
 remote CAD execution endpoints. The MVP resolves addresses only from its bundled,
-attributed Dawson fixture and accepts no listing or floorplan content.
+attributed Dawson fixture and accepts no listing or floorplan content. Radiance
+runs as a local subprocess on server-generated geometry with fixed arguments;
+no caller-supplied path, file or option reaches it.
 
 Exact security objectives and release gates are maintained in
 [`security-and-operations.md`](_DOCUMENTATION/20%20Areas/security-and-operations.md).

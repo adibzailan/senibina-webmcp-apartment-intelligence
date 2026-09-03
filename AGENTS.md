@@ -7,6 +7,15 @@ environmental due diligence on existing Singapore HDB apartments. Preserve the d
 between public records, inference, generated geometry, human confirmation,
 implemented behavior, and validated analysis.
 
+## Repository layout (v2)
+
+- `packages/geometry/ai_geometry`, `packages/solar/ai_solar`, `services/api/ai_api`
+  are the Python runtime; `apps/web` is the browser; `tests/` holds unit, API,
+  Playwright and acceptance checks; `deploy/` holds the Docker image and runbook.
+- Geometry is recipes (coordinates with source states), never committed rasters.
+- Radiance is an external pinned binary; there is no Rhino, Grasshopper, Revit
+  or Rhino.Compute anywhere in the runtime.
+
 ## Documentation authority
 
 - Start at `_DOCUMENTATION/README.md`.

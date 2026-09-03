@@ -6,71 +6,65 @@ status: current
 
 # Analysis and output reference
 
-This reference defines the implemented V1 study and presentation contract.
+This reference defines the v2 study and presentation contract.
 
 ## Study set
 
-| Study | Consumer question | Proposed calculation | Primary graphic |
+| Study | Consumer question | Calculation | Primary graphic |
 | --- | --- | --- | --- |
-| Sunpath | Where does the sun travel relative to this home? | Equinox, solstice, and selected-date solar positions | North-aligned 3D sunpath and key positions |
-| Shadow | Where does direct sun reach the apartment floor? | Aperture-gated context intersections at 09:00, 12:00, and 15:00 SGT | Horizontal sun-patch map |
-| Solar access | For how long can the apartment floor see direct sun through its window? | Four seasonal dates at 30-minute intervals | Floor hours-of-sun colour map |
-| Radiation | How much approximate solar exposure reaches the apartment floor through its window? | Up to 256 floor sensors; 12 monthly representative days; aperture- and obstruction-gated DNI plus isotropic DHI through a sampled aperture factor | Horizontal exposure map with numeric legend |
+| Sunpath | Where does the sun travel relative to this home? | Ladybug Sunpath (NOAA): day arcs for 21 Mar, 21 Jun, 22 Sep, 21 Dec and hourly analemmas | Stereographic sunpath card and sun vector in the scene |
+| Shadow | Is the floor in direct sun at this instant? | `rcontrib` boolean intersection per sensor for 16 instants (four dates × 09:00, 12:00, 15:00, 17:00) | Lit/shaded sensor map and lit fraction |
+| Solar access | For how long does the floor see direct sun? | Half-hour sun vectors on four key dates, `rcontrib` intersection, hours per sensor | Hours-of-sun heatmap per date |
+| Radiation | How much annual solar exposure reaches the floor? | `gendaymtx` Reinhart sky (577 patches, direct + diffuse) × cosine-weighted `rcontrib` intersection matrix; ground patches at 0.2 reflectance | Annual kWh/m² heatmap with min/avg/max and per-room table |
 
-Every study must record north, location, date or analysis period, time zone,
-weather source, geometry version, sampling settings, legend, units, assumptions,
-uncertainty, and a plain-language finding.
+Sensors sit on a 0.25 m plan grid (0.5 m in fast mode) at 0.8 m above the
+finished floor, inside the rooms of the placed unit and outside walls, columns,
+the household shelter and the AC ledge. The analytical mesh holds every
+`blocks_sun` element: neighbour towers (sourced footprints extruded to the
+assumed height model), the target plate per storey band with sky-garden voids
+and slab overhangs, the home storey's plate minus the unit envelope, and the
+unit's own walls, columns, slabs and balcony. Glazing is transparent.
 
-The current deterministic method is `apartment-intelligence-solar-v5`. Its
-digest includes the accepted unit-fixture digest, placement transform,
-handedness, aperture, weather, method assumptions, and computed results.
+The method version is `apartment-intelligence-solar-v6-ladybug-radiance`. The
+digest is the SHA-256 of the canonical JSON of recipe digest, placement,
+weather hash, method version and the result body. Identical inputs give
+identical digests and identical GLB, OBJ, SVG and evidence.json bytes on the
+same platform; arm64 macOS and amd64 Docker differ in floating point, so the
+Docker image is the reference platform for published digests.
 
-Radiation is not interchangeable with daylight, glare, indoor temperature,
-cooling load, comfort, or energy consumption. Those require different models
-and remain out of V1.
+Oracles: sun position within 0.008° of pvlib's NREL SPA at twelve instants;
+unobstructed horizontal annual radiation within 1.03% of the EPW global
+horizontal sum.
 
-The radiation method excludes glazing transmittance, inter-reflection, internal
-partitions, balcony slabs, and overhangs. Diffuse exposure uses an isotropic sky
-and a visible sensor-to-aperture configuration factor. It is approximate
-interior solar exposure, not a Radiance simulation or certification.
+Radiation is not daylight, glare, temperature, cooling load, comfort or
+energy. There are no inter-reflections, no glazing transmittance, and the
+upper-storey plate, heights, openings and balcony are inferred or assumed.
 
-## Five-card graphic system
+## Cards
 
-All PNG artifacts use the same 2:3 portrait canvas at 1600 × 2400 pixels.
-
-1. **Site & Unit** — address context, north, target block/unit, source layers,
-   height basis, and confirmed openings.
-2. **Sunpath** — solar path, selected dates/times, target orientation, and key
-   exposure finding.
-3. **Shadow** — comparable shadow evidence for the selected critical period.
-4. **Solar Access** — hours-of-sun map, sampling period, legend, and result.
-5. **Radiation** — energy map, units, period, EPW source, legend, and result.
-
-The cards are generated from the same scene and result record shown in the
-interactive application. AI-generated imagery must not substitute for analysis
-graphics. Plain-language copy may be agent-drafted but cannot alter numeric
-results, labels, provenance, or uncertainty.
+`cards.svg` stacks the radiation heatmap, one direct-sun-hours map per key
+date, the sunpath diagram and the shadow-instant table. It is generated
+server-side with fixed number formatting and no timestamps, so it is
+byte-stable and digest-bound. PNG and PDF (1600 × 2400 pages, Site & Unit page
+first from the live canvas) are browser renders of the same SVG and are
+presentation only.
 
 ## Download package
 
 | Artifact | Contents |
 | --- | --- |
-| PNG set | Five standalone 1600 × 2400 cards |
-| PDF | The same five compositions in a fixed order with no hidden extra claims |
-| ZIP | PNGs, PDF, `.3dm`, and machine-readable provenance/result summary |
-| `.3dm` | Metre-unit scene, layers, names, source/confidence metadata, confirmed floor plate/window, horizontal analysis grids, and coloured result meshes |
-
-Required `.3dm` layers are `01_SOURCED_CONTEXT`, `02_INFERRED_MASSING`,
-`03_HUMAN_CONFIRMED_UNIT`, `04_GENERATED_ANALYSIS`, and `05_RESULTS`.
-The file is a downstream professional artifact; it does not imply that Rhino
-created, validated, or certified the analysis.
+| `scene.glb` | Visual scene; every node carries element id, kind, source state, confidence, document, opacity token |
+| `analytical.obj` | The watertight obstruction mesh used by Radiance |
+| `scene.3dm` | Metre-unit meshes on layers `context`, `tower`, `home`, `glass`, `analysis` with provenance user strings; embeds fresh GUIDs, so not byte-stable |
+| `evidence.json` | The full result record, canonical JSON |
+| `cards.svg` | Digest-bound evidence cards |
+| `bundle.zip` | All of the above plus `manifest.json` with SHA-256 per file (fixed 1980 timestamps) |
 
 ## Failure and uncertainty presentation
 
-- Missing source data produces an explicit gap, adjustable assumption, or
-  blocked analysis—not a guessed authoritative value.
-- Unconfirmed target geometry prevents analysis.
-- Unavailable weather or failed geometry produces no result card.
-- Cached or example output is labelled and cannot be presented as a live run.
-- Low-resolution or simplified geometry remains visible in both graphics and
-  downloadable provenance.
+- Unconfirmed or stale placement returns `CONFIRMATION_REQUIRED` or
+  `STALE_CONFIRMATION`; analysis never runs on it.
+- A busy engine returns `ANALYSIS_BUSY`; a run over 15 s returns
+  `ANALYSIS_TIMEOUT` with the advice to use the 0.5 m grid.
+- Every displayed number sits beside a disclosure of method, sources and
+  limitations; exports carry the same record.

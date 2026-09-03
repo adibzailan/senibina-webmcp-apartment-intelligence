@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: active
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Adib reviews the verified gates 1–5 and approves preparation of the demo video and final submission materials.
+next_action: Adib decides whether the submission URL serves v1 (live now) or v2 (needs a deployment), then records the demo video.
 ---
 
 # WebMCP Challenge submission
@@ -23,8 +23,14 @@ the submitted URLs are read back successfully.
 
 ## Current state
 
-- The public baseline, dependency locks, Dawson fixture, application, analysis
-  engine, export pipeline, and six WebMCP tools are implemented and published.
+- 3 September 2026: the v2 clean-room rebuild (real apartment walls, Ladybug +
+  Radiance, 0.25 m grid, eight WebMCP tools, Docker image) is merged to `main`
+  with Gate 1 accepted by Adib. It is not deployed; see
+  [`2026-09-clean-room-reconstruction.md`](2026-09-clean-room-reconstruction.md).
+- The public hostname still serves the v1 build below from the Windows VM.
+- v1: the public baseline, dependency locks, Dawson fixture, application,
+  analysis engine, export pipeline, and six WebMCP tools were implemented and
+  published on 1 September 2026.
 - Apartment Intelligence is the founder-approved product title.
 - Ten backend and five frontend tests pass on macOS; the same backend tests and
   frontend suite/build also pass in Windows.

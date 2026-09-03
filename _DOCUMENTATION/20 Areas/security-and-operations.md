@@ -1,7 +1,7 @@
 ---
 title: Security and operations
 para: area
-status: implemented-and-verified
+status: current
 ---
 
 # Security and operations
@@ -67,10 +67,20 @@ worker timeout, 100 live studies, and 20 MB export bundles.
 
 ## Deployment boundary
 
-One FastAPI process serves the built web application and `/api` on
-`127.0.0.1:8000` inside the dedicated Windows VM. A named Cloudflare Tunnel is
-the only ingress; no RDP, port forwarding, admin route, filesystem path, or
-tunnel control is publicly exposed. Deployment credentials remain VM-local.
+Two runtimes exist on 3 September 2026:
+
+- **v1 (live):** one FastAPI process on `127.0.0.1:8000` inside the dedicated
+  Windows VM behind a named Cloudflare Tunnel, serving
+  `apartment.senibina.com.sg`. Its source trees were removed from `main` in
+  commit `461e344`; the VM runs its own earlier checkout.
+- **v2 (main, not deployed):** one Docker image (`deploy/Dockerfile`,
+  linux/amd64) holding Python 3.13, Radiance 6.1a, the API, the data and the
+  built web bundle; one Uvicorn worker; `/healthz`. Radiance is invoked as a
+  subprocess with fixed arguments on server-generated geometry only. Studies
+  are in memory and lost on restart, which the page reports as
+  `STUDY_EXPIRED` with a next action.
+
+Deployment credentials remain host-local in both cases.
 
 ### Proposed managed deployment
 
@@ -130,7 +140,20 @@ Competition tactics, real deployment configuration, hostnames, credentials,
 and operational receipts belong only in ignored local notes. Ignored notes are
 not backed up by Git.
 
-## Dependency intake decision — 1 September 2026
+## v2 release checks — 3 September 2026
+
+- 20 Python tests: closed schemas, cross-session 403, expired 404, stale
+  confirmation 409, single-use challenge, determinism, watertight mesh, pvlib
+  oracle (0.008°), EPW closure (1.03%).
+- 4 reducer parity tests and 6 Playwright journeys (human and WebMCP, 1440/1024/390)
+  in Chrome 152 with `--enable-features=WebMCP`; eight tools discovered natively.
+- Docker compose up, healthz, in-container analysis, kill, up, healthz.
+- Not run: axe audit, reduced-motion and 200% zoom checks, Render deploy.
+
+The v2 dependency intake is recorded in
+[`dependency-intake-v2-2026-09-03.md`](dependency-intake-v2-2026-09-03.md).
+
+## Dependency intake decision — 1 September 2026 (v1)
 
 The direct candidates below were checked against their official npm or PyPI
 registry metadata and the OSV API before acquisition. OSV returned no known
