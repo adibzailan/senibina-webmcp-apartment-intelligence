@@ -42,7 +42,7 @@ export default function App() {
   const stateRef = useRef(state); stateRef.current = state;
   const ctx = useMemo(() => ({ api: liveApi, dispatch, getState: () => stateRef.current }), []);
   const [context, setContext] = useState<any>(null);
-  const [grid, setGrid] = useState<0.25 | 0.5>(0.25);
+  const [grid, setGrid] = useState<0.1 | 0.25 | 0.5>(0.25);
   const [mcp, setMcp] = useState<{ registered: boolean; where: string } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
@@ -235,8 +235,9 @@ export default function App() {
             {!r && <>
               <label>Measuring grid</label>
               <div className="toolbar">
-                <button aria-pressed={grid === 0.25} onClick={() => setGrid(0.25)}>Fine, 0.25 m</button>
-                <button aria-pressed={grid === 0.5} onClick={() => setGrid(0.5)}>Fast, 0.5 m</button>
+                <button aria-pressed={grid === 0.1} onClick={() => setGrid(0.1)}>Fine, 0.1 m</button>
+                <button aria-pressed={grid === 0.25} onClick={() => setGrid(0.25)}>Medium, 0.25 m</button>
+                <button aria-pressed={grid === 0.5} onClick={() => setGrid(0.5)}>Coarse, 0.5 m</button>
               </div>
               <div className="toolbar run-row"><button className="primary" disabled={!!state.busy} onClick={() => runAnalysis(ctx, grid).catch(() => {})}>Run the analysis</button></div>
             </>}

@@ -5,6 +5,7 @@ from __future__ import annotations
 import concurrent.futures
 import hashlib
 import io
+import math
 import json
 import os
 import secrets
@@ -128,7 +129,7 @@ class ConfirmIn(Closed):
 
 
 class AnalysisIn(Closed):
-    grid_spacing_m: Literal[0.25, 0.5] = 0.25
+    grid_spacing_m: Literal[0.1, 0.25, 0.5] = 0.25
 
 
 # ----- helpers -----
@@ -152,6 +153,19 @@ def next_action(st: Study) -> str:
     return {"created": "Propose a placement (facade, stack position, variant).", "placed": "Confirm the placement with a visible click in the page.", "needs_confirmation": "Confirm the placement with a visible click in the page.", "ready": "Run the solar analysis.", "analysing": "Wait for the analysis to finish.", "analysed": "Show the analysis, explain evidence, or export."}[st.state]
 
 
+def plan_north(frame) -> tuple[float, float]:
+    """True north expressed in the unit plan frame (x along the frontage, y inward), as a unit vector."""
+    ax, ay = math.cos(frame.axis_rad), math.sin(frame.axis_rad)
+    ix, iy = math.cos(frame.inward_rad), math.sin(frame.inward_rad)
+    det = ax * iy - ay * ix
+    u = (0 * iy - 1 * ix) / det      # solve u*A + v*I = (0, 1)
+    v = (ax * 1 - ay * 0) / det
+    if frame.mirrored:
+        u = -u
+    n = math.hypot(u, v) or 1.0
+    return (u / n, v / n)
+
+
 def build_exports(st: Study) -> None:
     pl = placement_obj(st)
     unit = UNITS[pl.variant]
@@ -159,7 +173,7 @@ def build_exports(st: Study) -> None:
     glb = write_glb(scene)
     obj = write_obj(scene.analytical_mesh())
     evidence = (canonical_json(st.result) + "\n").encode("utf-8")
-    cards = cards_bundle(st.result, unit.envelope).encode("utf-8")
+    cards = cards_bundle(st.result, unit.envelope, north=plan_north(unit_frame(PLATE, pl))).encode("utf-8")
     st.scene_glb = glb
     st.exports = {"scene.glb": glb, "analytical.obj": obj, "evidence.json": evidence, "cards.svg": cards}
 
@@ -289,7 +303,7 @@ def analysis(sid: str, request: Request, response: Response, body: AnalysisIn = 
             timing = st.result.pop("_timing_s", None)
         except concurrent.futures.TimeoutError:
             st.state = "ready"
-            raise err(504, "ANALYSIS_TIMEOUT", "The 15 s worker budget was exceeded; try the 0.5 m grid.")
+            raise err(504, "ANALYSIS_TIMEOUT", "The 15 s worker budget was exceeded; try a coarser grid.")
         build_exports(st)
         st.state = "analysed"
         return {"state": st.state, "digest": st.result["digest"], "timing_s": timing, "next_action": next_action(st)}

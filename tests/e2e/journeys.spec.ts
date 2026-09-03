@@ -20,7 +20,7 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   await expect(page.getByTestId("confirm-button")).toBeEnabled({ timeout: 15_000 });
   await page.getByTestId("confirm-button").click();
   await expect(page.getByRole("heading", { name: /Sun, shade and radiation/ })).toBeVisible();
-  await page.getByRole("button", { name: "Fast, 0.5 m" }).click();
+  await page.getByRole("button", { name: "Coarse, 0.5 m" }).click();
   await page.getByRole("button", { name: "Run the analysis" }).click();
   await expect(page.getByRole("heading", { name: "Room by room" })).toBeVisible({ timeout: 60_000 });
   // every displayed number sits with its provenance: the numbers block, the room table, and the closed method disclosure

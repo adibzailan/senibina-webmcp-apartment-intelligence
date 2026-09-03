@@ -50,7 +50,7 @@ Guaranteed input:
    assumed openings apply.
 3. **Confirm:** read the confirmation sentence and click; the click is exchanged
    for a ten-second single-use server challenge.
-4. **Analyse:** run Ladybug + Radiance on a 0.25 m (or 0.5 m) floor grid and
+4. **Analyse:** run Ladybug + Radiance on a 0.1, 0.25 or 0.5 m floor grid and
    inspect sunpath, shadow, solar access and radiation in the same scene.
 5. **Export:** download GLB, OBJ, 3DM, SVG cards, evidence.json, ZIP, and
    presentation PNG/PDF renders.

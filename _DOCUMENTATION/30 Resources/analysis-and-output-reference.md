@@ -17,7 +17,7 @@ This reference defines the v2 study and presentation contract.
 | Solar access | For how long does the floor see direct sun? | Half-hour sun vectors on four key dates, `rcontrib` intersection, hours per sensor | Hours-of-sun heatmap per date |
 | Radiation | How much annual solar exposure reaches the floor? | `gendaymtx` Reinhart sky (577 patches, direct + diffuse) × cosine-weighted `rcontrib` intersection matrix; ground patches at 0.2 reflectance | Annual kWh/m² heatmap with min/avg/max and per-room table |
 
-Sensors sit on a 0.25 m plan grid (0.5 m in fast mode) at 0.8 m above the
+Sensors sit on a 0.25 m plan grid by default (0.1 m fine, 0.5 m coarse) at 0.8 m above the
 finished floor, inside the rooms of the placed unit and outside walls, columns,
 the household shelter and the AC ledge. The analytical mesh holds every
 `blocks_sun` element: neighbour towers (sourced footprints extruded to the
@@ -65,6 +65,6 @@ presentation only.
 - Unconfirmed or stale placement returns `CONFIRMATION_REQUIRED` or
   `STALE_CONFIRMATION`; analysis never runs on it.
 - A busy engine returns `ANALYSIS_BUSY`; a run over 15 s returns
-  `ANALYSIS_TIMEOUT` with the advice to use the 0.5 m grid.
+  `ANALYSIS_TIMEOUT` with the advice to use a coarser grid.
 - Every displayed number sits beside a disclosure of method, sources and
   limitations; exports carry the same record.

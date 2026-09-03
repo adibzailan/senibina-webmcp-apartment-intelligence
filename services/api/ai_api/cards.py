@@ -19,7 +19,7 @@ def colour_ramp(t: float) -> str:
     return "#000000"
 
 
-def heatmap_card(result: dict, unit_envelope, key: str = "radiation", title: str = "Annual incident radiation, sensor plane 0.8 m", unit_label: str = "kWh/m² per year", values=None) -> str:
+def heatmap_card(result: dict, unit_envelope, key: str = "radiation", title: str = "Annual incident radiation, sensor plane 0.8 m", unit_label: str = "kWh/m² per year", values=None, north=None) -> str:
     s = result["sensors"]
     vals = values if values is not None else result["radiation"]["sensor_kwh_m2"]
     sp = s["grid"]["spacing_m"]
@@ -43,9 +43,26 @@ def heatmap_card(result: dict, unit_envelope, key: str = "radiation", title: str
         out.append(f'<rect x="{lx}" y="{_f(oy + i * 8)}" width="18" height="8" fill="{colour_ramp(1 - i / 19)}"/>')
     out.append(f'<text x="{lx + 24}" y="{_f(oy + 8)}" font-size="11" fill="#111">{_f(vmax, 1)}</text>')
     out.append(f'<text x="{lx + 24}" y="{_f(oy + 160)}" font-size="11" fill="#111">{_f(vmin, 1)}</text>')
+    if north is not None:
+        out.append(north_arrow(W - 50, H - 60, north))
     out.append(f'<text x="20" y="{H - 16}" font-size="10" fill="#555">Computed evidence; upper-storey plate inferred, openings assumed. Not a daylight certification.</text>')
     out.append("</svg>")
     return "\n".join(out)
+
+
+def north_arrow(cx: float, cy: float, north) -> str:
+    """North arrow at (cx, cy). `north` is the unit vector toward true north in the card's plan frame (x right, y down)."""
+    nx, ny = north
+    L = 26.0
+    tx, ty = cx + nx * L, cy + ny * L          # tip
+    bx, by = cx - nx * L * 0.55, cy - ny * L * 0.55  # tail
+    px, py = -ny, nx                            # perpendicular
+    head = f"{_f(tx)},{_f(ty)} {_f(tx - nx * 10 + px * 5)},{_f(ty - ny * 10 + py * 5)} {_f(tx - nx * 10 - px * 5)},{_f(ty - ny * 10 - py * 5)}"
+    lx, ly = cx + nx * (L + 12), cy + ny * (L + 12)
+    return (f'<g><circle cx="{_f(cx)}" cy="{_f(cy)}" r="30" fill="none" stroke="#b9b7ae"/>'
+            f'<line x1="{_f(bx)}" y1="{_f(by)}" x2="{_f(tx)}" y2="{_f(ty)}" stroke="#c8472d" stroke-width="2"/>'
+            f'<polygon points="{head}" fill="#c8472d"/>'
+            f'<text x="{_f(lx)}" y="{_f(ly + 4)}" font-size="11" text-anchor="middle" fill="#111">N</text></g>')
 
 
 def sunpath_card(result: dict) -> str:
@@ -86,11 +103,11 @@ def shadow_card(result: dict) -> str:
     return "\n".join(out)
 
 
-def cards_bundle(result: dict, unit_envelope) -> str:
+def cards_bundle(result: dict, unit_envelope, north=None) -> str:
     """Single SVG document stacking the four cards (byte-deterministic)."""
-    parts = [heatmap_card(result, unit_envelope)]
+    parts = [heatmap_card(result, unit_envelope, north=north)]
     for date, rec in sorted(result.get("solar_access", {}).items()):
-        parts.append(heatmap_card(result, unit_envelope, title=f"Direct sun hours on {date}", unit_label="hours", values=rec["sun_hours"]))
+        parts.append(heatmap_card(result, unit_envelope, title=f"Direct sun hours on {date}", unit_label="hours", values=rec["sun_hours"], north=north))
     parts += [sunpath_card(result), shadow_card(result)]
     y = 0
     inner = []

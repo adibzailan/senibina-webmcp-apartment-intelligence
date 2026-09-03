@@ -55,7 +55,7 @@ export async function confirmFromClick(ctx: Ctx, activation: boolean) {
   });
 }
 
-export async function runAnalysis(ctx: Ctx, spacing: 0.25 | 0.5 = 0.25) {
+export async function runAnalysis(ctx: Ctx, spacing: 0.1 | 0.25 | 0.5 = 0.25) {
   const s = ctx.getState();
   if (!s.studyId) throw new Error("No study.");
   if (s.confirmedRevision === null || s.confirmedRevision !== s.placementRevision) {
