@@ -70,8 +70,8 @@ def concat(out, segs):
 
 # ---------- content ----------
 PRACTICE = ["wall-panorama.jpg", "wall-front.jpg", "desk-rhino-grasshopper.jpg", "light-and-shadow-sheet.jpg", "sightlines-sheet.jpg", "wind-and-temperature-site.jpg",
-            "room-radiation-l1-l3.jpg", "exterior-walls-study.jpg"]
-PCAPS = ["How practitioners answer it."] + [None] * 7
+            "room-radiation-l1-l3.jpg"]
+PCAPS = ["How practitioners answer it."] + [None] * 6
 # sales cards timed to the pauses in the narration (measured with silencedetect); durations in seconds
 SALES_LONG = [(["When a home is sold,", "it gets a sentence."], 4.1), (["Bright and airy."], 1.4), (["Afternoon sun."], 1.6), (["High floor, unblocked."], 2.7), (["Every word is a guess about light."], 2.6), (["None of it is measured."], 3.0)]
 SALES_SHORT = [(["When a home is sold,", "it gets a sentence."], 4.35), (["Bright and airy."], 2.05), (["Afternoon sun."], 2.3), (["None of it is measured."], 3.3)]
@@ -99,7 +99,7 @@ def timeline(v):
     T = []
     if v == "editorial":
         T.append(("card", dict(sec=6, lines=["Will this apartment get", "the sun you expect?"]), "b01"))
-        for i, f in enumerate(PRACTICE): T.append(("still", dict(f=f"{PR}/{f}", sec=[6, 4, 3.5, 3.5, 3, 2.5, 3.5, 3.2][i], cap=PCAPS[i], push=1.0 if "wind" in f else 1.04), "b02" if i == 0 else None))
+        for i, f in enumerate(PRACTICE): T.append(("still", dict(f=f"{PR}/{f}", sec=[6, 4, 4, 3.5, 3, 2.5, 6.5][i], cap=PCAPS[i], push=1.0 if "wind" in f else 1.04), "b02" if i == 0 else None))
         for i, (l, sec) in enumerate(SALES_LONG): T.append(("card", dict(sec=sec, lines=l, fade=False), "b03" if i == 0 else None))
         T.append(("card", dict(sec=7, **INTRO), "b04"))
         T += product_beats([1.0, 1.0, 1.15, 1.9, 1.1]) + tail(1.5, 10)
@@ -108,7 +108,7 @@ def timeline(v):
             T.append(("cut", dict(t0=marks["screen:analysis"] + 8.0, t1=marks["screen:analysis"] + 13.0, speed=1.0, cap="Will this apartment get the sun you expect?", pip=46.0), "b01"))
         else:
             T.append(("card", dict(sec=4, lines=["Will this apartment get", "the sun you expect?"]), "b01"))
-        for i, f in enumerate(PRACTICE): T.append(("still", dict(f=f"{PR}/{f}", sec=[3, 2, 2, 2, 1.8, 1.5, 2.2, 2.0][i], cap=PCAPS[i], push=1.0 if "wind" in f else 1.05), "b02" if i == 0 else None))
+        for i, f in enumerate(PRACTICE): T.append(("still", dict(f=f"{PR}/{f}", sec=[3, 2, 2, 2, 1.8, 1.5, 3.4][i], cap=PCAPS[i], push=1.0 if "wind" in f else 1.05), "b02" if i == 0 else None))
         for i, (l, sec) in enumerate(SALES_SHORT): T.append(("card", dict(sec=sec, lines=l, fade=False), "b03" if i == 0 else None))
         T.append(("card", dict(sec=5, **INTRO), "b04"))
         T += product_beats([1.25, 1.15, 1.35, 2.4, 1.3]) + tail(1.1, 8.5)
