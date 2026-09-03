@@ -1,0 +1,62 @@
+---
+title: Devpost write-up, Apartment Intelligence
+para: project
+status: ready to paste
+---
+
+# Apartment Intelligence
+
+*Will this apartment get the sun you expect?*
+
+## Inspiration
+
+Architects answer that question with instruments: sun paths, radiation on every square metre of floor, hours of direct sun on the days that matter. When a home is sold, the same question gets a sentence. "Bright and airy." "Afternoon sun." Nobody measures it. We wanted the instruments architects use in practice in the hands of the person who will live there.
+
+## What it does
+
+Pick a real block and storey (SkyVille @ Dawson, Singapore, is covered). Choose the wing and layout you recognise on a 3D model of the tower. Confirm it with one click. The engine then computes sun path, shadow at sixteen instants, direct-sun hours on four key dates and annual radiation on a 0.1 to 0.5 m floor grid, room by room, and shows it on the apartment in 3D. Export a report with the cover, the plans, a north arrow, room labels and the result digest on every page, or the model as GLB, OBJ or 3DM.
+
+## How WebMCP fits
+
+The page registers nine tools on `document.modelContext`. An agent in the browser can list covered homes, open a study, stage a placement, run the analysis, switch the view, explain any number, export, and survey placements without a study. Tools and buttons share one state, so what the agent does is what the person sees.
+
+Two modes, one rule. **Study**: the resident confirms the unit they will live in with a visible click, and only that path produces the report. **Survey**: `survey_unit` lets an agent analyse any placement without a click and compare units in a row, with every number labelled `survey_unconfirmed`. Agents explore, people vouch.
+
+There is no confirmation tool. A `confirmed` argument is rejected. The click is exchanged for a ten-second single-use server challenge. This is the human-agent boundary made concrete: the agent does everything except the one thing only a person can vouch for.
+
+## How we built it
+
+Python: Ladybug and Radiance run headless on Render (one Docker container, Singapore). Geometry is a coordinate recipe of the published 4-room plans and the reconstructed tower plate, labelled sourced, inferred, reconstructed, assumed or human-confirmed. Every result is bound to a SHA-256 digest of recipe, placement, weather and method. Front end: React, Three.js, TypeScript. No LLM in the runtime, no scraping, no accounts, no database.
+
+## Challenges
+
+- Making a confirmation that a tool cannot fake without making the product tedious. The answer was two modes with different labels, not a switch.
+- A race that only showed on the live host: the page re-sent a placement an agent had staged, and on a slower network the re-send landed after the click and made the confirmation stale. Found by running the browser journeys against production, not localhost.
+- Radiance ships x86-64 Linux only, so the image is amd64 and the analysis has to fit a 15-second budget on one CPU. Fine 0.1 m runs in 10.6 s live.
+
+## Accomplishments
+
+- A real ChatGPT desktop agent discovered all nine tools, surveyed three units, chose one, staged it, was refused, waited for the click, then ran and explained the confirmed study.
+- A practitioner read the report and said it was what a sustainability consultant takes weeks to produce.
+- Every export is byte-stable and digest-bound; the same inputs give the same file.
+
+## What we learned
+
+- Agents need labels more than they need permissions. Once every number said "confirmed" or "unconfirmed", we could open the analysis to agents without weakening the evidence.
+- The rate limit that protects the server is the first thing an agent hits when it tries to be useful. Separate budgets by mode fixed it.
+- Test against the deployed URL. Two bugs lived only there.
+- The same engine that answers one resident can answer a practice. That is the door this challenge opened for us.
+
+## What's next
+
+More covered developments, a survey progress indicator ("2 of 24 surveyed"), separate badges for survey and confirmed evidence in chat, and the practice-side version of the same engine.
+
+## Links
+
+- Live: https://apartments.senibina.com.sg
+- Code: https://github.com/adibzailan/senibina-webmcp-apartment-intelligence (AGPL-3.0)
+- A public-interest study by Senibina for apartment living. Singapore now, the region next.
+
+## Testing instructions (private field)
+
+Open https://apartments.senibina.com.sg in the ChatGPT desktop app's built-in browser (GPT-5.6 Sol or Terra) or Chrome 152 with `chrome://flags/#enable-webmcp-testing`. No login. Try: "List the tools. Survey NE wing tip Type A storey 12, SE near the core Type B storey 30 and SW wing tip Type C storey 44 at 0.5 m and compare the averages. Create a study for the one you would confirm, stage it, and try run_solar_analysis." The refusal is expected; click the green confirm button, then ask it to run again and export the PDF. Limits: five confirmed analyses and thirty surveys per ten minutes per browser session.

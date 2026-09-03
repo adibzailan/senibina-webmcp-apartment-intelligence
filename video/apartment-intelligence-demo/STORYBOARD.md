@@ -1,7 +1,7 @@
 ---
 title: Apartment Intelligence demo film, storyboard
 para: project
-status: draft for founder review
+status: shipped as v1 (see PRODUCTION-RECEIPT.md); this storyboard is the plan, build.py is the truth
 target: 160 s (2:40), 1920 x 1080, 30 fps, H.264 + AAC
 ---
 

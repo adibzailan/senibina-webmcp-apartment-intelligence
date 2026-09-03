@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: active
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Adib records the demo video against https://apartments.senibina.com.sg and submits on Devpost before 04:00 SGT on 4 September 2026.
+next_action: Adib uploads video/apartment-intelligence-demo/renders/Apartment-Intelligence-Demo-v1.mp4 to YouTube (Unlisted), pastes the write-up from 2026-webmcp-devpost-writeup.md into Devpost, and submits before 04:00 SGT on 4 September 2026.
 ---
 
 # WebMCP Challenge submission
@@ -41,6 +41,12 @@ the submitted URLs are read back successfully.
   and the challenge. Verified headless: every export produces a real file; a
   three-unit agent sequence through the WebMCP tools; 6 Playwright, 4 vitest,
   20 pytest pass.
+- 3 September 2026, night: survey mode (`survey_unit`, nine tools) with its own
+  budget of thirty per ten minutes; `show_analysis` drives camera, massing and
+  map; both senibina hostnames live on Render; ChatGPT desktop agent receipt
+  (see checklist); demo film v1 mastered at 2:03 with production receipt in
+  `video/apartment-intelligence-demo/`; Devpost write-up ready in
+  `2026-webmcp-devpost-writeup.md`.
 - v1: the public baseline, dependency locks, Dawson fixture, application,
   analysis engine, export pipeline, and six WebMCP tools were implemented and
   published on 1 September 2026.

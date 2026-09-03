@@ -8,7 +8,8 @@ and authority second.
 Finite active outcomes with a defined completion condition and one next action.
 
 - [`WebMCP Challenge submission`](10%20Projects/2026-webmcp-challenge-submission.md)
-- [`Clean-room reconstruction (v2)`](10%20Projects/2026-09-clean-room-reconstruction.md)
+- [`Devpost write-up`](10%20Projects/2026-webmcp-devpost-writeup.md)
+- [`Clean-room reconstruction (v2)`](10%20Projects/2026-09-clean-room-reconstruction.md) (complete)
 
 ## 20 Areas
 
