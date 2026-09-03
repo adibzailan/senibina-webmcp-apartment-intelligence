@@ -30,6 +30,7 @@ Python: Ladybug and Radiance run headless on Render (one Docker container, Singa
 
 ## Challenges
 
+- Getting the practice capability out of Rhino at all. In practice these studies live inside Grasshopper on a licensed desktop, driven by hand. Our first attempt kept that shape: a Windows machine at home, a tunnel to the internet, a custom analysis loop that only imitated the real one. It worked once and taught us it could not be the product. The rebuild threw it away: Ladybug and Radiance run headless in one Docker container on Render, geometry is a coordinate recipe instead of a CAD file, and no Rhino, Grasshopper or Revit is in the runtime. That is what let a consumer page run a practice-grade study in ten seconds.
 - Making a confirmation that a tool cannot fake without making the product tedious. The answer was two modes with different labels, not a switch.
 - A race that only showed on the live host: the page re-sent a placement an agent had staged, and on a slower network the re-send landed after the click and made the confirmation stale. Found by running the browser journeys against production, not localhost.
 - Radiance ships x86-64 Linux only, so the image is amd64 and the analysis has to fit a 15-second budget on one CPU. Fine 0.1 m runs in 10.6 s live.
@@ -45,6 +46,7 @@ Python: Ladybug and Radiance run headless on Render (one Docker container, Singa
 - Agents need labels more than they need permissions. Once every number said "confirmed" or "unconfirmed", we could open the analysis to agents without weakening the evidence.
 - The rate limit that protects the server is the first thing an agent hits when it tries to be useful. Separate budgets by mode fixed it.
 - Test against the deployed URL. Two bugs lived only there.
+- The hard part was never the physics. It was taking a tool that lives inside a desktop CAD licence and making it a service. Once it was a service, both the consumer page and a practice could call it.
 - The same engine that answers one resident can answer a practice. That is the door this challenge opened for us.
 
 ## What's next
