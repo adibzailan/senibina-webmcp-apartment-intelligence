@@ -1,8 +1,13 @@
 # Apartment Intelligence
 
-Apartment Intelligence is a WebMCP-native consumer apartment environmental-study
-application. It brings early-stage architectural solar analysis to a Singapore
-resident evaluating an existing HDB apartment.
+Apartment Intelligence is both a WebMCP Challenge project and a Senibina
+goodwill project for the public good. It brings early-stage architectural solar
+analysis to a Singapore resident evaluating an existing HDB apartment.
+
+We entered architecture because we love buildings, drawing, and 3D modelling.
+This project asks how those same tools can help residents evaluate the
+environmental conditions of a home empirically and objectively, with evidence,
+provenance, and uncertainty kept visible.
 
 The guaranteed demonstration starts with 87 Dawson Road and storey 30. An
 agent resolves the bundled public context, the resident places and confirms a
@@ -16,11 +21,12 @@ remain open.
 
 ## Public-interest research
 
-Apartment Intelligence is also a Senibina research project for the public
-good. Its longer-term hypothesis is that useful architectural knowledge about
-existing homes should not remain available only to professionals: residents
-should be able to understand sunlight, obstruction, environmental exposure,
-and the provenance and uncertainty behind each conclusion.
+Apartment Intelligence begins in Singapore because this is where Senibina
+practises and can evaluate the work responsibly. Its longer-term hypothesis is
+that useful architectural knowledge about existing homes should not remain
+available only to professionals: residents should be able to understand
+sunlight, obstruction, environmental exposure, and the provenance and
+uncertainty behind each conclusion.
 
 The Dawson study is one deliberately bounded beginning. Future research may
 reconstruct and validate reference floor plans for a wider subset of Singapore
@@ -28,6 +34,10 @@ housing, creating a transparent and reusable public-interest knowledge base.
 Any reconstructed plan must retain its source, method, confidence, and limits;
 it must never be presented as an authoritative unit survey or verified stack
 without supporting evidence.
+
+If the approach survives local scrutiny, the ambition is to extend the practice
+across ASEAN and, eventually, other housing contexts globally. Singapore remains
+the first case study, not a claim of official status or government endorsement.
 
 ## Product boundary
 
@@ -92,3 +102,12 @@ the localhost URL, and inspect `document.modelContext.getTools()` in DevTools.
 The verified public deployment is <https://apartment.senibina.com.sg>. Windows
 deployment is documented in
 [`WINDOWS_DEPLOYMENT.md`](WINDOWS_DEPLOYMENT.md).
+
+## v2 clean room (branch `v2-clean-room`)
+
+A headless rebuild on this branch: published 4-room plans traced to coordinate recipes with real
+walls, columns, openings and balcony; the Block 87 plate reconstructed from the sourced HDB
+footprint; Ladybug + Radiance (`gendaymtx`, `rcontrib`) computing sunpath, shadow, direct sun and
+annual radiation on a 0.25 m floor grid; eight WebMCP tools on `document.modelContext` with no
+confirmation tool; deterministic GLB, OBJ, SVG, evidence.json and ZIP exports; one Docker image.
+See `_DOCUMENTATION/10 Projects/2026-09-clean-room-reconstruction.md` and `deploy/RUNBOOK.md`.

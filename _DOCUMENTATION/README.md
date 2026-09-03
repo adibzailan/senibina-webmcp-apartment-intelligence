@@ -17,6 +17,7 @@ changes.
 
 - [`Product and architecture`](20%20Areas/product-and-architecture.md)
 - [`Security and operations`](20%20Areas/security-and-operations.md)
+- [`Dependency intake, v2 clean room`](20%20Areas/dependency-intake-v2-2026-09-03.md)
 
 ## 30 Resources
 

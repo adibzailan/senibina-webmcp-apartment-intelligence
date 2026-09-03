@@ -1,5 +1,5 @@
 # Apartment Intelligence v2: Python 3.13 + Radiance 6.1a (LBNL-ETA 39b99660) + built web bundle.
-# Build:  docker build -f deploy/Dockerfile -t apartment-intelligence:v2 .
+# Build:  docker build --platform linux/amd64 -f deploy/Dockerfile -t apartment-intelligence:v2 .
 FROM node:22-bookworm-slim AS web
 WORKDIR /web
 COPY apps/web/package.json apps/web/package-lock.json ./

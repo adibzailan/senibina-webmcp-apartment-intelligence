@@ -14,7 +14,7 @@ Open http://127.0.0.1:8000. Radiance is found via `RADIANCE_PATH`, then `.tools/
 ## Docker
 
 ```bash
-docker compose -f deploy/compose.yaml up --build -d
+docker compose -f deploy/compose.yaml build && docker compose -f deploy/compose.yaml up -d
 curl -fsS http://127.0.0.1:8000/healthz
 docker compose -f deploy/compose.yaml kill && docker compose -f deploy/compose.yaml up -d
 curl -fsS http://127.0.0.1:8000/healthz
