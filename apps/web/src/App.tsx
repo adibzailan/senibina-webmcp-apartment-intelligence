@@ -9,6 +9,20 @@ import { registerWebMcp, toolDefinitions } from "./webmcp";
 
 const STEPS: State["screen"][] = ["locate", "place", "confirm", "analysis", "export"];
 const DATES = ["03-21", "06-21", "09-22", "12-21"];
+const STATE_WORDS: Record<string, string> = { created: "started", placed: "placement staged", needs_confirmation: "awaiting your confirmation", ready: "confirmed, ready to analyse", analysing: "analysing", analysed: "analysed" };
+const ELEMENT_LABELS: Record<string, string> = { "win-mainbed": "Main bedroom window", "win-bed2": "Bedroom 2 window", "win-bed3": "Bedroom 3 window", "win-living": "Living room window", "win-living-side": "Living room side window", "win-mainbed-side": "Main bedroom side window", "win-kitchen": "Kitchen window", "railing-serviceyard": "Service yard railing", "balcony-living": "Living room balcony", "railing-balcony": "Balcony railing" };
+const labelOf = (id: string) => ELEMENT_LABELS[id] ?? id.replace(/[-_]/g, " ");
+
+/** A step is reachable only when the state behind it exists; confirmation still needs the click. */
+function canAdvance(s: State): boolean {
+  switch (s.screen) {
+    case "locate": return !!s.studyId;
+    case "place": return s.placementRevision > 0;
+    case "confirm": return s.confirmedRevision !== null && s.confirmedRevision === s.placementRevision;
+    case "analysis": return !!s.result;
+    default: return false;
+  }
+}
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -19,13 +33,22 @@ export default function App() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
   const [glbKey, setGlbKey] = useState<string>("");
+  const framedFor = useRef<string>("");
+  const [basemap, setBasemap] = useState(true);
+  const compassRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => { liveApi.context().then(setContext).catch(() => setContext({ supported: [] })); }, []);
+  useEffect(() => {
+    const v = viewerRef.current; const o = context?.frame?.origin_wgs84; if (!v || !o) return;
+    v.loadBasemap(o[0], o[1]).catch((e) => console.warn("basemap", e));
+  }, [context]);
+  useEffect(() => { viewerRef.current?.setBasemapVisible(basemap); }, [basemap]);
 
   useEffect(() => {
     if (!canvasRef.current || viewerRef.current) return;
     try {
       viewerRef.current = new Viewer(canvasRef.current);
+      viewerRef.current.onFrame = (az) => { if (compassRef.current) compassRef.current.style.transform = `rotate(${-az}deg)`; };
       viewerRef.current.loadGlb("/api/context/scene.glb").then(() => viewerRef.current?.preset("precinct")).catch((e) => console.warn(e));
     } catch (e) { console.warn("WebGL unavailable", e); }
     return () => { viewerRef.current?.dispose(); viewerRef.current = null; };
@@ -36,7 +59,16 @@ export default function App() {
     const key = state.studyId ? `${state.studyId}:${state.placementRevision}:${state.digest ?? ""}` : "";
     if (!viewerRef.current || !state.studyId || !state.placementRevision || key === glbKey) return;
     setGlbKey(key);
-    viewerRef.current.loadGlb(`/api/studies/${state.studyId}/scene.glb?r=${state.placementRevision}&d=${state.digest ?? ""}`).then(() => viewerRef.current?.preset(state.view.camera)).catch((e) => console.warn(e));
+    viewerRef.current.loadGlb(`/api/studies/${state.studyId}/scene.glb?r=${state.placementRevision}&d=${state.digest ?? ""}`).then(() => {
+      const v = viewerRef.current; if (!v) return;
+      // frame once per stage: a tower-level plan while placing; the apartment once analysed. Never re-frame on every reload.
+      const stage = state.result ? "analysed" : "placing";
+      if (framedFor.current !== `${state.studyId}:${stage}`) {
+        framedFor.current = `${state.studyId}:${stage}`;
+        if (stage === "placing") { dispatch({ type: "set_view", view: { camera: "plan" } }); v.preset("plan", "tower"); }
+        else { dispatch({ type: "set_view", view: { camera: "home" } }); v.preset("home", "home"); }
+      }
+    }).catch((e) => console.warn(e));
   }, [state.studyId, state.placementRevision, state.digest]);
 
   useEffect(() => {
@@ -46,7 +78,7 @@ export default function App() {
     v.setSun(state.view.preset === "radiation" ? null : state.result, state.view.date, state.view.hour);
   }, [state.result, state.view]);
 
-  useEffect(() => { viewerRef.current?.preset(state.view.camera); }, [state.view.camera, glbKey]);
+  const focus: "home" | "tower" = state.result ? "home" : "tower";
 
   // live staging: any placement change on the Place/Confirm screens re-stages after a short pause
   const placementKey = JSON.stringify(state.placement);
@@ -107,13 +139,15 @@ export default function App() {
       <div className="workbench">
         <div className="canvas-col">
           <div className="canvas" ref={canvasRef} role="img" aria-label="Three-dimensional precinct model with the target tower and the confirmed apartment">
-            <span className="north">N ↑ (+y)</span>
+            <span className="north" aria-label="Compass; the arrow points to true north"><svg ref={compassRef} viewBox="-22 -22 44 44"><circle r="20" fill="none" stroke="#b9b7ae" /><polygon points="0,-18 5,4 0,1 -5,4" fill="#c8472d" /><polygon points="0,18 5,-4 0,-1 -5,-4" fill="#5f665f" /><text y="-11" textAnchor="middle" fontSize="8" fill="#18211d" fontFamily="Inter, system-ui">N</text></svg></span>
+            {basemap && <span className="attribution">Map data © OpenStreetMap contributors</span>}
             <span className="edge">{state.view.camera} view · Dawson precinct, ENU metres · {state.view.preset}{r ? ` · ${state.view.date} ${state.view.hour}:00` : ""}</span>
           </div>
           <div className="toolbar" aria-label="Canvas controls">
-            {(["precinct", "tower", "home", "plan"] as const).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c); }}>{c}</button>)}
-            <button onClick={() => viewerRef.current?.preset("north")}>north</button>
-            <button onClick={() => viewerRef.current?.preset(state.view.camera)}>reset</button>
+            {(["precinct", "tower", "home", "plan"] as const).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c, focus); }}>{c[0].toUpperCase() + c.slice(1)}</button>)}
+            <button onClick={() => viewerRef.current?.preset("north")}>North</button>
+            <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
+            <button aria-pressed={basemap} onClick={() => setBasemap(!basemap)}>Map</button>
           </div>
           {r && <div className="legend" style={{ marginTop: 8 }}>
             {state.view.preset === "shadow" ? <><span style={{ width: 12, height: 12, background: "#f2c230", display: "inline-block" }} /> lit <span style={{ width: 12, height: 12, background: "#45534d", display: "inline-block" }} /> shaded</> : <><span>{state.view.preset === "radiation" ? "0" : "0 h"}</span><span className="ramp" /><span>{state.view.preset === "radiation" ? `${r.radiation.max} kWh/m² per year` : "hours of direct sun"}</span></>}
@@ -124,7 +158,11 @@ export default function App() {
         <aside className="rail">
           <section className="study-card" aria-label="Study">
             <div className="study-line"><strong>{state.address}</strong>{state.studyId ? `, storey ${state.storey}` : ""}</div>
-            <div className="study-meta" aria-live="polite">Step {stepIndex} of 5 · {({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyId ? ` · ${state.studyState}` : ""}</div>
+            <div className="study-meta steps" aria-live="polite">
+              <button className="step-arrow" aria-label="Previous step" disabled={stepIndex <= 1} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex - 2] })}>←</button>
+              <span>Step {stepIndex} of 5 · {({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyState ? ` · ${STATE_WORDS[state.studyState] ?? state.studyState}` : ""}</span>
+              <button className="step-arrow" aria-label="Next step" disabled={!canAdvance(state)} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex] })}>→</button>
+            </div>
             <div className="study-meta">{mcp ? (mcp.registered ? `WebMCP tools registered on ${mcp.where}` : "WebMCP not enabled in this browser (chrome://flags/#enable-webmcp-testing)") : ""}</div>
           </section>
           {state.screen === "locate" && <section>
@@ -145,7 +183,7 @@ export default function App() {
             <div className="toolbar">{([["A", "Type A, three bedrooms"], ["B", "Type B, larger living"], ["C", "Type C, master suite"]] as const).map(([v, l]) => <button key={v} aria-pressed={state.placement.variant === v} onClick={() => dispatch({ type: "set_placement", placement: { variant: v } })}>{l}</button>)}</div>
             <label className="checks" style={{ marginTop: 8 }}><input type="checkbox" checked={state.placement.mirrored} onChange={(e) => dispatch({ type: "set_placement", placement: { mirrored: e.target.checked } })} /> Mirrored plan</label>
             <details><summary>Windows, balcony and railings (assumed unless published)</summary>
-              <div className="checks" style={{ marginTop: 8 }}>{toggles.map((e: any) => <label key={e.id}><input type="checkbox" checked={state.placement.openings[e.id] ?? e.enabled_by_default} onChange={(ev) => dispatch({ type: "set_placement", placement: { openings: { [e.id]: ev.target.checked } } })} /> {e.id} <span style={{ color: "var(--ink-muted)" }}>({e.source.state})</span></label>)}</div>
+              <div className="checks" style={{ marginTop: 8 }}>{toggles.map((e: any) => <label key={e.id}><input type="checkbox" checked={state.placement.openings[e.id] ?? e.enabled_by_default} onChange={(ev) => dispatch({ type: "set_placement", placement: { openings: { [e.id]: ev.target.checked } } })} /> {labelOf(e.id)} <span style={{ color: "var(--ink-muted)", fontSize: 12 }}>{e.source.state}</span></label>)}</div>
             </details>
             <div className="toolbar">
               <button className="confirm" data-testid="confirm-button" disabled={!!state.busy || state.placementRevision === 0} onClick={(ev) => confirmFromClick(ctx, ev.isTrusted && (navigator as any).userActivation?.isActive !== false).catch(() => {})}>I confirm this is my apartment</button>
@@ -160,7 +198,7 @@ export default function App() {
             </div>}
             {r && <>
               <label>Study</label>
-              <div className="toolbar">{(["sunpath", "shadow", "solar_access", "radiation"] as const).map((p) => <button key={p} aria-pressed={state.view.preset === p} onClick={() => showAnalysis(ctx, { preset: p })}>{p.replace("_", " ")}</button>)}</div>
+              <div className="toolbar">{(["sunpath", "shadow", "solar_access", "radiation"] as const).map((p) => <button key={p} aria-pressed={state.view.preset === p} onClick={() => showAnalysis(ctx, { preset: p })}>{(p[0].toUpperCase() + p.slice(1)).replace("_", " ")}</button>)}</div>
               <label>Date and hour</label>
               <div className="field">
                 <select value={state.view.date} onChange={(e) => showAnalysis(ctx, { date: e.target.value })}>{DATES.map((d) => <option key={d}>{d}</option>)}</select>
@@ -176,7 +214,7 @@ export default function App() {
                   {r.radiation.limitations.map((l: string, i: number) => <tr key={"l" + i}><td colSpan={4}>{l}</td></tr>)}
                 </tbody></table>
               </details>
-              <div className="toolbar"><button className="primary" onClick={() => dispatch({ type: "go", screen: "export" })}>Export</button></div>
+              <div className="toolbar"><button className="primary" onClick={() => dispatch({ type: "go", screen: "export" })}>Keep the evidence</button></div>
             </>}
           </section>}
 
@@ -187,7 +225,7 @@ export default function App() {
             <p className="status">SVG, GLB, OBJ and evidence.json are byte-stable and bound to the digest. PNG and PDF are presentation renders. 3DM embeds fresh object ids.</p>
           </section>}
 
-          <p className={"status" + (state.message?.kind === "error" ? " error" : "")} role="status" aria-live="polite">{state.busy ? `${state.busy}…` : state.message?.text ?? (state.studyId ? `Study ${state.studyId} · ${state.studyState}` : "")}</p>
+          <p className={"status" + (state.message?.kind === "error" ? " error" : "")} role="status" aria-live="polite">{state.busy ? `${state.busy}…` : state.message?.text ?? ""}</p>
           {state.lastActor === "webmcp" && <p className="status">Last change came from a WebMCP tool; the page state is what you see.</p>}
         </aside>
       </div>

@@ -31,6 +31,8 @@ export class Viewer {
   precinct = new THREE.Box3();
   private raf = 0;
   private ro: ResizeObserver;
+  basemap: THREE.Mesh | null = null;
+  onFrame: ((azimuthDeg: number) => void) | null = null;
 
   constructor(public el: HTMLElement) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
@@ -75,7 +77,45 @@ export class Viewer {
     this.raf = requestAnimationFrame(this.loop);
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
+    if (this.onFrame) {
+      const d = new THREE.Vector3(); this.camera.getWorldDirection(d);
+      this.onFrame((Math.atan2(d.x, d.y) * 180) / Math.PI); // compass bearing the camera looks toward, 0 = north (+y)
+    }
   };
+
+  /** OpenStreetMap raster tiles as a muted ground plane. Browser-side fetch only, with attribution. */
+  async loadBasemap(lon: number, lat: number, zoom = 17, radius = 3, opacity = 0.55): Promise<void> {
+    const n = 2 ** zoom, T = 256;
+    const px = ((lon + 180) / 360) * n * T;
+    const latR = (lat * Math.PI) / 180;
+    const py = ((1 - Math.log(Math.tan(latR) + 1 / Math.cos(latR)) / Math.PI) / 2) * n * T;
+    const tx = Math.floor(px / T), ty = Math.floor(py / T);
+    const mpp = (156543.03392 * Math.cos(latR)) / n;
+    const size = (2 * radius + 1) * T;
+    const canvas = document.createElement("canvas"); canvas.width = size; canvas.height = size;
+    const g = canvas.getContext("2d")!; g.fillStyle = "#f5f2e9"; g.fillRect(0, 0, size, size);
+    const loads: Promise<void>[] = [];
+    for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {
+      const img = new Image(); img.crossOrigin = "anonymous";
+      loads.push(new Promise<void>((res) => { img.onload = () => { g.drawImage(img, (dx + radius) * T, (dy + radius) * T); res(); }; img.onerror = () => res(); }));
+      img.src = `https://tile.openstreetmap.org/${zoom}/${tx + dx}/${ty + dy}.png`;
+    }
+    await Promise.all(loads);
+    // desaturate toward paper so the drawing stays the lead image
+    g.globalCompositeOperation = "saturation"; g.fillStyle = "hsl(0,0%,50%)"; g.fillRect(0, 0, size, size);
+    g.globalCompositeOperation = "source-over";
+    const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+    const metres = size * mpp;
+    // world position of the mosaic centre relative to the origin (x east, y north)
+    const cxPx = (tx - radius) * T + size / 2, cyPx = (ty - radius) * T + size / 2;
+    const cx = (cxPx - px) * mpp, cy = -(cyPx - py) * mpp;
+    if (this.basemap) this.scene.remove(this.basemap);
+    this.basemap = new THREE.Mesh(new THREE.PlaneGeometry(metres, metres), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity }));
+    this.basemap.position.set(cx, cy, -0.03); this.basemap.renderOrder = 0;
+    this.scene.add(this.basemap);
+  }
+
+  setBasemapVisible(v: boolean) { if (this.basemap) this.basemap.visible = v; }
 
   dispose() { cancelAnimationFrame(this.raf); this.ro.disconnect(); this.renderer.dispose(); }
 
@@ -165,24 +205,32 @@ export class Viewer {
       const pts = s.corners.map(([x, y]) => new THREE.Vector3(x, y, s.z + 0.05));
       const selected = s.id === selectedId;
       const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([...pts, pts[0]]), selected ? new THREE.LineBasicMaterial({ color: 0xc8472d, linewidth: 2 }) : new THREE.LineDashedMaterial({ color: 0x18211d, dashSize: 0.6, gapSize: 0.4, transparent: true, opacity: 0.9 }));
-      line.computeLineDistances(); line.renderOrder = 6; g.add(line);
+      (line.material as THREE.Material).depthTest = false; line.computeLineDistances(); line.renderOrder = 6; g.add(line);
       const shape = new THREE.Shape(s.corners.map(([x, y]) => new THREE.Vector2(x, y)));
-      const fill = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({ color: selected ? 0xc8472d : 0xbfc9bf, transparent: true, opacity: selected ? 0.35 : 0.18, depthWrite: false, side: THREE.DoubleSide }));
+      const fill = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshBasicMaterial({ color: selected ? 0xc8472d : 0x8fa08f, transparent: true, opacity: selected ? 0.5 : 0.35, depthWrite: false, depthTest: false, side: THREE.DoubleSide }));
       fill.position.z = s.z + 0.04; fill.renderOrder = 5; (fill as any).userData.slotId = s.id;
       this.slotMeshes.push(fill); g.add(fill);
     }
     this.slots = g; this.scene.add(g);
   }
 
-  preset(name: "precinct" | "tower" | "home" | "plan" | "reset" | "north") {
-    const box = name === "home" || name === "plan" ? this.home : name === "tower" ? this.tower : this.precinct;
-    if (box.isEmpty()) return;
-    const c = box.getCenter(new THREE.Vector3()); const size = box.getSize(new THREE.Vector3()).length();
-    const dist = Math.max(20, size * 0.9);
-    if (name === "plan") { this.camera.position.set(c.x, c.y - 0.01, c.z + dist); }
-    else if (name === "north") { this.camera.position.set(c.x, c.y - dist, c.z + dist * 0.5); }
-    else { this.camera.position.set(c.x - dist * 0.6, c.y - dist * 0.6, c.z + dist * 0.55); } // north-west axonometric
-    this.controls.target.copy(c); this.camera.near = 0.5; this.camera.far = dist * 20; this.camera.updateProjectionMatrix(); this.controls.update();
+  preset(name: "precinct" | "tower" | "home" | "plan" | "north" | "reset", focus: "home" | "tower" = "home") {
+    const pick = (...boxes: THREE.Box3[]) => boxes.find((b) => !b.isEmpty());
+    const homeFirst = focus === "home" ? [this.home, this.tower, this.precinct] : [this.tower, this.precinct];
+    const box = name === "precinct" ? pick(this.precinct) : name === "tower" || name === "north" ? pick(this.tower, this.precinct) : pick(...homeFirst);
+    if (!box) return;
+    const c = box.getCenter(new THREE.Vector3()); const size = box.getSize(new THREE.Vector3());
+    const radius = size.length() / 2;
+    const fit = radius / Math.sin((this.camera.fov * Math.PI) / 360) * 1.05; // distance that fits the bounding sphere
+    if (name === "plan") {
+      const h = Math.max(30, fit * 0.9);
+      this.camera.position.set(c.x, c.y - 0.001 * h, box.max.z + h);
+    } else if (name === "north") {
+      this.camera.position.set(c.x, c.y - fit * 0.85, c.z + fit * 0.5); // south of the target, looking north
+    } else {
+      this.camera.position.set(c.x - fit * 0.55, c.y + fit * 0.55, c.z + fit * 0.4); // from the north-west
+    }
+    this.controls.target.copy(c); this.camera.near = 0.5; this.camera.far = Math.max(2000, fit * 10); this.camera.updateProjectionMatrix(); this.controls.update();
   }
 
   snapshot(): string { this.renderer.render(this.scene, this.camera); return this.renderer.domElement.toDataURL("image/png"); }

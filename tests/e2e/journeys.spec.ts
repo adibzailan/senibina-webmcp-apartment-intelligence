@@ -23,15 +23,15 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   // every displayed number in the numbers block sits next to provenance disclosure
   await expect(page.locator(".numbers strong")).toHaveCount(3);
   await expect(page.getByText("Method, sources and limitations")).toBeVisible();
-  for (const preset of ["sunpath", "shadow", "solar access", "radiation"]) await page.getByRole("button", { name: preset, exact: true }).click();
-  for (const cam of ["precinct", "tower", "home", "plan", "north", "reset"]) await page.getByRole("button", { name: cam, exact: true }).click();
+  for (const preset of ["Sunpath", "Shadow", "Solar access", "Radiation"]) await page.getByRole("button", { name: preset, exact: true }).click();
+  for (const cam of ["Precinct", "Tower", "Home", "Plan", "North", "Reset", "Map"]) await page.getByRole("button", { name: cam, exact: true }).click();
   // orbit, pan, zoom on the live canvas must not throw
   const canvas = page.locator(".canvas canvas");
   const box = (await canvas.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down(); await page.mouse.move(box.x + box.width / 2 + 60, box.y + box.height / 2 + 30, { steps: 5 }); await page.mouse.up();
   await page.mouse.wheel(0, -200);
-  await page.getByRole("button", { name: "Export", exact: true }).click();
+  await page.getByRole("button", { name: "Keep the evidence", exact: true }).click();
   const dl = page.waitForEvent("download");
   await page.getByRole("button", { name: "cards.svg", exact: true }).click();
   expect((await dl).suggestedFilename()).toContain("cards.svg");
