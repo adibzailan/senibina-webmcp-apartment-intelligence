@@ -80,6 +80,19 @@ Two runtimes exist on 3 September 2026:
   are in memory and lost on restart, which the page reports as
   `STUDY_EXPIRED` with a next action.
 
+### Why Render, and why a container
+
+The v1 plan put the React app on Vercel and the API on a managed container host. v2 collapses
+that into one Render web service because the analysis is a real server process, not a function:
+Radiance is a native x86-64 binary (`gendaymtx`, `oconv`, `rcontrib`) that must sit on disk next
+to Python and run for several seconds per study, and the sky matrix is cached on the local
+filesystem between requests. Vercel's static and serverless model cannot host that binary or
+hold a warm process; a Docker image can. Render builds `deploy/Dockerfile` on every push to
+`main`, exactly like Vercel does for a Next.js repo, and serves the built web bundle from the
+same process, so there is one origin, one CSP, and no cross-origin API. Singapore region keeps
+latency low for residents and judges; the 1 CPU / 2 GB plan keeps the 0.25 m analysis inside its
+15 s budget (6.2 s measured). Free instances (0.1 CPU, spin-down) cannot.
+
 Deployment credentials remain host-local in both cases. On Render the service sets
 `AI_EXPECTED_ORIGINS` (its own origin and `apartments.senibina.com.sg`) so state-changing API
 calls from other origins receive 403, and `AI_COOKIE_SECURE=true`.

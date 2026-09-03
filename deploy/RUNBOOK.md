@@ -30,7 +30,13 @@ Studies live in memory for 30 minutes and are lost on restart; the page shows `S
 (cd tests/e2e && npx playwright test)   # Chrome 152 with --enable-features=WebMCP
 ```
 
-## Render
+## Render (live)
+
+Why a full container rather than Vercel: the engine is Radiance, a native binary that runs for
+seconds per study and keeps a sky-matrix cache on disk, which serverless hosting cannot provide.
+One Docker image on Render holds Python, Radiance, the data and the built web bundle, and Render
+rebuilds it from `deploy/Dockerfile` on every push to `main`, the same push-to-deploy loop as
+Vercel. Live service: <https://apartment-intelligence.onrender.com>.
 
 `deploy/render.yaml` describes one Git-backed Docker web service in Singapore on the Standard plan (1 CPU / 2 GB) with `/healthz`. Connect the repo in the Render dashboard and pick the blueprint; no secrets are needed. After that every push to `main` rebuilds and redeploys with zero downtime and instant rollback. Free instances (0.1 CPU, spin-down after 15 min) cannot meet the 15 s analysis budget.
 
