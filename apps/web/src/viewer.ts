@@ -32,6 +32,7 @@ export class Viewer {
   private raf = 0;
   private ro: ResizeObserver;
   basemap: THREE.Mesh | null = null;
+  massing = true;
   onFrame: ((azimuthDeg: number) => void) | null = null;
   private gizmo = new THREE.Scene();
   private gizmoCam = new THREE.OrthographicCamera(-2.1, 2.1, 2.1, -2.1, 0.1, 20);
@@ -123,6 +124,18 @@ export class Viewer {
 
   setBasemapVisible(v: boolean) { if (this.basemap) this.basemap.visible = v; }
 
+  /** Massing on or off. Off keeps only faint edges of the tower and context so the apartment and its heat reads clean. */
+  setMassingVisible(v: boolean) {
+    this.massing = v;
+    this.model?.traverse((o: any) => {
+      if (!o.isMesh || o.userData.token === undefined) return;
+      const t: string = o.userData.token;
+      if (t === "home" || t === "glass") return;
+      o.material.opacity = v ? OPACITY[t] : 0.0; o.material.visible = v;
+      o.children.forEach((c: any) => { if (c.isLineSegments) c.material.opacity = v ? (t === "context" ? 0.18 : 0.4) : (t === "context" ? 0.06 : 0.16); });
+    });
+  }
+
   dispose() { cancelAnimationFrame(this.raf); this.ro.disconnect(); this.renderer.dispose(); }
 
   async loadGlb(url: string): Promise<void> {
@@ -136,7 +149,7 @@ export class Viewer {
       const token: string = extras.opacity_token || "context";
       const alpha = OPACITY[token];
       o.material = new THREE.MeshLambertMaterial({ color: COLOURS[token], transparent: alpha < 1, opacity: alpha, depthWrite: alpha >= 1, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: token === "home" ? 0 : 1, polygonOffsetUnits: token === "home" ? 0 : 1 });
-      o.renderOrder = alpha < 1 ? 1 : 2;
+      o.renderOrder = alpha < 1 ? 1 : 2; o.userData.token = token;
       const edges = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 30), new THREE.LineBasicMaterial({ color: token === "home" ? 0x18211d : 0x5f665f, transparent: true, opacity: token === "context" ? 0.18 : token === "tower" ? 0.4 : 0.9 }));
       edges.renderOrder = 3; o.add(edges);
       const box = new THREE.Box3().setFromObject(o);
@@ -144,6 +157,7 @@ export class Viewer {
       if (token === "tower") this.tower.union(box);
       if (token === "home" || token === "glass") this.home.union(box);
     });
+    if (!this.massing) this.setMassingVisible(false);
     this.scene.add(this.model);
   }
 

@@ -57,6 +57,8 @@ export default function App() {
     lastScreen.current = state.screen;
   }, [state.screen]);
   const [basemap, setBasemap] = useState(true);
+  const [massing, setMassing] = useState(true);
+  useEffect(() => { viewerRef.current?.setMassingVisible(massing); }, [massing]);
   const [hoverShot, setHoverShot] = useState<string | null>(null);
 
   useEffect(() => { liveApi.context().then(setContext).catch(() => setContext({ supported: [] })); }, []);
@@ -176,6 +178,10 @@ export default function App() {
             {basemap && <span className="attribution">Map data © OpenStreetMap contributors</span>}
             <span className="edge">{state.view.camera} view · Dawson precinct, ENU metres · {state.view.preset}{r ? ` · ${state.view.date} ${state.view.hour}:00` : ""}</span>
           </div>
+          {r && <div className="legend">
+            {state.view.preset === "shadow" ? <><span style={{ width: 12, height: 12, background: "#f2c230", display: "inline-block" }} /> lit <span style={{ width: 12, height: 12, background: "#45534d", display: "inline-block" }} /> shaded</> : <><span>{state.view.preset === "radiation" ? "0" : "0 h"}</span><span className="ramp" /><span>{state.view.preset === "radiation" ? `${r.radiation.max} kWh/m² per year` : "hours of direct sun"}</span></>}
+            <span style={{ marginLeft: "auto" }}>{r.sensors.count} sensors at {r.sensors.grid.spacing_m} m, plane 0.8 m</span>
+          </div>}
           <div className="toolbar view-controls" aria-label="Canvas controls">
             <span className="control-group" role="group" aria-label="Look at">
               <span className="control-label">Look at</span>
@@ -186,12 +192,9 @@ export default function App() {
               <button onClick={() => viewerRef.current?.preset("north")}>Face north</button>
               <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
               <button aria-pressed={basemap} onClick={() => setBasemap(!basemap)}>Map</button>
+              <button aria-pressed={massing} onClick={() => setMassing(!massing)}>Massing</button>
             </span>
           </div>
-          {r && <div className="legend" style={{ marginTop: 8 }}>
-            {state.view.preset === "shadow" ? <><span style={{ width: 12, height: 12, background: "#f2c230", display: "inline-block" }} /> lit <span style={{ width: 12, height: 12, background: "#45534d", display: "inline-block" }} /> shaded</> : <><span>{state.view.preset === "radiation" ? "0" : "0 h"}</span><span className="ramp" /><span>{state.view.preset === "radiation" ? `${r.radiation.max} kWh/m² per year` : "hours of direct sun"}</span></>}
-            <span style={{ marginLeft: "auto" }}>{r.sensors.count} sensors at {r.sensors.grid.spacing_m} m · plane 0.8 m</span>
-          </div>}
         </div>
 
         <aside className="rail">
