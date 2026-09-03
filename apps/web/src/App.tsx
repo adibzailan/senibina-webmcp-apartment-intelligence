@@ -136,7 +136,9 @@ export default function App() {
     for (const f of formats) {
       const server: Record<string, string> = { glb: "scene.glb", obj: "analytical.obj", "3dm": "scene.3dm", "evidence.json": "evidence.json", "cards.svg": "cards.svg", zip: "bundle.zip" };
       if (server[f]) { const b = await (await fetch(exportUrl(s.studyId, server[f]))).blob(); download(`apartment-intelligence-${server[f]}`, b); done.push(f); continue; }
-      if (f === "pdf") { const svg = await (await fetch(exportUrl(s.studyId, "cards.svg"))).text(); download("apartment-intelligence-cards.pdf", await cardsPdf(svg, viewerRef.current?.snapshot() ?? null, s.digest ?? "")); done.push(f); }
+      if (f === "pdf") { const svg = await (await fetch(exportUrl(s.studyId, "cards.svg"))).text(); const homeRec = (context?.supported ?? []).find((h: any) => h.address === s.address);
+        const meta = { development: homeRec?.development ?? s.address, block: homeRec?.block ?? "", storey: s.storey, placement: `${s.placement.facade} Wing, ${s.placement.stack_position === "end" ? "Wing Tip" : "Near the Core"}, Type ${s.placement.variant}${s.placement.mirrored ? ", mirrored" : ""}`, method: s.result.method_version, weather: s.result.weather?.sha256 ?? "", generated: new Date().toISOString().slice(0, 10) };
+        download("apartment-intelligence-report.pdf", await cardsPdf(svg, viewerRef.current?.snapshot() ?? null, s.digest ?? "", meta)); done.push(f); }
       if (f === "png") { const svg = await (await fetch(exportUrl(s.studyId, "cards.svg"))).text(); download("apartment-intelligence-cards.png", await svgToPng(svg, 1)); done.push(f); }
     }
     return { downloaded: done, note: "Downloads start from the visible page; PNG/PDF are presentation renders." };
@@ -334,7 +336,7 @@ export default function App() {
 
       <footer className="colophon">
         <div className="colophon-brand">Apartment Intelligence</div>
-        <div className="colophon-line">A public-interest study by <a className="colophon-link" href="https://senibina.com.sg" target="_blank" rel="noopener noreferrer">Senibina</a>. Singapore now, the region next.</div>
+        <div className="colophon-line">A public-interest study by <a className="colophon-link" href="https://senibina.com.sg" target="_blank" rel="noopener noreferrer">Senibina</a> for apartment living. Singapore now, the region next.</div>
         <div className="status">Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification.</div>
       </footer>
     </div>
