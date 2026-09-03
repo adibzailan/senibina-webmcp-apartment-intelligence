@@ -42,6 +42,7 @@ export default function App() {
   const stateRef = useRef(state); stateRef.current = state;
   const ctx = useMemo(() => ({ api: liveApi, dispatch, getState: () => stateRef.current }), []);
   const [context, setContext] = useState<any>(null);
+  const [grid, setGrid] = useState<0.25 | 0.5>(0.25);
   const [mcp, setMcp] = useState<{ registered: boolean; where: string } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
@@ -49,7 +50,6 @@ export default function App() {
   const framedFor = useRef<string>("");
   const [basemap, setBasemap] = useState(true);
   const [hoverShot, setHoverShot] = useState<string | null>(null);
-  const compassRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => { liveApi.context().then(setContext).catch(() => setContext({ supported: [] })); }, []);
   useEffect(() => {
@@ -62,7 +62,6 @@ export default function App() {
     if (!canvasRef.current || viewerRef.current) return;
     try {
       viewerRef.current = new Viewer(canvasRef.current);
-      viewerRef.current.onFrame = (az) => { if (compassRef.current) compassRef.current.style.transform = `rotate(${-az}deg)`; };
       viewerRef.current.loadGlb("/api/context/scene.glb").then(() => viewerRef.current?.preset("precinct")).catch((e) => console.warn(e));
     } catch (e) { console.warn("WebGL unavailable", e); }
     return () => { viewerRef.current?.dispose(); viewerRef.current = null; };
@@ -167,7 +166,6 @@ export default function App() {
       <div className="workbench">
         <div className="canvas-col">
           <div className="canvas" ref={canvasRef} role="img" aria-label="Three-dimensional precinct model with the target tower and the confirmed apartment">
-            <span className="north" aria-label="Compass; the arrow points to true north"><svg ref={compassRef} viewBox="-22 -22 44 44"><circle r="20" fill="none" stroke="#b9b7ae" /><polygon points="0,-18 5,4 0,1 -5,4" fill="#c8472d" /><polygon points="0,18 5,-4 0,-1 -5,-4" fill="#5f665f" /><text y="-11" textAnchor="middle" fontSize="8" fill="#18211d" fontFamily="Inter, system-ui">N</text></svg></span>
             {basemap && <span className="attribution">Map data © OpenStreetMap contributors</span>}
             <span className="edge">{state.view.camera} view · Dawson precinct, ENU metres · {state.view.preset}{r ? ` · ${state.view.date} ${state.view.hour}:00` : ""}</span>
           </div>
@@ -234,10 +232,14 @@ export default function App() {
           </section>}
 
           {(state.screen === "analysis" || state.screen === "export") && <section>
-            {!r && <div className="toolbar">
-              <button className="primary" disabled={!!state.busy} onClick={() => runAnalysis(ctx, 0.25).catch(() => {})}>Run the analysis (0.25 m grid)</button>
-              <button disabled={!!state.busy} onClick={() => runAnalysis(ctx, 0.5).catch(() => {})}>Fast (0.5 m)</button>
-            </div>}
+            {!r && <>
+              <label>Measuring grid</label>
+              <div className="toolbar">
+                <button aria-pressed={grid === 0.25} onClick={() => setGrid(0.25)}>Fine, 0.25 m</button>
+                <button aria-pressed={grid === 0.5} onClick={() => setGrid(0.5)}>Fast, 0.5 m</button>
+              </div>
+              <div className="toolbar run-row"><button className="primary" disabled={!!state.busy} onClick={() => runAnalysis(ctx, grid).catch(() => {})}>Run the analysis</button></div>
+            </>}
             {r && <>
               <label>Study</label>
               <div className="toolbar">{(["sunpath", "shadow", "solar_access", "radiation"] as const).map((p) => <button key={p} aria-pressed={state.view.preset === p} onClick={() => showAnalysis(ctx, { preset: p })}>{(p[0].toUpperCase() + p.slice(1)).replace("_", " ")}</button>)}</div>

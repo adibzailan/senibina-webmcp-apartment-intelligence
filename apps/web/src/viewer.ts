@@ -33,6 +33,9 @@ export class Viewer {
   private ro: ResizeObserver;
   basemap: THREE.Mesh | null = null;
   onFrame: ((azimuthDeg: number) => void) | null = null;
+  private gizmo = new THREE.Scene();
+  private gizmoCam = new THREE.OrthographicCamera(-2.1, 2.1, 2.1, -2.1, 0.1, 20);
+  gizmoSize = 104; // CSS px, drawn in the top-right corner of the canvas
 
   constructor(public el: HTMLElement) {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true, logarithmicDepthBuffer: true });
@@ -49,6 +52,7 @@ export class Viewer {
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshBasicMaterial({ color: 0xf5f2e9 }));
     ground.position.z = -1.0; ground.renderOrder = -2; this.scene.add(ground);
     const grid = new THREE.GridHelper(1200, 24, 0xb9b7ae, 0xe2e0d8); grid.rotation.x = Math.PI / 2; grid.position.z = -0.6; grid.renderOrder = -1; this.scene.add(grid);
+    this.buildGizmo();
     const dom = this.renderer.domElement;
     dom.addEventListener("pointerdown", (e) => { this.downAt = [e.clientX, e.clientY]; });
     dom.addEventListener("pointerup", (e) => {
@@ -78,6 +82,7 @@ export class Viewer {
     this.raf = requestAnimationFrame(this.loop);
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
+    this.renderGizmo();
     if (this.onFrame) {
       const d = new THREE.Vector3(); this.camera.getWorldDirection(d);
       this.onFrame((Math.atan2(d.x, d.y) * 180) / Math.PI); // compass bearing the camera looks toward, 0 = north (+y)
@@ -235,5 +240,54 @@ export class Viewer {
     this.controls.target.copy(c); this.camera.near = 0.5; this.camera.far = Math.max(2000, fit * 10); this.camera.updateProjectionMatrix(); this.controls.update();
   }
 
-  snapshot(): string { this.renderer.render(this.scene, this.camera); return this.renderer.domElement.toDataURL("image/png"); }
+  /** A small three-dimensional compass: north arrow, east and west ticks, and an up post, sharing the main camera's rotation. */
+  private buildGizmo() {
+    const g = this.gizmo;
+    g.add(new THREE.HemisphereLight(0xffffff, 0x9a9a90, 1.4));
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(1.75, 48), new THREE.MeshBasicMaterial({ color: 0xfbfaf6, transparent: true, opacity: 0.85, depthWrite: false }));
+    (disc as any).isBackdrop = true; disc.renderOrder = -1; g.add(disc);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(1.5, 1.55, 64), new THREE.MeshBasicMaterial({ color: 0xb9b7ae, side: THREE.DoubleSide }));
+    g.add(ring);
+    const tick = (ang: number, len: number, colour: number) => {
+      const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 1.5 - len, 0), new THREE.Vector3(0, 1.5, 0)]);
+      const l = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: colour })); l.rotation.z = ang; g.add(l);
+    };
+    for (let i = 0; i < 16; i++) tick((i * Math.PI) / 8, i % 4 === 0 ? 0.3 : 0.14, 0x8d8b83);
+    // north arrow (red), south stub (muted)
+    const red = new THREE.MeshLambertMaterial({ color: 0xc8472d }), mute = new THREE.MeshLambertMaterial({ color: 0x5f665f }), ink = new THREE.MeshLambertMaterial({ color: 0x18211d });
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.0, 12), red); shaft.position.y = 0.5; g.add(shaft);
+    const head = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.45, 16), red); head.position.y = 1.22; g.add(head);
+    const south = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.9, 12), mute); south.position.y = -0.45; g.add(south);
+    // east and west bars
+    const ew = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 12), mute); ew.rotation.z = Math.PI / 2; g.add(ew);
+    // up post with a small cap, so tilt reads at a glance
+    const up = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.1, 12), ink); up.rotation.x = Math.PI / 2; up.position.z = 0.55; g.add(up);
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), ink); cap.position.z = 1.1; g.add(cap);
+    const label = (text: string, x: number, y: number, z: number, colour: string, size = 0.5) => {
+      const c = document.createElement("canvas"); c.width = 128; c.height = 128; const cx = c.getContext("2d")!;
+      cx.font = "600 84px Inter, system-ui, sans-serif"; cx.textAlign = "center"; cx.textBaseline = "middle"; cx.fillStyle = colour; cx.fillText(text, 64, 68);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false }));
+      sp.position.set(x, y, z); sp.scale.set(size, size, 1); g.add(sp);
+    };
+    label("N", 0, 1.95, 0, "#c8472d", 0.6); label("S", 0, -1.95, 0, "#5f665f"); label("E", 1.95, 0, 0, "#5f665f"); label("W", -1.95, 0, 0, "#5f665f");
+    label("up", 0, 0, 1.5, "#18211d", 0.45);
+    this.gizmoCam.up.set(0, 0, 1);
+  }
+
+  private renderGizmo() {
+    const w = this.el.clientWidth, h = this.el.clientHeight, s = this.gizmoSize, pad = 10;
+    if (w < s * 2 || h < s * 2) return;
+    const r = this.renderer;
+    // same rotation as the main camera, looking at the gizmo origin from 6 units away
+    const dir = new THREE.Vector3().subVectors(this.camera.position, this.controls.target).normalize();
+    this.gizmoCam.position.copy(dir.multiplyScalar(6)); this.gizmoCam.lookAt(0, 0, 0);
+    // the paper disc always faces the viewer
+    this.gizmo.children.forEach((c) => { if ((c as any).isBackdrop) c.quaternion.copy(this.gizmoCam.quaternion); });
+    r.autoClear = false; r.setScissorTest(true);
+    r.setViewport(w - s - pad, h - s - pad, s, s); r.setScissor(w - s - pad, h - s - pad, s, s);
+    r.clearDepth(); r.render(this.gizmo, this.gizmoCam);
+    r.setScissorTest(false); r.setViewport(0, 0, w, h); r.autoClear = true;
+  }
+
+  snapshot(): string { this.renderer.render(this.scene, this.camera); this.renderGizmo(); return this.renderer.domElement.toDataURL("image/png"); }
 }
