@@ -39,7 +39,7 @@ describe("UI and WebMCP drive the same reducer", () => {
 
     const strip = (s: State) => ({ ...s, lastActor: null });
     expect(strip(mcp.get())).toEqual(strip(ui.get()));
-    expect(mcp.get().screen).toBe("analysis");
+    expect(mcp.get().screen).toBe("confirm"); // show_analysis never skips confirmation
   });
 
   it("run_solar_analysis is refused before confirmation and has no confirm tool", async () => {

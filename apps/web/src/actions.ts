@@ -73,8 +73,9 @@ export async function runAnalysis(ctx: Ctx, spacing: 0.25 | 0.5 = 0.25) {
 
 export function showAnalysis(ctx: Ctx, view: Partial<State["view"]>) {
   ctx.dispatch({ type: "set_view", view });
-  ctx.dispatch({ type: "go", screen: "analysis" });
-  return { view: ctx.getState().view };
+  const s = ctx.getState();
+  if (s.confirmedRevision !== null && s.confirmedRevision === s.placementRevision) ctx.dispatch({ type: "go", screen: "analysis" });
+  return { view: ctx.getState().view, screen: ctx.getState().screen, note: s.confirmedRevision === s.placementRevision ? undefined : "Placement not confirmed; view changed but the page stays on the current step." };
 }
 
 export function explainEvidence(ctx: Ctx, item: string) {

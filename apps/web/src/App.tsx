@@ -112,7 +112,7 @@ export default function App() {
             <span className="edge">{state.view.camera} view · Dawson precinct, ENU metres · {state.view.preset}{r ? ` · ${state.view.date} ${state.view.hour}:00` : ""}</span>
           </div>
           <div className="toolbar" aria-label="Canvas controls">
-            {(["precinct", "tower", "home", "plan"] as const).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { showAnalysis(ctx, { camera: c }); viewerRef.current?.preset(c); }}>{c}</button>)}
+            {(["precinct", "tower", "home", "plan"] as const).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c); }}>{c}</button>)}
             <button onClick={() => viewerRef.current?.preset("north")}>north</button>
             <button onClick={() => viewerRef.current?.preset(state.view.camera)}>reset</button>
           </div>
