@@ -26,7 +26,7 @@ There is no confirmation tool. A `confirmed` argument is rejected. The click is 
 
 ## How we built it
 
-Python: Ladybug and Radiance run headless on Render (one Docker container, Singapore). Geometry is a coordinate recipe of the published 4-room plans and the reconstructed tower plate, labelled sourced, inferred, reconstructed, assumed or human-confirmed. Every result is bound to a SHA-256 digest of recipe, placement, weather and method. Front end: React, Three.js, TypeScript. No LLM in the runtime, no scraping, no accounts, no database.
+Python: Ladybug and Radiance run headless in one Docker container on Render. Geometry is a coordinate recipe of the published 4-room plans and the reconstructed tower plate, labelled sourced, inferred, reconstructed, assumed or human-confirmed. Every result is bound to a SHA-256 digest of recipe, placement, weather and method. Front end: React, Three.js, TypeScript. No LLM in the runtime, no scraping, no accounts, no database.
 
 ## Challenges
 
