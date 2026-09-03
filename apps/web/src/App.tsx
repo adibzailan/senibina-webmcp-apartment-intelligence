@@ -163,8 +163,8 @@ export default function App() {
             onClick={() => { if (!p.live) return; dispatch({ type: "set_address", address: p.address! }); stepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
             <span className="project-art" style={{ backgroundImage: p.live && hoverShot ? `url(${hoverShot})` : `url(/projects/${p.slug}.png)` }} aria-hidden="true" />
             <span className="project-name">{p.name}</span>
-            <span className="project-meta">{p.town} · blocks {p.blocks} · {p.storeys} storeys</span>
-            <span className="project-state">{p.live ? "Ready" : "Not yet covered"}</span>
+            <span className="project-meta">{p.town}, Blocks {p.blocks}, {p.storeys} Storeys</span>
+            <span className="project-state">{p.live ? "Ready" : "Not Yet Covered"}</span>
           </button>)}
         </div>
       </section>}
