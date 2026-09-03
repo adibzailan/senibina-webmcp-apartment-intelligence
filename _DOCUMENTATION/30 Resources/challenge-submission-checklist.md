@@ -8,13 +8,11 @@ status: active-reference
 
 - [x] Working public HTTPS URL: https://apartments.senibina.com.sg (Chrome WebMCP verified via Playwright; ChatGPT desktop in-app browser verified by Adib, 3 Sep ~21:10 SGT: nine tools discovered, three surveys run, study created and staged, CONFIRMATION_REQUIRED refusal captured, human click accepted, confirmed 0.5 m analysis and evidence retrieved, GPT-5.6 Sol).
 - [x] Public repository with source baseline and visible AGPL-3.0 licence.
-- [ ] Public repository final revision with all source, assets, build instructions,
-  licence, and visible WebMCP registration code.
+- [x] Public repository at `main` (b93f6e5 or later): source, tiles, build instructions, AGPL-3.0 detected by GitHub, WebMCP registration in apps/web/src/webmcp.ts.
 - [x] Public YouTube demo shorter than three minutes with audio: https://youtu.be/pkn1xDcIVq8 (2:03, Public, uploaded by Codex 3 Sep ~22:00 SGT). Master: `video/apartment-intelligence-demo/renders/Apartment-Intelligence-Demo-v1.mp4`, 2:03, -16.1 LUFS.
 - [x] Description drafted: `10 Projects/2026-webmcp-devpost-writeup.md` (WebMCP fit, two modes, human-agent boundary, build, lessons).
 - [x] Demo shows the refusal, the visible click, the agent retry succeeding, and survey mode.
-- [ ] Devpost fields and every submitted URL are read back before the
-  4 September 2026, 04:00 SGT deadline.
+- [x] Submitted 3 September 2026, about 23:30 SGT: https://devpost.com/software/apartment-intelligence. Page read back anonymously: pitch, video embed, live and repo links present. Editable until 04:00 SGT on 4 September.
 
 - [x] ChatGPT desktop run also hit the five-per-ten-minutes limit while surveying storey 30; surveys now have their own budget of thirty per window with a countdown in the refusal (3 Sep ~21:30 SGT).
 

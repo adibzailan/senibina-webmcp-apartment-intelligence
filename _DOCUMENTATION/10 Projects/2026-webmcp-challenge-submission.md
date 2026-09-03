@@ -1,9 +1,9 @@
 ---
 title: WebMCP Challenge submission
 para: project
-status: active
+status: submitted, judging until 21 September 2026
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Adib uploads video/apartment-intelligence-demo/renders/Apartment-Intelligence-Demo-v1.mp4 to YouTube (Unlisted), pastes the write-up from 2026-webmcp-devpost-writeup.md into Devpost, and submits before 04:00 SGT on 4 September 2026.
+next_action: Keep https://apartments.senibina.com.sg free to test, unchanged in substance, until judging ends on 21 September 2026 (5:00 pm PT); winners announced around 23 September.
 ---
 
 # WebMCP Challenge submission
@@ -14,6 +14,13 @@ Submit a working, publicly reviewable Apartment Intelligence application that he
 Singapore resident understand the solar conditions of an existing HDB
 apartment through researched context, human-confirmed unit geometry,
 deterministic environmental analysis, and thoughtful WebMCP orchestration.
+
+## Submitted
+
+3 September 2026, about 23:30 SGT. Project page: https://devpost.com/software/apartment-intelligence.
+Video: https://youtu.be/pkn1xDcIVq8. Live: https://apartments.senibina.com.sg. Repo: GitHub
+`adibzailan/senibina-webmcp-apartment-intelligence`, AGPL-3.0. Submitter type Individual, Singapore,
+App Status New.
 
 ## Completion condition
 
