@@ -287,13 +287,13 @@ export default function App() {
           </tbody></table>
           <h3>Limits to keep in mind</h3>
           <ul className="limits">{r.radiation.limitations.map((l: string, i: number) => <li key={i}>{l}</li>)}</ul>
-          <p className="status">Record: method {r.method_version} · result digest {r.digest.slice(0, 16)} · weather file {r.weather.sha256.slice(0, 16)}. The same record is what an agent receives from the explain_evidence tool and what every export carries.</p>
+          <p className="status">Record: method {r.method_version}, result digest {r.digest.slice(0, 16)}, weather file {r.weather.sha256.slice(0, 16)}. The same record is what an agent receives from the explain_evidence tool and what every export carries.</p>
         </details>
       </section>}
 
       <footer className="colophon">
         <div className="colophon-brand">Apartment Intelligence</div>
-        <div className="colophon-line">A public-interest study by <a className="colophon-link" href="https://senibina.com.sg" target="_blank" rel="noopener noreferrer">Senibina</a> · Singapore now, the region next</div>
+        <div className="colophon-line">A public-interest study by <a className="colophon-link" href="https://senibina.com.sg" target="_blank" rel="noopener noreferrer">Senibina</a>. Singapore now, the region next.</div>
         <div className="status">Footprints and storey counts: HDB via data.gov.sg, Singapore Open Data Licence v1.0. No endorsement by HDB, OneMap or the Singapore Government. Not a valuation, compliance or daylight certification.</div>
       </footer>
     </div>
