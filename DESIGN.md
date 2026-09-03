@@ -68,6 +68,7 @@ The apartment question and evidence come before branding. The interface should r
 - Inferred: warm neutral fill and fine dashed annotation.
 - Human-confirmed: confirmed-home red on the geometry, solid rule, and explicit confirmation sentence. The confirm button itself is go green, since red reads as "stop" to a person about to commit.
 - Generated/calculated: analysis scale plus method caption.
+- Survey, unconfirmed: agent-run numbers listed in the rail in muted ink under a dashed rule, with the sentence "Nobody has vouched for these placements." They never take the confirmed red and never reach the report.
 - Provenance lives in a disclosure and in report captions. Do not repeat large state labels across every surface.
 
 ## Interaction and copy

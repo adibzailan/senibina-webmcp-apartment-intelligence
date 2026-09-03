@@ -119,6 +119,17 @@ class PlacementIn(Closed):
     openings: dict[str, bool] = Field(default_factory=dict)
 
 
+class SurveyIn(Closed):
+    """A survey is an analysis of a staged placement that nobody has confirmed. Every number it returns is labelled."""
+    address: str = Field(min_length=3, max_length=120)
+    storey: int = Field(ge=1, le=60)
+    facade: Literal["NE", "NW", "SW", "SE"]
+    stack_position: Literal["end", "inner"] = "end"
+    variant: Literal["A", "B", "C"] = "A"
+    mirrored: bool = False
+    grid_spacing_m: Literal[0.1, 0.25, 0.5] = 0.5
+
+
 class ChallengeIn(Closed):
     placement_revision: int
 
@@ -307,6 +318,43 @@ def analysis(sid: str, request: Request, response: Response, body: AnalysisIn = 
         build_exports(st)
         st.state = "analysed"
         return {"state": st.state, "digest": st.result["digest"], "timing_s": timing, "next_action": next_action(st)}
+    finally:
+        _analysis_lock.release()
+
+
+@app.post("/api/survey")
+def survey(body: SurveyIn, request: Request, response: Response):
+    """Agent-only exploration. No study is created, nothing is confirmed, no report can come from it.
+    The result carries provenance 'survey_unconfirmed' on every number so it can never pass as a confirmed study."""
+    sess = session_of(request, response)
+    target = next((s for s in SUPPORTED if body.address.strip().lower() in (s["address"].lower(), s["postal_code"])), None)
+    if target is None:
+        raise err(404, "FIXTURE_NOT_FOUND", "Use list_supported_homes; v2 covers 87 Dawson Road (141087).")
+    lo, hi = target["storey_range"]
+    if not (lo <= body.storey <= hi):
+        raise err(422, "STOREY_OUT_OF_RANGE", f"Choose a storey between {lo} and {hi}.")
+    if not store.allow_analysis(sess):
+        raise err(429, "RATE_LIMITED", "Five analyses per ten minutes per session; wait and retry.")
+    if not _analysis_lock.acquire(blocking=False):
+        raise err(409, "ANALYSIS_BUSY", "Another analysis is running; retry in a few seconds.")
+    try:
+        pl = Placement(storey=body.storey, facade=body.facade, stack_position=body.stack_position, variant=body.variant, mirrored=body.mirrored, openings={})
+        fut = _executor.submit(lambda: run_analysis(PRECINCT, PLATE, UNITS[pl.variant], pl, float(body.grid_spacing_m)))
+        try:
+            r = fut.result(timeout=ANALYSIS_TIMEOUT_S)
+        except concurrent.futures.TimeoutError:
+            raise err(504, "ANALYSIS_TIMEOUT", "The 15 s worker budget was exceeded; try a coarser grid.")
+        timing = r.pop("_timing_s", None)
+        rad = r["radiation"]
+        return {
+            "mode": "survey", "provenance": "survey_unconfirmed",
+            "label": "Survey, unconfirmed. Nobody has vouched for this placement; it is not a study and cannot produce a report.",
+            "address": target["address"], "storey": body.storey,
+            "placement": {"facade": body.facade, "stack_position": body.stack_position, "variant": body.variant, "mirrored": body.mirrored},
+            "grid_spacing_m": body.grid_spacing_m, "digest": r["digest"], "method_version": r["method_version"], "timing_s": timing,
+            "radiation": {"min": rad["min"], "avg": rad["avg"], "max": rad["max"], "unit": "kWh/m2 per year", "per_room": rad.get("per_room", {})},
+            "next_action": "To keep any of this, create a study for the unit you will live in and confirm it with the visible button.",
+        }
     finally:
         _analysis_lock.release()
 

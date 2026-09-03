@@ -46,9 +46,9 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   await page.screenshot({ path: `test-results/journey-${test.info().project.name}.png`, fullPage: true });
 });
 
-test("WebMCP journey: eight tools, read-only hints, no confirm tool, refusal before click", async ({ page }) => {
+test("WebMCP journey: nine tools, read-only hints, no confirm tool, refusal before click", async ({ page }) => {
   await page.goto("/");
-  await page.waitForFunction(() => (window as any).__aiTools?.length === 8);
+  await page.waitForFunction(() => (window as any).__aiTools?.length === 9);
   const native = await page.evaluate(() => {
     const mc: any = (document as any).modelContext ?? (navigator as any).modelContext;
     if (!mc) return { exposed: false, tools: [] as any[] };
@@ -56,7 +56,7 @@ test("WebMCP journey: eight tools, read-only hints, no confirm tool, refusal bef
     return { exposed: true, tools: Array.from(tools as any[]).map((t: any) => ({ name: t.name, readOnly: !!t.annotations?.readOnlyHint })) };
   });
   const names = await page.evaluate(() => (window as any).__aiTools.map((t: any) => t.name));
-  expect(names.sort()).toEqual(["create_apartment_study", "explain_evidence", "export_study", "get_study_state", "list_supported_homes", "propose_unit_placement", "run_solar_analysis", "show_analysis"]);
+  expect(names.sort()).toEqual(["create_apartment_study", "explain_evidence", "export_study", "get_study_state", "list_supported_homes", "propose_unit_placement", "run_solar_analysis", "show_analysis", "survey_unit"]);
   if (native.exposed && native.tools.length) {
     expect(native.tools.map((t) => t.name).sort()).toEqual(names.sort());
     expect(native.tools.filter((t) => t.readOnly).map((t) => t.name).sort()).toEqual(["explain_evidence", "get_study_state", "list_supported_homes", "show_analysis"]);
@@ -78,6 +78,10 @@ test("WebMCP journey: eight tools, read-only hints, no confirm tool, refusal bef
   const st: any = await call("get_study_state", { study_id: created.study_id });
   expect(st.confirmed).toBe(true);
   expect(st.placement.facade).toBe("SE");
+  // survey: an agent may analyse a staged placement without a click, but every number is labelled unconfirmed
+  const sv: any = await call("survey_unit", { address: "87 Dawson Road", storey: 12, facade: "NE", stack_position: "end", variant: "A", grid_spacing_m: 0.5 });
+  expect(sv.provenance).toBe("survey_unconfirmed");
+  await expect(page.getByText(/Surveys by an agent, unconfirmed/)).toBeVisible();
   const ev: any = await call("explain_evidence", { study_id: created.study_id, item: "radiation" });
   expect(ev.value).toBe(st.radiation.avg);
   await call("show_analysis", { analysis: "shadow", date: "12-21", hour: 9, camera: "home" });

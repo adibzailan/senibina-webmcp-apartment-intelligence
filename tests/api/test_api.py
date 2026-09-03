@@ -101,3 +101,16 @@ def test_full_run_exports_and_determinism(client):
     for n in a.namelist():
         if n not in ("scene.3dm", "manifest.json"):  # 3DM embeds fresh GUIDs, so it and its manifest hash differ
             assert a.read(n) == b.read(n), n
+
+
+def test_survey_is_labelled_and_never_confirms(client):
+    """A survey analyses a staged placement with no study and no click; every number is labelled unconfirmed."""
+    r = client.post("/api/survey", json={"address": "87 Dawson Road", "storey": 12, "facade": "NE", "stack_position": "end", "variant": "A", "grid_spacing_m": 0.5})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["mode"] == "survey" and body["provenance"] == "survey_unconfirmed"
+    assert "unconfirmed" in body["label"].lower() and "report" in body["label"].lower()
+    assert body["radiation"]["avg"] >= 0 and len(body["digest"]) == 64
+    # a survey leaves no study behind and rejects a confirmed flag like every other tool
+    assert client.post("/api/survey", json={"address": "87 Dawson Road", "storey": 12, "facade": "NE", "confirmed": True}).status_code == 422
+    assert client.post("/api/survey", json={"address": "1 Nowhere Road", "storey": 12, "facade": "NE"}).status_code == 404

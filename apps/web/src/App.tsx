@@ -220,6 +220,13 @@ export default function App() {
               <span className="step-name">{({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyState ? `, ${STATE_WORDS[state.studyState] ?? state.studyState}` : ""}</span>
             </div>
           </section>
+          {state.surveys.length > 0 && <section className="surveys" aria-label="Surveys, unconfirmed">
+            <label>Surveys by an agent, unconfirmed</label>
+            <table className="evidence"><tbody>
+              {state.surveys.map((s, i) => <tr key={i}><td>{s.placement.facade} {s.placement.stack_position === "end" ? "Wing Tip" : "Near the Core"}, Type {s.placement.variant}, Storey {s.storey}</td><td>{s.avg.toFixed(1)} avg, {s.max.toFixed(0)} max kWh/m²</td></tr>)}
+            </tbody></table>
+            <p className="status" style={{ padding: 0 }}>Nobody has vouched for these placements. They are not studies and cannot produce a report.</p>
+          </section>}
           {state.screen === "locate" && <section>
             <label htmlFor="address">Address</label>
             <div className="field"><select id="address" value={home ? home.address : ""} onChange={(e) => dispatch({ type: "set_address", address: e.target.value })}>

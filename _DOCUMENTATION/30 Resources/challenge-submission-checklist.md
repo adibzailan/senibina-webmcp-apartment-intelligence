@@ -20,7 +20,7 @@ status: active-reference
 
 ## Proven local receipts
 
-- [x] Chrome 152 with WebMCP enabled exposed all eight registered tools (v2, Playwright, 3 Sep 2026).
+- [x] Chrome 152 with WebMCP enabled exposed all eight registered tools (v2, Playwright, 3 Sep 2026); nine after `survey_unit` was added the same evening.
 - [x] `create_apartment_study` moved the same visible UI to Place.
 - [x] `run_solar_analysis` returned `CONFIRMATION_REQUIRED` before the trusted
   resident confirmation action.

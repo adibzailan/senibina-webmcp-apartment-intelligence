@@ -41,7 +41,7 @@ const agent = async (name, input) => {
   return r;
 };
 
-await p.goto(URL); await p.waitForFunction(() => window.__aiTools?.length === 8); await overlay(); await move(960, 540, 5);
+await p.goto(URL); await p.waitForFunction(() => window.__aiTools?.length === 9); await overlay(); await move(960, 540, 5);
 mark("start"); await p.waitForTimeout(2500);
 // beat 5: human
 await move(700, 700, 20); await p.waitForTimeout(300);

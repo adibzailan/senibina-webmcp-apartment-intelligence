@@ -20,6 +20,7 @@ export interface State {
   busy: string | null;
   message: { kind: "info" | "error"; text: string } | null;
   lastActor: "ui" | "webmcp" | null;
+  surveys: { address: string; storey: number; placement: any; avg: number; max: number; digest: string }[]; // unconfirmed, agent-run
 }
 
 export const initialState: State = {
@@ -38,6 +39,7 @@ export const initialState: State = {
   busy: null,
   message: null,
   lastActor: null,
+  surveys: [],
 };
 
 export type Action =
@@ -52,6 +54,7 @@ export type Action =
   | { type: "go"; screen: Screen }
   | { type: "busy"; busy: string | null }
   | { type: "message"; message: State["message"] }
+  | { type: "survey_added"; survey: State["surveys"][number] }
   | { type: "actor"; actor: "ui" | "webmcp" }
   | { type: "reset" };
 
@@ -68,6 +71,7 @@ export function reducer(s: State, a: Action): State {
     case "go": return { ...s, screen: a.screen };
     case "busy": return { ...s, busy: a.busy };
     case "message": return { ...s, message: a.message };
+    case "survey_added": return { ...s, surveys: [...s.surveys.slice(-7), a.survey] };
     case "actor": return { ...s, lastActor: a.actor };
     case "reset": return { ...initialState };
   }

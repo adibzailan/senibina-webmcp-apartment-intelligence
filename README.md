@@ -152,12 +152,19 @@ host and is superseded for new deployments.
 
 ## WebMCP
 
-Eight tools register on `document.modelContext` (with the `navigator.modelContext`
+Nine tools register on `document.modelContext` (with the `navigator.modelContext`
 fallback for Chrome before 152): `list_supported_homes`, `create_apartment_study`,
 `propose_unit_placement`, `get_study_state`, `run_solar_analysis`,
-`show_analysis`, `explain_evidence`, `export_study`. There is no confirmation
-tool; a `confirmed` argument is rejected, and confirmation is a visible click
-exchanged for a ten-second single-use server challenge. Enable
+`show_analysis`, `explain_evidence`, `export_study`, `survey_unit`. There is no
+confirmation tool; a `confirmed` argument is rejected, and confirmation is a
+visible click exchanged for a ten-second single-use server challenge.
+
+Two modes, one rule. **Study**: the resident confirms the unit they will live in
+with a click; results are labelled human-confirmed and only this path produces
+the report and the digest-bound bundle. **Survey**: `survey_unit` lets an agent
+analyse any staged placement without a click, so it can compare several units
+in a row; every number comes back labelled `survey_unconfirmed`, no study is
+created, and no report can be made from it. Agents explore, people vouch. Enable
 `chrome://flags/#enable-webmcp-testing` and inspect
 `document.modelContext.getTools()` in DevTools.
 
@@ -166,7 +173,7 @@ exchanged for a ten-second single-use server challenge. Enable
 Three checks, from cheapest to most complete:
 
 - **DevTools.** On the live page, `document.modelContext.getTools().map(t => t.name)`
-  lists the eight tools. Without the Chrome flag the page still registers them
+  lists the nine tools. Without the Chrome flag the page still registers them
   on `window.__aiTools` for tests, and the masthead says so.
 - **Playwright.** `tests/e2e/journeys.spec.ts` runs the WebMCP journey: discovery,
   `create_apartment_study`, a staged placement, the refusal before the click,

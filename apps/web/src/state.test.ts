@@ -11,6 +11,7 @@ function fakeApi(): Api {
     createStudy: async () => ({ study_id: "s1", state: "created" }),
     getStudy: async () => ({}),
     putPlacement: async () => ({ state: "needs_confirmation", placement_revision: ++rev }),
+    survey: async () => ({ mode: "survey", address: "87 Dawson Road", storey: 12, placement: {}, radiation: { avg: 1, max: 2 }, digest: "x" }),
     challenge: async (_id, _r, activation) => { if (!activation) throw new Error("403"); return { challenge: "c" }; },
     confirm: async (_id, r) => ({ state: "ready", confirmed_revision: r }),
     analyse: async () => ({ state: "analysed", digest: "abc", timing_s: 1 }),
@@ -45,7 +46,7 @@ describe("UI and WebMCP drive the same reducer", () => {
   it("run_solar_analysis is refused before confirmation and has no confirm tool", async () => {
     const h = harness();
     const defs = toolDefinitions(h.ctx, [], async () => ({}));
-    expect(defs.map((d) => d.name).sort()).toEqual(["create_apartment_study", "explain_evidence", "export_study", "get_study_state", "list_supported_homes", "propose_unit_placement", "run_solar_analysis", "show_analysis"]);
+    expect(defs.map((d) => d.name).sort()).toEqual(["create_apartment_study", "explain_evidence", "export_study", "get_study_state", "list_supported_homes", "propose_unit_placement", "run_solar_analysis", "show_analysis", "survey_unit"]);
     expect(defs.some((d) => /confirm/.test(d.name))).toBe(false);
     const tools = Object.fromEntries(defs.map((t) => [t.name, t]));
     await tools.create_apartment_study.execute({ address: "87 Dawson Road", storey: 30 });

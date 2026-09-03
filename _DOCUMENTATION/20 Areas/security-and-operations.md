@@ -174,6 +174,9 @@ not backed up by Git.
 - After the Version 0 push: six journeys pass against the live URL run serially; live grid
   timings 4.4 / 5.4 / 10.6 s for 0.5 / 0.25 / 0.1 m. A stale-confirmation race found only on the
   live host (a debounced re-stage landing after the click) was fixed the same evening.
+- Survey mode added 3 Sep evening: `POST /api/survey` runs an analysis on a staged placement with
+  no study and no confirmation, under the same rate limit and single-worker lock; the response is
+  labelled `survey_unconfirmed` and carries no export. The confirmed path is unchanged.
 - Not run: axe audit, reduced-motion and 200% zoom checks.
 
 The v2 dependency intake is recorded in

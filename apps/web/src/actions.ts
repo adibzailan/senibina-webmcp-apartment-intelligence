@@ -43,6 +43,15 @@ export async function proposePlacement(ctx: Ctx, patch: Partial<Placement>) {
   });
 }
 
+/** Agent exploration: analyse a staged placement without a confirmation. Labelled unconfirmed everywhere; never a report. */
+export async function surveyUnit(ctx: Ctx, input: { address: string; storey: number; facade: string; stack_position?: string; variant?: string; mirrored?: boolean; grid_spacing_m?: number }) {
+  return guard(ctx, "Surveying a placement, unconfirmed", async () => {
+    const r = await ctx.api.survey({ address: input.address, storey: input.storey, facade: input.facade, stack_position: input.stack_position ?? "end", variant: input.variant ?? "A", mirrored: !!input.mirrored, grid_spacing_m: input.grid_spacing_m ?? 0.5 });
+    ctx.dispatch({ type: "survey_added", survey: { address: r.address, storey: r.storey, placement: r.placement, avg: r.radiation.avg, max: r.radiation.max, digest: r.digest } });
+    return r;
+  });
+}
+
 /** Only called from the click handler of the visible confirm button. */
 export async function confirmFromClick(ctx: Ctx, activation: boolean) {
   const s = ctx.getState();

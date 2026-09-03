@@ -105,8 +105,12 @@ external binary bundled in the Docker image.
 | `show_analysis` | Switch study, date, hour and camera in the visible page | Presentation only |
 | `explain_evidence` | Return the provenance record for an item | Read-only, numbers unaltered |
 | `export_study` | Trigger downloads from the visible page: glb, obj, 3dm, evidence.json, cards.svg, png, pdf, zip | Adds nothing to the evidence |
+| `survey_unit` | Analyse a staged placement for an address, storey, facade, stack, layout without a click | Survey mode: every number labelled `survey_unconfirmed`; no study, no report; listed in the rail as unconfirmed |
 
 There is no confirmation tool. A `confirmed` argument is rejected with 422.
+Two modes share one rule: a **study** is confirmed by a person and is the only
+source of the report; a **survey** is agent exploration, labelled unconfirmed on
+every number, so several units can be compared before one is confirmed.
 One study is live per page session. An agent comparing several units runs
 them in sequence, each with its own visible click, and keeps its own table;
 a 3 September 2026 run did this for three placements in one session.

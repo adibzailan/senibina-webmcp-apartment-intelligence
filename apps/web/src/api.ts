@@ -17,6 +17,7 @@ async function call(method: string, path: string, body?: Json, headers: Record<s
 export interface Api {
   context(): Promise<Json>;
   createStudy(address: string, storey: number): Promise<Json>;
+  survey(body: Json): Promise<Json>;
   getStudy(id: string): Promise<Json>;
   putPlacement(id: string, placement: Json): Promise<Json>;
   challenge(id: string, revision: number, activation: boolean): Promise<Json>;
@@ -28,6 +29,7 @@ export interface Api {
 export const liveApi: Api = {
   context: () => call("GET", "/api/context"),
   createStudy: (address, storey) => call("POST", "/api/studies", { address, storey }),
+  survey: (body) => call("POST", "/api/survey", body),
   getStudy: (id) => call("GET", `/api/studies/${id}`),
   putPlacement: (id, placement) => call("PUT", `/api/studies/${id}/placement`, placement),
   challenge: (id, revision, activation) => call("POST", `/api/studies/${id}/confirmation-challenge`, { placement_revision: revision }, activation ? { "X-User-Activation": "trusted" } : {}),
