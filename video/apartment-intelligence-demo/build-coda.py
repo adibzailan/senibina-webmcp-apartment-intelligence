@@ -1,6 +1,6 @@
 """Append the 'how this was made' coda to the v1 master. Usage: .venv/bin/python video/apartment-intelligence-demo/build-coda.py
 Output: renders/apartment-intelligence-demo-v2-coda.mp4 (v1 untouched, then a hard cut into the coda)."""
-import json, os, re, shlex, subprocess
+import glob, json, os, re, shlex, subprocess
 D = "video/apartment-intelligence-demo"; F = f"{D}/footage"; R = f"{D}/renders/coda"; os.makedirs(R, exist_ok=True)
 SERIF = f"{F}/fonts/snba-serif-regular.ttf"; SANS = f"{F}/fonts/snba-sans-serif-medium.ttf"
 V1 = f"{D}/renders/apartment-intelligence-demo-fast.mp4"  # the current fast cut; v1 master kept as history
@@ -42,20 +42,37 @@ def phrase_times(f, phrases):
     for x in phrases: d = span * len(x) / n; out.append((t, t + d)); t += d
     return out
 
-SUBS = ["A last word on how this was made.", "For the past two weeks I have not been able to type much,", "so the whole project was dictated.",
-        "Coding agents wrote the code from what I said.", "I reviewed what came out: every screen, every number, every export.",
+SUBS = ["A last word on how this was made.", "Two weeks before the deadline, an accident left me with a pin in my wrist,", "so I could barely type.",
+        "The whole project was dictated.", "I spoke the briefs into Codex, Codex wrote the code,",
+        "and we went round and round:", "I reviewed every screen, every number, every export,", "and sent back what was wrong.",
         "Less reading code, more judging results.", "I cannot vouch for every line; I can vouch for what it does.",
-        "That is the lesson of this hackathon:", "let the agents run the work, and keep the person on the decisions."]
+        "Let the agent run the work.", "Keep the person on the decisions."]
+CAPS = ["Dictated, not typed.", "", "An accident, a pin in the wrist,", "two weeks before the close.", "", "Briefs spoken into Codex.", "Codex wrote the code.", "",
+        "I reviewed every screen,", "every number, every export,", "and sent back what was wrong."]
 NL = alen(NARR); LEAD = 0.6                    # narration starts 0.6 s into the coda
 t_title = 3.2; t_close = 6.0
-t_desk = max(6.0, NL + LEAD + 0.8 - t_title)   # the desk clip carries the rest of the narration
+t_body = max(6.0, NL + LEAD + 0.8 - t_title)   # the pictures carry the rest of the narration
+def still(out, f, sec, push=1.05):
+    n = int(sec * FPS)
+    vf = (f"scale={W*2}:{H*2}:force_original_aspect_ratio=increase,crop={W*2}:{H*2},"
+          f"zoompan=z='1+({push}-1)*on/{n}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={n}:s={W}x{H}:fps={FPS},eq=saturation=0.92:contrast=1.02")
+    run(f"ffmpeg -v error -y -loop 1 -t {sec} -i {shlex.quote(f)} -vf \"{vf}\" -frames:v {n} -c:v libx264 -pix_fmt yuv420p -r {FPS} {out}")
+# Pictures: your own stills in footage/founder/stills/ (jpg or png, sorted by name; suggested: the wrist, the dictation
+# setup, a dictated brief in Codex), each with the act-one slow push. Until they exist, the desk recording stands in.
+STILLS = sorted(p for p in glob.glob(f"{F}/founder/stills/*") if p.lower().endswith((".jpg", ".jpeg", ".png")))
 segs = []
 card(f"{R}/c0.mp4", t_title, ["How this was made."], size=72); segs.append(f"{R}/c0.mp4")
-founder(f"{R}/c1.mp4", 40.0, t_desk, "The founder's desk, 3 September 2026", ["Dictated, not typed.", "", "Briefs spoken into", "Claude Code and Codex.", "", "Agents wrote the code.", "", "The founder reviewed", "every screen, every number,", "every export."]); segs.append(f"{R}/c1.mp4")
+if STILLS:
+    each = t_body / len(STILLS)
+    for i, f in enumerate(STILLS): still(f"{R}/s{i}.mp4", f, each); segs.append(f"{R}/s{i}.mp4")
+    print(f"stills: {len(STILLS)} x {each:.1f}s")
+else:
+    founder(f"{R}/c1.mp4", 40.0, t_body, "My desk, 3 September 2026", CAPS); segs.append(f"{R}/c1.mp4")
+    print("no stills in footage/founder/stills/; the desk recording stands in")
 card(f"{R}/c2.mp4", t_close, ["Apartment Intelligence,", "built for the OpenAI WebMCP Challenge."], size=54, sub=["apartments.senibina.com.sg"], subsize=30); segs.append(f"{R}/c2.mp4")
 lst = f"{R}/list.txt"; open(lst, "w").write("".join(f"file '{os.path.abspath(s)}'\n" for s in segs))
 run(f"ffmpeg -v error -y -f concat -safe 0 -i {lst} -c copy {R}/coda_video0.mp4")
-total = t_title + t_desk + t_close
+total = t_title + t_body + t_close
 chain = ",".join(f"drawtext=fontfile={SANS}:text='{esc(txt)}':fontsize=34:fontcolor={INK}:box=1:boxcolor={PAPER}@0.94:boxborderw=16:x=(w-text_w)/2:y=h-96:enable='between(t,{LEAD+a:.2f},{LEAD+z+0.25:.2f})'" for (a, z), txt in zip(phrase_times(NARR, SUBS), SUBS))
 run(f"ffmpeg -v error -y -i {R}/coda_video0.mp4 -vf \"{chain}\" -c:v libx264 -crf 18 -pix_fmt yuv420p -r {FPS} {R}/coda_video.mp4")
 V1LEN = alen(V1)

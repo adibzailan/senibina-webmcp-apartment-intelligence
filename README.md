@@ -91,17 +91,18 @@ the first case study, not a claim of official status or government endorsement.
 
 ## How this was made
 
-Most of this repository was dictated, not typed. For the two weeks before the
-challenge closed the founder could not type much, so the briefs were spoken
-(Wispr Flow into Claude Code and Codex), the coding agents wrote the code, and
-the founder reviewed the outputs: every screen, every number, every export, and
-every claim in these documents. That is a different way of working. The person
-reads less code and judges more results; the agents run the work; the person
-keeps the decisions, the product boundary and the evidence rules. We cannot
-vouch for every line the way a hand-written codebase would let us, and we say
-so; we can vouch for what the application does, because that is what was
-reviewed. The same division of labour is what the product asks of its own
-users: agents explore, people vouch.
+Most of this repository was dictated, not typed. Two weeks before the
+challenge closed, an accident left the author with a pin in the wrist and
+little ability to type, so the briefs were spoken (Wispr Flow into Codex),
+Codex wrote the code, and the work went round in a loop: review every screen,
+every number, every export and every claim in these documents, send back what
+was wrong, repeat. That is a different way of working. The person reads less
+code and judges more results; the agent runs the work; the person keeps the
+decisions, the product boundary and the evidence rules. We cannot vouch for
+every line the way a hand-written codebase would let us, and we say so; we can
+vouch for what the application does, because that is what was reviewed. The
+same division of labour is what the product asks of its own users: agents
+explore, people vouch.
 
 ## Repository map
 
