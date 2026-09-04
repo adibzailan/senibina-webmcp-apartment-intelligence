@@ -36,7 +36,7 @@ const log = (line, cls) => p.evaluate(([l, c]) => window.__agentLog(l, c), [line
 const agent = async (name, input) => {
   await log(`${name}(${JSON.stringify(input)})`, "call"); mark("tool:" + name, { input });
   const r = await p.evaluate(([n, i]) => window.__aiTools.find(t => t.name === n).execute(i).catch(e => ({ thrown: String(e) })), [name, input]);
-  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.mode === "survey" ? `survey, unconfirmed: avg ${r.radiation?.avg} kWh/m2` : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
+  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.confirmation?.kind === "delegated" ? `confirmed under the resident's delegation, revision ${r.placement_revision}` : r.mode === "survey" ? `survey, unconfirmed: avg ${r.radiation?.avg} kWh/m2` : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
   await log(`  -> ${short}`, r.refused || r.thrown ? "no" : "ok"); mark("reply:" + name, { reply: short });
   return r;
 };
@@ -63,6 +63,13 @@ await agent("show_analysis", { analysis: "radiation", camera: "home" }); await p
 await agent("show_analysis", { massing: false }); await p.waitForTimeout(2200);
 await agent("show_analysis", { massing: true }); await p.waitForTimeout(600);
 const ev = await agent("explain_evidence", { study_id: studyId, item: "radiation" }); await p.waitForTimeout(2600);
+// beat 8b: delegation. The resident steps back to Confirm, clicks once to delegate; the agent then re-stages and runs with no further click.
+await click(p.getByRole("button", { name: "Previous step" }), "prev"); await p.waitForTimeout(1400);
+await click(p.getByTestId("delegate-button"), "delegate"); await p.getByTestId("delegation-status").waitFor(); await p.waitForTimeout(1800);
+await agent("propose_unit_placement", { study_id: studyId, facade: "NE", stack_position: "end", variant: "C" }); await p.waitForTimeout(1600);
+await agent("run_solar_analysis", { study_id: studyId, grid_spacing_m: 0.25 }); await p.waitForTimeout(1000);
+await agent("show_analysis", { camera: "isometric", section: true, massing: false }); await p.waitForTimeout(2600);
+await agent("show_analysis", { massing: true }); await p.waitForTimeout(400); mark("delegate:end");
 // beat 9: survey mode, three units in a row, no click
 const rows = [];
 for (const u of [{ storey: 12, facade: "NE", stack_position: "end", variant: "A" }, { storey: 30, facade: "SE", stack_position: "inner", variant: "B" }, { storey: 44, facade: "SW", stack_position: "end", variant: "C" }]) {

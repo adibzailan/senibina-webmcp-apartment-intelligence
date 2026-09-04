@@ -20,15 +20,16 @@ deterministic environmental analysis, and thoughtful WebMCP orchestration.
 3 September 2026, about 23:30 SGT. Project page: https://devpost.com/software/apartment-intelligence.
 Video: https://youtu.be/pkn1xDcIVq8. Live: https://apartments.senibina.com.sg. Repo: GitHub
 `adibzailan/senibina-webmcp-apartment-intelligence`, AGPL-3.0. Submitter type Individual, Singapore,
-App Status New.
+App Status New. The write-up as pasted is `2026-webmcp-devpost-writeup.md`.
 
 ## Completion condition
 
-This outcome is complete only when the live application, public code repository,
+This outcome is complete when the live application, public code repository,
 project description, required visual material, and demo video are submitted and
-the submitted URLs are read back successfully.
+the submitted URLs are read back successfully. All of these are done; what
+remains is keeping the live host stable through judging.
 
-## Current state
+## What was submitted
 
 - 4 September 2026, morning: Adib reports the challenge close was extended (the
   Devpost page showed about six hours left that morning; the official notice
@@ -43,87 +44,31 @@ the submitted URLs are read back successfully.
   including a new delegation journey). Coverage question answered: Block 87 has
   160 three-room and 160 four-room flats; the three 4-room layouts are covered,
   the 3-room plan and Blocks 86 and 88 (4- and 5-room) are not.
+- Version 0 of the v2 build on `main`: one Docker container on Render
+  (Singapore) serving the page and the Ladybug + Radiance engine from one origin.
+- Nine WebMCP tools on `document.modelContext`, including `survey_unit` with
+  its own budget of thirty surveys per ten minutes. No confirmation tool.
+- A resident journey of Locate, Place, Confirm, Analyse and Keep, with a PDF
+  report and GLB, OBJ, 3DM and ZIP exports, every result digest-bound.
+- A 2:03 demo film showing the refusal, the visible click, the agent retry
+  succeeding, and survey mode. Master in `video/apartment-intelligence-demo/`.
+- An agent receipt from the ChatGPT desktop app's built-in browser: nine tools
+  discovered, three surveys, one study staged, refused, confirmed by click,
+  analysed and explained.
 
-- 3 September 2026: the v2 clean-room rebuild (real apartment walls, Ladybug +
-  Radiance, 0.25 m grid, eight WebMCP tools, Docker image) is merged to `main`
-  with Gate 1 accepted by Adib. It is not deployed; see
-  [`2026-09-clean-room-reconstruction.md`](2026-09-clean-room-reconstruction.md).
-- 3 September 2026, afternoon: v2 is live at <https://apartment-intelligence.onrender.com>
-  (Render blueprint, Singapore, 1 CPU / 2 GB). Public readback: six Playwright journeys pass,
-  a 0.25 m analysis completes in 6.2 s, every export downloads. The Windows VM is shut down;
-  `apartments.senibina.com.sg` is not yet pointed at Render.
-- 3 September 2026, evening (local, not yet pushed): Version 0 polish. Ten-tile
-  development grid with pen-and-ink art, address dropdown and storey range,
-  title-case choice labels, green confirm, three-dimensional compass, Massing
-  toggle, room labels in the scene and on every card, north arrow on every
-  card, Fine 0.1 m / Medium 0.25 m / Coarse 0.5 m grid, pick-then-Export with a
-  designed PDF report (paper cover and back cover, fixed apartment isometric,
-  one card per block). Footer names Senibina, the Ladybug and Radiance thesis
-  and the challenge. Verified headless: every export produces a real file; a
-  three-unit agent sequence through the WebMCP tools; 6 Playwright, 4 vitest,
-  20 pytest pass.
-- 3 September 2026, night: survey mode (`survey_unit`, nine tools) with its own
-  budget of thirty per ten minutes; `show_analysis` drives camera, massing and
-  map; both senibina hostnames live on Render; ChatGPT desktop agent receipt
-  (see checklist); demo film v1 mastered at 2:03 with production receipt in
-  `video/apartment-intelligence-demo/`; Devpost write-up ready in
-  `2026-webmcp-devpost-writeup.md`.
-- v1: the public baseline, dependency locks, Dawson fixture, application,
-  analysis engine, export pipeline, and six WebMCP tools were implemented and
-  published on 1 September 2026.
-- Apartment Intelligence is the founder-approved product title.
-- Ten backend and five frontend tests pass on macOS; the same backend tests and
-  frontend suite/build also pass in Windows.
-- The Windows runtime runs the app under the dedicated non-admin
-  `ApartmentIntel` account on loopback.
-- The named Cloudflare Tunnel and Vercel hostname bridge serve
-  <https://apartment.senibina.com.sg>. Both services and the app recovered after
-  a real Windows restart.
-- v1 receipts (superseded by v2): a real public Chrome WebMCP journey
-  discovered the six v1 tools, returned `CONFIRMATION_REQUIRED`, accepted
-  confirmation through the visible UI, then analysed and exported; artifact
-  readback proved five 1600 × 2400 PNGs, a five-page PDF, one manifest, and a
-  metre-unit `.3dm` with five layers, 29 objects, and metadata.
-- Demo-video preparation and final challenge submission remain deliberately
-  unstarted.
-- JourneyProof remains a separate earlier concept and repository.
+Dated build and test receipts are archived in
+[`40 Archives/2026-09-submission-receipts.md`](../40%20Archives/2026-09-submission-receipts.md).
 
-## Accepted v1 direction
+## Principal risks during judging
 
-- Focus on an existing HDB apartment rather than professional design authoring.
-- Guarantee one Dawson journey for Blocks 86–94, centred on 87 Dawson Road,
-  postal 141087, storey 30.
-- Use a frozen, reproducible public-data fixture and label every inference.
-- Require the resident to confirm an approximate target floor plate, facade, and window in 3D.
-- Run sunpath, shadow, solar-access, and radiation studies deterministically.
-- Present interactive 3D plus consistent architectural graphics (v2: seven
-  cards in one `cards.svg`).
-- Export a report and models (v2: PDF report, GLB, OBJ, 3DM, ZIP; the SVG
-  cards and evidence.json travel inside the ZIP).
-- Let WebMCP coordinate the same stateful actions exposed in the visible UI.
-
-## Milestones
-
-1. Lock the product contract, product title, and public/private boundary.
-2. Pass dependency intake and the WebMCP, VM, and `.3dm` platform gates. Done.
-3. Prove one HDB data-to-massing fixture with visible source and confidence.
-4. Prove human unit confirmation and the four deterministic analyses.
-5. Implement the WebMCP tools and verify human-agent/UI state parity.
-6. Generate the five cards and downloadable PDF, ZIP, and `.3dm` artifacts.
-7. Complete accessibility, abuse, failure, deployment, and submission checks.
-
-Milestones 3–6 are implemented and exercised. Milestone 7 is complete through
-deployment and restart recovery; video and submission checks remain.
-
-## Principal risks
-
-- Public records do not identify exact unit, facade, windows, or internal plan.
-- Listing availability and formats are inconsistent; generic scraping is not a
-  reliable or accepted ingestion contract.
-- Inferred building height and simplified massing can create false precision.
-- Solar results can appear authoritative unless assumptions and uncertainty are
-  visible in both the interface and exported artifacts.
-- The challenge window is short; scope must remain one excellent HDB journey.
+- The live host is rebuilt from `main` on every push. Do not merge anything
+  that changes runtime behaviour until judging ends.
+- Studies are in memory and expire after 30 minutes; a Render restart shows
+  `STUDY_EXPIRED` with a next action rather than a broken page.
+- Rate limits are per browser session: five confirmed analyses and thirty
+  surveys per ten minutes. A judge who exceeds them sees a countdown.
+- Solar results can appear authoritative unless assumptions and uncertainty
+  stay visible in both the interface and the exports.
 
 ## Non-goals
 
@@ -137,15 +82,15 @@ deployment and restart recovery; video and submission checks remain.
 - Accounts, billing, database persistence, runtime LLMs, live OneMap calls,
   enterprise administration, or a general AEC platform.
 
-## Required proof
+## Required proof (all met)
 
 - One public HDB example can be researched, verified, located, analysed, and
   exported end to end.
-- Every important fact is visibly labelled sourced, inferred, generated, or
-  human-confirmed.
+- Every important fact is visibly labelled sourced, inferred, reconstructed,
+  assumed, computed, or human-confirmed.
 - Analysis cannot begin until the human confirms the unit geometry.
 - WebMCP tool calls and manual actions update the same visible study state.
-- The four graphics use computed values and disclose dates, north, legend,
+- The graphics use computed values and disclose dates, north, legend,
   assumptions, and uncertainty.
 - Timeout, missing data, invalid geometry, and unavailable analysis states fail
   honestly without fabricated results.

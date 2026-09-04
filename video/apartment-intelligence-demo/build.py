@@ -97,6 +97,7 @@ SUBS = {
  "b10": ["Then keep the evidence.", "A report with the cover, the plans, the digest on every page."],
  "b12": ["We built this for residents.", "Then practitioners read the report and saw their own four-week study in it.", "The same engine that answers one resident can answer a practice,", "and that is the door this challenge opened."],
  "b11": ["The same engines.", "Now for the people who live there.", "Apartment Intelligence, built for the OpenAI WebMCP Challenge."],
+ "b14": ["Or the resident delegates, once.", "One click, and the agent confirms the next few placements itself.", "Every result says so, and the permission can be taken back at any time."],
 }
 def speech_segments(f):
     """Speech runs in a narration file, from silencedetect."""
@@ -126,7 +127,8 @@ def product_beats(pace):
         ("cut", dict(t0=marks["start"] + 1.0, t1=marks["screen:place"] + 1.0, speed=s[0], cap="A real block. A real storey.", pip=2.0), "b05"),
         ("cut", dict(t0=marks["agent:show"] - 0.3, t1=marks["click:confirm"] - 0.3, speed=s[1], cap="An agent can stage a placement. It cannot confirm one.", pip=12.0), "b06"),
         ("cut", dict(t0=marks["click:confirm"] - 0.6, t1=marks["screen:analysis"] + 1.2, speed=1.0, cap="That click belongs to a person.", pip=44.0), "b07"),
-        ("cut", dict(t0=marks["screen:analysis"] + 1.2, t1=marks["tool:survey_unit"] - 0.2, speed=s[2], cap="Radiation, per room. Every number carries its source.", pip=48.0), "b08"),
+        ("cut", dict(t0=marks["screen:analysis"] + 1.2, t1=marks["click:prev"] - 0.3, speed=s[2], cap="Radiation, per room. Every number carries its source.", pip=48.0), "b08"),
+        ("cut", dict(t0=marks["click:prev"] - 0.3, t1=marks["delegate:end"], speed=s[5], cap="One click delegates. The agent confirms the rest, and every result says so.", pip=56.0), "b14"),
         ("cut", dict(t0=marks["tool:survey_unit"] - 0.2, t1=marks["agent:hide"], speed=s[3], cap="Three units surveyed. No click. Every number unconfirmed.", pip=60.0), "b09"),
         ("cut", dict(t0=marks["agent:hide"], t1=marks["end"] - 0.4, speed=s[4], cap="Keep the evidence.", pip=80.0), "b10"),
     ]
@@ -142,7 +144,7 @@ def timeline(v):
         for i, f in enumerate(PRACTICE): T.append(("still", dict(f=f"{PR}/{f}", sec=[6, 4, 4, 3.5, 3, 2.5, 6.5][i], cap=PCAPS[i], push=1.0 if "wind" in f else 1.04), "b02" if i == 0 else None))
         for i, (l, sec) in enumerate(SALES_LONG): T.append(("card", dict(sec=sec, lines=l, fade=False), "b03" if i == 0 else None))
         T.append(("card", dict(sec=7, **INTRO), "b04"))
-        T += product_beats([1.0, 1.0, 1.15, 1.9, 1.1]) + tail(1.5, 10)
+        T += product_beats([1.0, 1.0, 1.15, 1.9, 1.1, 1.0]) + tail(1.5, 10)
     else:
         if v == "product-first":
             T.append(("cut", dict(t0=marks["screen:analysis"] + 8.0, t1=marks["screen:analysis"] + 13.0, speed=1.0, cap="Will this apartment get the sun you expect?", pip=46.0), "b01"))
@@ -151,10 +153,10 @@ def timeline(v):
         for i, f in enumerate(PRACTICE): T.append(("still", dict(f=f"{PR}/{f}", sec=[3, 2, 2, 2, 1.8, 1.5, 3.4][i], cap=PCAPS[i], push=1.0 if "wind" in f else 1.05), "b02" if i == 0 else None))
         for i, (l, sec) in enumerate(SALES_SHORT): T.append(("card", dict(sec=sec, lines=l, fade=False), "b03" if i == 0 else None))
         T.append(("card", dict(sec=5, **INTRO), "b04"))
-        T += product_beats([1.25, 1.15, 1.35, 2.4, 1.3]) + tail(1.1, 8.5)
+        T += product_beats([1.25, 1.15, 1.35, 2.4, 1.3, 1.25]) + tail(1.1, 8.5)
     return T
 
-BEATNAME = {"b01":"question","b02":"practice","b03":"sales","b04":"intro","b05":"block","b06":"agent","b07":"click","b08":"runs","b09":"three","b10":"export","b11":"close","b12":"why"}
+BEATNAME = {"b01":"question","b02":"practice","b03":"sales","b04":"intro","b05":"block","b06":"agent","b07":"click","b08":"runs","b09":"three","b10":"export","b11":"close","b12":"why","b14":"delegate"}
 if V != "editorial": BEATNAME["b02"] = "practice-short"; BEATNAME["b03"] = "sales-short"
 def alen(f): return float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","csv=p=0",f]))
 BEATLEN = {b: alen(f"{BEATS}/{b}-{n}.mp3") for b, n in BEATNAME.items()}

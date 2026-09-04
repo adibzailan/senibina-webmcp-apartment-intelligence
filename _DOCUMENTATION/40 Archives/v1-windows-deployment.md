@@ -1,10 +1,17 @@
+---
+title: v1 Windows deployment procedure
+para: archive
+status: superseded-implementation
+decision_date: 2026-09-03
+---
+
 # Windows deployment (v1, superseded)
 
-> Retained for the Windows VM that still serves the v1 build at
-> `apartment.senibina.com.sg`. The `server/` and `web/` trees this procedure
-> installs were removed from `main` on 3 September 2026 (commit `461e344`);
-> check out a commit before that for a v1 redeploy. New deployments use the
-> Docker image described in `deploy/RUNBOOK.md`.
+> Historical. The Windows VM was shut down on 3 September 2026 and both
+> hostnames now point at Render. The `server/` and `web/` trees this procedure
+> installs were removed from `main` in commit `461e344`; check out an earlier
+> commit for a v1 redeploy. The scripts it names live under
+> `deploy/archive/`. Current deployments use `deploy/RUNBOOK.md`.
 
 This is the reproducible target procedure for the dedicated Windows 11 ARM VM.
 It contains no tunnel token, private hostname receipt, or administrator secret.
@@ -39,7 +46,7 @@ same command as the dedicated non-admin account at startup, with restart on
 failure. Keep its working directory fixed to the repository checkout.
 
 After placing the accepted source at `C:\ApartmentIntelligence\app`, run
-`deploy\windows\install-apartment-intelligence-task.ps1` once from an elevated
+`deploy\archive\windows\install-apartment-intelligence-task.ps1` once from an elevated
 PowerShell prompt. It creates or rotates a random password for the local
 `ApartmentIntel` service account, grants read/execute access only to the app and
 virtual environment plus modify access to ignored exports, and registers the
@@ -51,7 +58,7 @@ enough to register the task and is never printed or written to a repository file
 Install `cloudflared` from Cloudflare's official signed Windows distribution.
 Create a named tunnel whose Cloudflare-managed hostname maps to
 `http://127.0.0.1:8000`. Because `senibina.com.sg` uses Vercel DNS, the verified
-deployment uses the versioned `deploy/edge-proxy` route to preserve
+deployment uses the versioned `deploy/archive/edge-proxy` route to preserve
 `apartment.senibina.com.sg` while proxying to that tunnel hostname. Install the
 tunnel as a Windows service and store its connector credential only in the
 system-protected service configuration. Do not commit, print, or paste it into

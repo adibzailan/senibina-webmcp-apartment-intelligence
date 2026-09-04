@@ -16,12 +16,11 @@ inside a reconstructed Block 87 plate, and Ladybug + Radiance produce
 deterministic sunpath, shadow, direct-sun and radiation evidence on a 0.1,
 0.25 or 0.5 m floor grid, with per-room readings.
 
-Status (4 September 2026): Version 0, built for the OpenAI WebMCP Challenge.
-The v2 clean-room rebuild is on `main` and live at
-<https://apartment-intelligence.onrender.com> (Render, Singapore, built from
-`deploy/render.yaml` on every push). The earlier v1 Windows VM host is shut
-down. See
-[`_DOCUMENTATION/10 Projects/2026-09-clean-room-reconstruction.md`](_DOCUMENTATION/10%20Projects/2026-09-clean-room-reconstruction.md).
+Status (4 September 2026): Version 0, built for the OpenAI WebMCP Challenge
+and submitted on 3 September 2026; extended-close additions (delegation, section
+cut, isometric view) on 4 September. The build on `main` is live at
+<https://apartments.senibina.com.sg> (one Docker container on Render,
+Singapore, rebuilt from `deploy/render.yaml` on every push).
 
 ## What the page does
 
@@ -114,7 +113,7 @@ explore, people vouch.
 | `apps/web` | React + TypeScript + Three.js interface and the WebMCP tool registry |
 | `data/` | Precinct fixture, recipes, weather, and the retained v1 fixtures |
 | `tests/` | Unit and oracle tests, API tests, Playwright journeys, Gate 1 overlay script |
-| `deploy/` | Dockerfile, compose, Render blueprint, runbook; v1 Windows and edge-proxy material |
+| `deploy/` | Dockerfile, compose, Render blueprint, runbook; `deploy/archive/` keeps retired v1 host material |
 
 ## Documentation
 
@@ -169,9 +168,7 @@ docker compose -f deploy/compose.yaml up -d
 Radiance publishes x86-64 Linux binaries only, so the image is linux/amd64 and
 runs under emulation on Apple silicon. Full procedure and limits:
 [`deploy/RUNBOOK.md`](deploy/RUNBOOK.md). The Render blueprint in
-`deploy/render.yaml` is the live deployment. The v1 Windows VM procedure in
-[`WINDOWS_DEPLOYMENT.md`](WINDOWS_DEPLOYMENT.md) is retained for the live v1
-host and is superseded for new deployments.
+`deploy/render.yaml` is the live deployment.
 
 ## WebMCP
 
