@@ -3,7 +3,8 @@ Output: renders/apartment-intelligence-demo-v2-coda.mp4 (v1 untouched, then a ha
 import json, os, re, shlex, subprocess
 D = "video/apartment-intelligence-demo"; F = f"{D}/footage"; R = f"{D}/renders/coda"; os.makedirs(R, exist_ok=True)
 SERIF = f"{F}/fonts/snba-serif-regular.ttf"; SANS = f"{F}/fonts/snba-sans-serif-medium.ttf"
-V1 = f"{D}/renders/Apartment-Intelligence-Demo-v1.mp4"; FOUNDER = f"{F}/founder/desk-take-1.mov"
+V1 = f"{D}/renders/apartment-intelligence-demo-fast.mp4"  # the current fast cut; v1 master kept as history
+FOUNDER = f"{F}/founder/desk-take-1.mov"
 MUSIC = f"{F}/music/music__20260903_191426.mp3"; NARR = f"{F}/audio/beats/b13-coda.mp3"
 W, H, FPS = 1920, 1080, 30; PAPER = "0xf5f2e9"; INK = "0x18211d"; MUTED = "0x5f665f"
 def run(c): subprocess.run(c, shell=True, check=True)

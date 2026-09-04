@@ -79,8 +79,9 @@ PRACTICE = ["wall-panorama.jpg", "wall-front.jpg", "desk-rhino-grasshopper.jpg",
             "room-radiation-l1-l3.jpg"]
 PCAPS = [None] * 7
 # sales cards timed to the pauses in the narration (measured with silencedetect); durations in seconds
-SALES_LONG = [(["When a home is sold,", "it gets a sentence."], 4.1), (["Bright and airy."], 1.4), (["Afternoon sun."], 1.6), (["High floor, unblocked."], 2.7), (["Every word is a guess about light."], 2.6), (["None of it is measured."], 3.0)]
-SALES_SHORT = [(["When a home is sold,", "it gets a sentence."], 4.35), (["Bright and airy."], 2.05), (["Afternoon sun."], 2.3), (["None of it is measured."], 3.3)]
+# the sales lines sit in quotation marks: they are what a listing or an agent says to a buyer, not our words
+SALES_LONG = [(["When a home is sold,", "it gets a sentence."], 4.1), (["“Bright and airy.”"], 1.4), (["“Afternoon sun.”"], 1.6), (["“High floor, unblocked.”"], 2.7), (["Every word is a guess about light."], 2.6), (["None of it is measured."], 3.0)]
+SALES_SHORT = [(["When a home is sold,", "it gets a sentence."], 4.35), (["“Bright and airy.”"], 2.05), (["“Afternoon sun.”"], 2.3), (["None of it is measured."], 3.3)]
 QUOTES = [["“This is what the sustainability consultant", "claims takes weeks to do.”"], ["“They always say four weeks,", "and the model must be simple, simple.”"], ["“Someone cracked his brain for two weeks", "to get our whole model into Rhino.”"]]
 QSUB = "A practitioner, Singapore, on reading the report, 3 September 2026"
 SUBS = {
