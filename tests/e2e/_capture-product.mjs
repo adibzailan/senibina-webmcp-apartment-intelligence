@@ -14,7 +14,7 @@ const overlay = async () => p.evaluate(() => {
   const s = document.createElement("style"); s.textContent = `
     #demo-cursor{position:fixed;left:0;top:0;width:24px;height:24px;border-radius:50%;border:3px solid #d94b3f;box-shadow:0 0 0 3px #fbfaf6;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:transform .08s}
     #demo-cursor.press{transform:translate(-50%,-50%) scale(.72);background:rgba(217,75,63,.42)}
-    #agent{position:fixed;right:24px;bottom:24px;width:560px;max-height:300px;background:#18211d;color:#f5f2e9;font:15px/1.5 "SF Mono",Menlo,monospace;padding:16px 18px;border-radius:3px;box-shadow:0 3px 8px rgba(0,0,0,.18);z-index:99998;opacity:0;transition:opacity .4s;overflow:hidden}
+    #agent{pointer-events:none;position:fixed;right:24px;bottom:24px;width:560px;max-height:300px;background:#18211d;color:#f5f2e9;font:15px/1.5 "SF Mono",Menlo,monospace;padding:16px 18px;border-radius:3px;box-shadow:0 3px 8px rgba(0,0,0,.18);z-index:99998;opacity:0;transition:opacity .4s;overflow:hidden}
     #agent.on{opacity:1}
     #agent .h{font:600 11px/1 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#b9b7ae;margin-bottom:10px}
     #agent .l{white-space:pre-wrap;word-break:break-word}
@@ -31,12 +31,13 @@ const overlay = async () => p.evaluate(() => {
   document.addEventListener("mousedown", () => c.classList.add("press")); document.addEventListener("mouseup", () => c.classList.remove("press"));
 });
 const move = async (x, y, steps = 28) => { await p.mouse.move(x, y, { steps }); };
-const click = async (loc, name) => { const bb = await loc.boundingBox(); await move(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.waitForTimeout(250); await p.mouse.down(); await p.waitForTimeout(90); await p.mouse.up(); mark("click:" + name); };
+// each scripted click first settles any smooth scroll, then measures the button
+const click = async (loc, name) => { await loc.scrollIntoViewIfNeeded(); await p.waitForTimeout(650); const bb = await loc.boundingBox(); await move(bb.x + bb.width / 2, bb.y + bb.height / 2); await p.waitForTimeout(250); await p.mouse.down(); await p.waitForTimeout(90); await p.mouse.up(); mark("click:" + name); };
 const log = (line, cls) => p.evaluate(([l, c]) => window.__agentLog(l, c), [line, cls]);
 const agent = async (name, input) => {
   await log(`${name}(${JSON.stringify(input)})`, "call"); mark("tool:" + name, { input });
   const r = await p.evaluate(([n, i]) => window.__aiTools.find(t => t.name === n).execute(i).catch(e => ({ thrown: String(e) })), [name, input]);
-  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.mode === "survey" ? `survey, unconfirmed: avg ${r.radiation?.avg} kWh/m2` : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
+  const short = r.refused ? `refused: ${r.reason.split(":")[0]}` : r.thrown ? r.thrown.slice(0, 90) : r.confirmation?.kind === "delegated" ? `confirmed under the resident's delegation, revision ${r.placement_revision}` : r.mode === "survey" ? `survey, unconfirmed: avg ${r.radiation?.avg} kWh/m2` : r.digest ? `analysed, digest ${r.digest.slice(0, 12)}, avg ${r.radiation?.avg} kWh/m2` : r.study_id ? `study ${r.study_id}` : r.state ? `${r.state}` : JSON.stringify(r).slice(0, 90);
   await log(`  -> ${short}`, r.refused || r.thrown ? "no" : "ok"); mark("reply:" + name, { reply: short });
   return r;
 };
@@ -63,6 +64,16 @@ await agent("show_analysis", { analysis: "radiation", camera: "home" }); await p
 await agent("show_analysis", { massing: false }); await p.waitForTimeout(2200);
 await agent("show_analysis", { massing: true }); await p.waitForTimeout(600);
 const ev = await agent("explain_evidence", { study_id: studyId, item: "radiation" }); await p.waitForTimeout(2600);
+// beat 8b: delegation. The resident steps back to Confirm, clicks once to delegate; the agent then re-stages and runs with no further click.
+await p.evaluate(() => window.__agentShow(false)); // the console sits over the rail's lower buttons; the human's beat plays without it
+await click(p.getByRole("button", { name: "Previous step" }), "prev"); await p.getByRole("heading", { name: /Confirm the placement/ }).waitFor();
+await p.getByTestId("delegate-button").scrollIntoViewIfNeeded(); await p.waitForTimeout(1200); // let the smooth scroll settle before measuring the button
+await click(p.getByTestId("delegate-button"), "delegate"); await p.getByTestId("delegation-status").waitFor(); await p.waitForTimeout(1600);
+await p.evaluate(() => window.__agentShow(true)); await p.waitForTimeout(500);
+await agent("propose_unit_placement", { study_id: studyId, facade: "NE", stack_position: "end", variant: "C" }); await p.waitForTimeout(1600);
+await agent("run_solar_analysis", { study_id: studyId, grid_spacing_m: 0.25 }); await p.waitForTimeout(1000);
+await agent("show_analysis", { camera: "isometric", section: true, massing: false }); await p.waitForTimeout(2600);
+await agent("show_analysis", { massing: true }); await p.waitForTimeout(400); mark("delegate:end");
 // beat 9: survey mode, three units in a row, no click
 const rows = [];
 for (const u of [{ storey: 12, facade: "NE", stack_position: "end", variant: "A" }, { storey: 30, facade: "SE", stack_position: "inner", variant: "B" }, { storey: 44, facade: "SW", stack_position: "end", variant: "C" }]) {
@@ -71,7 +82,7 @@ for (const u of [{ storey: 12, facade: "NE", stack_position: "end", variant: "A"
 await log(`survey table: NE tip s12 ${rows[0].avg} | SE core s30 ${rows[1].avg} | SW tip s44 ${rows[2].avg} kWh/m2, all unconfirmed`, "ok"); mark("table"); await p.waitForTimeout(3200);
 // beat 10: export PDF
 await p.evaluate(() => window.__agentShow(false)); mark("agent:hide");
-await click(p.getByRole("button", { name: "Keep the evidence", exact: true }), "keep"); await p.waitForTimeout(1200);
+await click(p.getByRole("button", { name: "Keep the evidence", exact: true }), "keep"); await p.getByRole("heading", { name: /Keep the evidence/ }).waitFor(); mark("screen:export"); await p.waitForTimeout(1400);
 const dl = p.waitForEvent("download", { timeout: 60000 });
 await click(p.getByRole("button", { name: /^Export/ }), "export"); const d = await dl; await d.saveAs(path.join(OUT, "report.pdf")); mark("pdf:saved"); await p.waitForTimeout(1500);
 mark("end");

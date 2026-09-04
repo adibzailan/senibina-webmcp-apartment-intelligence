@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: submitted, judging until 21 September 2026
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Review the v2.1 branch (delegated confirmation, section cut and isometric camera, dictation note, film coda), push it so Render rebuilds, then refresh the Devpost text and video link before the extended close on 4 September 2026.
+next_action: Upload the 2:57 film to YouTube, replace the Devpost video link and paste the 4 September write-up before the extended close; then leave `main` untouched through judging.
 ---
 
 # WebMCP Challenge submission
@@ -41,7 +41,10 @@ remains is keeping the live host stable through judging.
   in, `show_analysis` gains `isometric` and `section`, a README section and a
   Devpost lesson on building by dictation, and a 30-second film coda on the
   same. Verified locally: 22 pytest, 5 vitest, 9 Playwright (three viewports,
-  including a new delegation journey). Coverage question answered: Block 87 has
+  including a new delegation journey). Pushed to `main` as 742fef3 about 11:55
+  SGT; Render rebuilt and the three desktop journeys pass against the live
+  host. The film was re-captured on this build with a delegation beat (2:57
+  with the coda). Coverage question answered: Block 87 has
   160 three-room and 160 four-room flats; the three 4-room layouts are covered,
   the 3-room plan and Blocks 86 and 88 (4- and 5-room) are not.
 - Version 0 of the v2 build on `main`: one Docker container on Render
