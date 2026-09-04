@@ -92,8 +92,8 @@ the first case study, not a claim of official status or government endorsement.
 ## How this was made
 
 Most of this repository was dictated, not typed. Two weeks before the
-challenge closed, an accident left the author with a pin in the wrist and
-little ability to type, so the briefs were spoken (Wispr Flow into Codex),
+challenge closed, an accident left the author with a wrist too painful to
+type with, so the briefs were spoken (Wispr Flow into Codex),
 Codex wrote the code, and the work went round in a loop: review every screen,
 every number, every export and every claim in these documents, send back what
 was wrong, repeat. That is a different way of working. The person reads less

@@ -42,15 +42,15 @@ def phrase_times(f, phrases):
     for x in phrases: d = span * len(x) / n; out.append((t, t + d)); t += d
     return out
 
-SUBS = ["A last word on how this was made.", "Two weeks before the deadline, an accident left me with a pin in my wrist,", "so I could barely type.",
-        "The whole project was dictated.", "I spoke the briefs into Codex, Codex wrote the code,",
-        "and we went round and round:", "I reviewed every screen, every number, every export,", "and sent back what was wrong.",
-        "Less reading code, more judging results.", "I cannot vouch for every line; I can vouch for what it does.",
-        "Let the agent run the work.", "Keep the person on the decisions."]
-CAPS = ["Dictated, not typed.", "", "An accident, a pin in the wrist,", "two weeks before the close.", "", "Briefs spoken into Codex.", "Codex wrote the code.", "",
-        "I reviewed every screen,", "every number, every export,", "and sent back what was wrong."]
+SUBS = ["A last word on how this was made.", "Two weeks before the deadline an accident left my wrist too painful to type with,", "so the whole project was dictated.",
+        "I spoke the briefs into Codex, Codex wrote the code,", "and we went round and round:", "I reviewed every screen, every number, every export,", "and sent back what was wrong.",
+        "That meant letting go.", "Less reading code, more judging results.", "I can vouch for what it does, because that is what I checked.",
+        "Speaking lets a thought arrive whole, in a way typing never did.", "And trusting the agent with the code freed me for the decisions only a person can make.",
+        "I will keep working this way.", "If you have not tried it, try it."]
+CAPS = ["Dictated, not typed.", "", "An accident, a wrist too painful", "to type with, two weeks", "before the close.", "", "Briefs spoken into Codex.", "Codex wrote the code.", "",
+        "I reviewed every screen,", "every number, every export,", "and sent back what was wrong.", "", "Letting go of the code.", "Keeping the decisions."]
 NL = alen(NARR); LEAD = 0.6                    # narration starts 0.6 s into the coda
-t_title = 3.2; t_close = 6.0
+t_title = 3.2; t_close = 4.5  # whole film must stay under three minutes
 t_body = max(6.0, NL + LEAD + 0.8 - t_title)   # the pictures carry the rest of the narration
 def still(out, f, sec, push=1.05):
     n = int(sec * FPS)
@@ -62,7 +62,12 @@ def still(out, f, sec, push=1.05):
 STILLS = sorted(p for p in glob.glob(f"{F}/founder/stills/*") if p.lower().endswith((".jpg", ".jpeg", ".png")))
 segs = []
 card(f"{R}/c0.mp4", t_title, ["How this was made."], size=72); segs.append(f"{R}/c0.mp4")
-if STILLS:
+DICTATION = next((p for p in glob.glob(f"{F}/founder/dictation.*") if p.lower().endswith((".mov", ".mp4", ".m4v"))), None)
+if DICTATION:
+    FOUNDER = DICTATION
+    founder(f"{R}/c1.mp4", 0.0, t_body, "Working by dictation, September 2026", CAPS); segs.append(f"{R}/c1.mp4")
+    print(f"dictation clip: {DICTATION}")
+elif STILLS:
     each = t_body / len(STILLS)
     for i, f in enumerate(STILLS): still(f"{R}/s{i}.mp4", f, each); segs.append(f"{R}/s{i}.mp4")
     print(f"stills: {len(STILLS)} x {each:.1f}s")
