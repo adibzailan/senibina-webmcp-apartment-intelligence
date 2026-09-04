@@ -43,11 +43,11 @@ def phrase_times(f, phrases):
     for x in phrases: d = span * len(x) / n; out.append((t, t + d)); t += d
     return out
 
-SUBS = ["A last word on how this was made.", "Two weeks before the deadline an accident left my wrist too painful to type with,", "so the whole project was dictated.",
-        "I spoke the briefs into Codex, Codex wrote the code,", "and we went round and round:", "I reviewed every screen, every number, every export,", "and sent back what was wrong.",
-        "That meant letting go.", "Less reading code, more judging results.", "I can vouch for what it does, because that is what I checked.",
-        "Speaking lets a thought arrive whole, in a way typing never did.", "And trusting the agent with the code freed me for the decisions only a person can make.",
-        "I will keep working this way.", "If you have not tried it, try it."]
+SUBS = ["A last word on how this was made.", "An accident left my wrist too painful to type with,", "so the whole project was dictated.",
+        "I spoke the briefs into Codex, Codex wrote the code,", "and I reviewed every screen, every number, every export.",
+        "That meant letting go: less reading code, more judging results.",
+        "Speaking lets a thought arrive whole, in a way typing never did,", "and trusting the agent with the code freed me for the decisions only a person can make.",
+        "If you have not tried it, try it."]
 CAPS = ["Dictated, not typed.", "", "A wrist too painful to type.", "", "Briefs spoken into Codex.", "Codex wrote the code.", "",
         "I reviewed every screen,", "every number, every export.", "", "Let go of the code.", "Keep the decisions."]
 NL = alen(NARR); LEAD = 0.6                    # narration starts 0.6 s into the coda
