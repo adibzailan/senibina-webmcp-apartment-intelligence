@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { exportUrl, liveApi } from "./api";
-import { confirmFromClick, createStudy, proposePlacement, runAnalysis, showAnalysis, explainEvidence } from "./actions";
+import { confirmFromClick, createStudy, delegateFromClick, proposePlacement, revokeDelegation, runAnalysis, showAnalysis, explainEvidence } from "./actions";
 import { cardsPdf, download, svgToPng, zipBlob } from "./cards";
 import { initialState, reducer, State } from "./state";
 import { Viewer } from "./viewer";
@@ -15,7 +15,7 @@ const ELEMENT_LABELS: Record<string, string> = { "win-mainbed": "Main bedroom wi
 const labelOf = (id: string) => ELEMENT_LABELS[id] ?? id.replace(/[-_]/g, " ");
 const ROOM_LABELS: Record<string, string> = { main_bedroom: "Main bedroom", bedroom_2: "Bedroom 2", bedroom_3: "Bedroom 3", living_dining: "Living and dining", corridor: "Corridor", bath_1: "Bathroom 1", bath_2: "Bathroom 2", kitchen: "Kitchen", service_yard: "Service yard", entrance: "Entrance", shelter: "Household shelter", ac_ledge: "AC ledge" };
 const STEP_QUESTIONS: Record<string, string> = { locate: "Start with your block and storey.", place: "Choose the wing and layout you recognise.", confirm: "Confirm the placement you see.", analysis: "Sun, shade and radiation on your floor.", export: "Keep the evidence." };
-const STATE_PLAIN: Record<string, string> = { sourced: "from public data", inferred: "estimated from public data", reconstructed: "traced from a published drawing", assumed: "an assumption you can change", computed: "computed", resident_confirmed: "confirmed by you" };
+const STATE_PLAIN: Record<string, string> = { sourced: "from public data", inferred: "estimated from public data", reconstructed: "traced from a published drawing", assumed: "an assumption you can change", computed: "computed", resident_confirmed: "confirmed by you", resident_delegated: "confirmed by your agent under your delegation" };
 const roomOf = (id: string) => ROOM_LABELS[id] ?? id.replace(/_/g, " ");
 
 function finding(r: any): string {
@@ -58,8 +58,9 @@ export default function App() {
     if (lastScreen.current !== state.screen && state.screen !== "locate") stepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     lastScreen.current = state.screen;
   }, [state.screen]);
-  const basemap = state.view.map, massing = state.view.massing;
+  const basemap = state.view.map, massing = state.view.massing, section = state.view.section;
   useEffect(() => { viewerRef.current?.setMassingVisible(massing); }, [massing]);
+  useEffect(() => { viewerRef.current?.setSectionCut(section); }, [section, glbKey]);
   // a camera chosen by a tool moves the viewer exactly as the buttons do
   const cameraSeen = useRef(state.view.camera);
   useEffect(() => { if (cameraSeen.current !== state.view.camera) { cameraSeen.current = state.view.camera; viewerRef.current?.preset(state.view.camera, focus); } }, [state.view.camera]);
@@ -93,7 +94,7 @@ export default function App() {
       if (framedFor.current !== `${state.studyId}:${stage}`) {
         framedFor.current = `${state.studyId}:${stage}`;
         if (stage === "placing") { dispatch({ type: "set_view", view: { camera: "plan" } }); v.preset("plan", "tower"); }
-        else { dispatch({ type: "set_view", view: { camera: "home" } }); v.preset("home", "home"); }
+        else { dispatch({ type: "set_view", view: { camera: "isometric", section: true } }); v.setSectionCut(true); v.preset("isometric", "home"); }
       }
     }).catch((e) => console.warn(e));
   }, [state.studyId, state.placementRevision, state.digest]);
@@ -157,6 +158,7 @@ export default function App() {
   }, [context]);
 
   const unit = context?.units?.[state.placement.variant];
+  const delegationLive = !!state.delegation && state.delegation.remaining > 0 && state.delegation.expiresAt > Date.now();
   const toggles = unit ? unit.elements.filter((e: any) => ["opening", "balcony", "railing"].includes(e.kind) && (e.kind !== "opening" || e.base_m > 0)) : [];
   const r = state.result;
   const stepIndex = Math.max(1, STEPS.indexOf(state.screen) + 1);
@@ -199,13 +201,14 @@ export default function App() {
           <div className="toolbar view-controls" aria-label="Canvas controls">
             <span className="control-group" role="group" aria-label="Look at">
               <span className="control-label">Look at</span>
-              {(["precinct", "tower", "home", "plan"] as const).filter((c) => c !== "home" || state.placementRevision > 0).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c, focus); }}>{({ precinct: "Precinct", tower: "Tower", home: "Apartment", plan: "From above" } as any)[c]}</button>)}
+              {(["precinct", "tower", "home", "isometric", "plan"] as const).filter((c) => (c !== "home" && c !== "isometric") || state.placementRevision > 0).map((c) => <button key={c} aria-pressed={state.view.camera === c} onClick={() => { dispatch({ type: "set_view", view: { camera: c } }); viewerRef.current?.preset(c, focus); }}>{({ precinct: "Precinct", tower: "Tower", home: "Apartment", isometric: "Isometric", plan: "From above" } as any)[c]}</button>)}
               <button onClick={() => viewerRef.current?.preset("north")}>Face north</button>
             </span>
             <span className="control-group" role="group" aria-label="View">
               <span className="control-label">View</span>
               <button aria-pressed={basemap} onClick={() => dispatch({ type: "set_view", view: { map: !basemap } })}>Map</button>
               <button aria-pressed={massing} onClick={() => dispatch({ type: "set_view", view: { massing: !massing } })}>Massing</button>
+              {state.placementRevision > 0 && <button aria-pressed={section} title="Slice the apartment's walls 1.2 m above the floor so the floor colours read from any angle" onClick={() => dispatch({ type: "set_view", view: { section: !section } })}>Section</button>}
               <button onClick={() => viewerRef.current?.preset(state.view.camera, focus)}>Reset</button>
             </span>
           </div>
@@ -219,9 +222,13 @@ export default function App() {
               <button className="step-arrow" aria-label="Previous step" disabled={stepIndex <= 1} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex - 2] })}>←</button>
               <span>Step {stepIndex} of 5</span>
               <button className="step-arrow" aria-label="Next step" disabled={!canAdvance(state)} onClick={() => dispatch({ type: "go", screen: STEPS[stepIndex] })}>→</button>
-              <span className="step-name">{({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyState ? `, ${STATE_WORDS[state.studyState] ?? state.studyState}` : ""}</span>
+              <span className="step-name">{({ locate: "Locate", place: "Place", confirm: "Confirm", analysis: "Analyse", export: "Export" } as any)[state.screen]}{state.studyState ? `, ${STATE_WORDS[state.studyState] ?? state.studyState}` : ""}{state.confirmedBy === "delegated" && state.confirmedRevision === state.placementRevision ? " by your agent, under your delegation" : ""}</span>
             </div>
           </section>
+          {delegationLive && <section className="delegation" aria-label="Delegation">
+            <p className="status" style={{ padding: 0 }} data-testid="delegation-status">Your agent may confirm {state.delegation!.remaining} more placement{state.delegation!.remaining === 1 ? "" : "s"} in this study until {new Date(state.delegation!.expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Results are labelled confirmed under your delegation.</p>
+            <div className="toolbar"><button onClick={() => revokeDelegation(ctx).catch(() => {})}>Revoke</button></div>
+          </section>}
           {state.surveys.length > 0 && <section className="surveys" aria-label="Surveys, unconfirmed">
             <label>Surveys by an agent, unconfirmed</label>
             <table className="evidence"><tbody>
@@ -265,6 +272,11 @@ export default function App() {
               <button className="confirm" data-testid="confirm-button" disabled={!!state.busy || state.placementRevision === 0} onClick={(ev) => confirmFromClick(ctx, ev.isTrusted && (navigator as any).userActivation?.isActive !== false).catch(() => {})}>I confirm this is my apartment</button>
             </div>
             <p className="confirm-sentence">You are confirming the {state.placement.facade} Wing, {state.placement.stack_position === "end" ? "Wing Tip" : "Near the Core"}, Type {state.placement.variant}{state.placement.mirrored ? ", mirrored" : ""}, on Storey {state.storey}. A tool cannot do this for you.</p>
+            {!delegationLive && <>
+              <label>Or let your agent confirm</label>
+              <div className="toolbar"><button data-testid="delegate-button" disabled={!!state.busy || state.placementRevision === 0} onClick={(ev) => delegateFromClick(ctx, ev.isTrusted && (navigator as any).userActivation?.isActive !== false, 3).catch(() => {})}>Let my agent confirm the next 3 placements</button></div>
+              <p className="status" style={{ padding: 0 }}>For ten minutes, placements staged in this study are confirmed without another click, this one included. Every result will say it was confirmed under your delegation, not by you. You can revoke it at any time.</p>
+            </>}
           </section>}
 
           {(state.screen === "analysis" || state.screen === "export") && <section>

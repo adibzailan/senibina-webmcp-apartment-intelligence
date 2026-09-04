@@ -26,7 +26,7 @@ from ai_geometry.writers import write_3dm, write_glb, write_obj
 from ai_solar.result import run_analysis
 
 from .cards import cards_bundle
-from .store import CHALLENGE_TTL, Store, Study
+from .store import CHALLENGE_TTL, DELEGATION_TTL, DELEGATION_USES_MAX, Store, Study
 
 ROOT = Path(__file__).resolve().parents[3]
 DATA = ROOT / "data"
@@ -143,10 +143,39 @@ class AnalysisIn(Closed):
     grid_spacing_m: Literal[0.1, 0.25, 0.5] = 0.25
 
 
+class DelegationIn(Closed):
+    """How many placements the resident's agent may confirm on their behalf in the next ten minutes."""
+    uses: int = Field(default=3, ge=1, le=DELEGATION_USES_MAX)
+
+
 # ----- helpers -----
 def placement_obj(st: Study) -> Placement:
     p = st.placement
     return Placement(storey=st.storey, facade=p["facade"], stack_position=p["stack_position"], variant=p["variant"], mirrored=p["mirrored"], openings=p["openings"])
+
+
+def delegation_view(st: Study) -> dict | None:
+    d = st.delegation
+    if d is None:
+        return None
+    if d["expires"] < time.time() or d["remaining"] <= 0:
+        st.delegation = None
+        return None
+    return {"active": True, "granted_at": d["granted_at"], "uses": d["uses"], "uses_remaining": d["remaining"], "expires_in_seconds": int(d["expires"] - time.time())}
+
+
+def _confirm_under_delegation(st: Study) -> bool:
+    """Confirm the staged placement under a live delegation, consuming one use. False when there is none."""
+    if delegation_view(st) is None or st.placement is None:
+        return False
+    st.delegation["remaining"] -= 1
+    st.confirmed_revision = st.placement_revision
+    st.confirmation_kind = "delegated"
+    st.state = "ready"
+    st.challenge = None
+    if st.delegation["remaining"] <= 0:
+        st.delegation = None
+    return True
 
 
 def study_view(st: Study) -> dict:
@@ -156,12 +185,14 @@ def study_view(st: Study) -> dict:
         "plate_summary": {"recipe": PLATE.id, "digest": PLATE.digest()[:16], "storeys": PLATE.storeys, "sky_gardens": PLATE.sky_garden_storeys, "wings": [w.id for w in PLATE.wings], "limitations": PLATE.limitations},
         "provenance": {"footprint": "sourced (HDB Existing Building, Singapore Open Data Licence v1.0)", "storeys": "sourced (HDB Property Information)", "plate_storey_30": "inferred (no published plan; band symmetry)", "unit_plan": "published typical 4R plan; placement assumed until resident confirms", "heights": "assumed model 3.6/2.8/5.6 m reconciled to 147.8 m"},
         "result_digest": st.result["digest"] if st.result else None,
+        "confirmation": {"kind": st.confirmation_kind} if st.confirmed_revision is not None and st.confirmed_revision == st.placement_revision else None,
+        "delegation": delegation_view(st),
         "next_action": next_action(st),
     }
 
 
 def next_action(st: Study) -> str:
-    return {"created": "Propose a placement (facade, stack position, variant).", "placed": "Confirm the placement with a visible click in the page.", "needs_confirmation": "Confirm the placement with a visible click in the page.", "ready": "Run the solar analysis.", "analysing": "Wait for the analysis to finish.", "analysed": "Show the analysis, explain evidence, or export."}[st.state]
+    return {"created": "Propose a placement (facade, stack position, variant).", "placed": "Confirm the placement with a visible click in the page, or click 'Let my agent confirm' there to delegate the next few confirmations.", "needs_confirmation": "Confirm the placement with a visible click in the page, or click 'Let my agent confirm' there to delegate the next few confirmations.", "ready": "Run the solar analysis.", "analysing": "Wait for the analysis to finish.", "analysed": "Show the analysis, explain evidence, or export."}[st.state]
 
 
 def plan_north(frame) -> tuple[float, float]:
@@ -191,7 +222,7 @@ def build_exports(st: Study) -> None:
 
 def _run(st: Study, spacing: float):
     pl = placement_obj(st)
-    return run_analysis(PRECINCT, PLATE, UNITS[pl.variant], pl, spacing)
+    return run_analysis(PRECINCT, PLATE, UNITS[pl.variant], pl, spacing, confirmation="resident_delegated" if st.confirmation_kind == "delegated" else "resident_confirmed")
 
 
 # ----- routes -----
@@ -264,7 +295,11 @@ def put_placement(sid: str, body: PlacementIn, request: Request, response: Respo
     st.state = "needs_confirmation"
     st.result = None
     st.exports = {}
-    return {"state": st.state, "placement_revision": st.placement_revision, "next_action": next_action(st)}
+    out = {"state": st.state, "placement_revision": st.placement_revision}
+    if _confirm_under_delegation(st):
+        out.update({"state": st.state, "confirmed_revision": st.confirmed_revision, "confirmation": {"kind": "delegated"}, "delegation": delegation_view(st)})
+    out["next_action"] = next_action(st)
+    return out
 
 
 @app.post("/api/studies/{sid}/confirmation-challenge")
@@ -291,8 +326,33 @@ def confirm(sid: str, body: ConfirmIn, request: Request, response: Response):
     if ch is None or ch[0] != body.challenge or ch[1] < time.time() or ch[2] != body.placement_revision:
         raise err(403, "CONFIRMATION_REQUIRED", "Challenge missing, expired or already used; click confirm again.")
     st.confirmed_revision = st.placement_revision
+    st.confirmation_kind = "click"
     st.state = "ready"
-    return {"state": st.state, "confirmed_revision": st.confirmed_revision, "next_action": next_action(st)}
+    return {"state": st.state, "confirmed_revision": st.confirmed_revision, "confirmation": {"kind": "click"}, "next_action": next_action(st)}
+
+
+@app.post("/api/studies/{sid}/delegation")
+def grant_delegation(sid: str, request: Request, response: Response, body: DelegationIn = Body(default=DelegationIn()), x_user_activation: str | None = Header(default=None)):
+    """The resident clicks once to let their agent confirm placements in this study: ten minutes, a few uses, revocable.
+    Like the confirmation itself, the grant needs a visible click; a tool cannot grant it to itself."""
+    st = load_study(sid, request, response)
+    if x_user_activation != "trusted":
+        raise err(403, "CONFIRMATION_REQUIRED", "Delegation must be granted by a visible click in the page (X-User-Activation: trusted).")
+    now = time.time()
+    st.delegation = {"expires": now + DELEGATION_TTL, "remaining": body.uses, "uses": body.uses, "granted_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now))}
+    out: dict = {"state": st.state}
+    if st.state == "needs_confirmation" and _confirm_under_delegation(st):
+        out.update({"state": st.state, "confirmed_revision": st.confirmed_revision, "confirmation": {"kind": "delegated"}})
+    out.update({"delegation": delegation_view(st), "next_action": next_action(st)})
+    return out
+
+
+@app.delete("/api/studies/{sid}/delegation")
+def revoke_delegation(sid: str, request: Request, response: Response):
+    """Revoking needs no click: taking permission away is always safe."""
+    st = load_study(sid, request, response)
+    st.delegation = None
+    return {"state": st.state, "delegation": None, "next_action": next_action(st)}
 
 
 @app.post("/api/studies/{sid}/analysis")

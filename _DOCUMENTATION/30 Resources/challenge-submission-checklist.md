@@ -16,6 +16,12 @@ status: active-reference
 
 - [x] ChatGPT desktop run also hit the five-per-ten-minutes limit while surveying storey 30; surveys now have their own budget of thirty per window with a countdown in the refusal (3 Sep ~21:30 SGT).
 
+## Extended close, 4 September 2026
+
+- [ ] Adib reviews the v2.1 branch and pushes it; Render rebuilds; the nine-tool Playwright run passes against https://apartments.senibina.com.sg.
+- [ ] Devpost "About the project" refreshed from `10 Projects/2026-webmcp-devpost-writeup.md` (delegation paragraph, isometric and section sentence, dictation lesson, testing instructions).
+- [ ] Film with the coda uploaded to YouTube (a new upload gets a new id) and the Devpost video link replaced; anonymous playback checked. Master: `video/apartment-intelligence-demo/renders/apartment-intelligence-demo-v2-coda.mp4`.
+
 ## Proven local receipts
 
 - [x] Chrome 152 with WebMCP enabled exposed all eight registered tools (v2, Playwright, 3 Sep 2026); nine after `survey_unit` was added the same evening.

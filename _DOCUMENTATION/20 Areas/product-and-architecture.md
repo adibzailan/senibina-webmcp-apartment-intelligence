@@ -37,8 +37,8 @@ Guaranteed input:
 
 | Actor | Owns | Does not own |
 | --- | --- | --- |
-| Resident | Apartment choice, target facade, unit, windows, corrections, and visible confirmation | Public-data research or repetitive analysis setup |
-| Agent | Research coordination, candidate facts, tool use, analysis sequencing, explanation, and export | Spatial certainty, professional judgement, or confirmation |
+| Resident | Apartment choice, target facade, unit, windows, corrections, and visible confirmation, or a visible one-click delegation letting their agent confirm the next few placements (ten minutes, five uses, revocable) | Public-data research or repetitive analysis setup |
+| Agent | Research coordination, candidate facts, tool use, analysis sequencing, explanation, and export; confirming placements only under a delegation the resident clicked to grant | Spatial certainty, professional judgement, confirmation, or granting itself a delegation |
 | Deterministic engines | Geometry construction, solar position, ray intersection, aggregation, graphics, and files | Meaning, property advice, or authority |
 
 ## Five-screen journey
@@ -52,10 +52,17 @@ Guaranteed input:
    or Mirrored, and which assumed openings apply. Room names appear above the
    rooms in the scene.
 3. **Confirm:** read the confirmation sentence and click; the click is exchanged
-   for a ten-second single-use server challenge.
+   for a ten-second single-use server challenge. Or click "Let my agent confirm
+   the next 3 placements": a delegation bound to the study and session, ten
+   minutes, at most five uses, revocable from the rail, under which staged
+   placements are confirmed without another click and labelled
+   `resident_delegated`.
 4. **Analyse:** choose Fine 0.1 m, Medium 0.25 m or Coarse 0.5 m, run
    Ladybug + Radiance, and inspect sunpath, shadow, solar access and radiation
-   in the same scene, with a Massing toggle and a three-dimensional compass.
+   in the same scene, with a Massing toggle, a Section toggle (the apartment's
+   walls sliced 1.2 m above the floor so the floor colours read from any
+   angle), an Isometric camera (steep, from the south-west) and a
+   three-dimensional compass. A fresh result opens isometric with the section on.
 5. **Keep the evidence:** pick a PDF report, GLB, OBJ, 3DM or the full ZIP,
    then Export. The ZIP also carries `cards.svg` and `evidence.json`; agents
    can request any format, PNG included, through `export_study`.
@@ -69,7 +76,8 @@ Guaranteed input:
 | Reconstructed | Traced from a published drawing with a stated tolerance | 4R Type A walls and columns (±0.25 m) |
 | Assumed | Not on any source; a labelled default the resident can change | Window sill/head, balcony, side windows, storey heights |
 | Computed | Produced deterministically by the engine | Sky matrix, intersection matrix, radiation per sensor |
-| Human-confirmed | Explicitly checked by the resident | Wing, stack, layout, mirroring, openings |
+| Human-confirmed | Explicitly checked by the resident with a click | Wing, stack, layout, mirroring, openings |
+| Human-delegated | Confirmed by the resident's agent under a delegation the resident clicked to grant; labelled `resident_delegated` in the result and digest | The same placement facts, staged by the agent |
 | Missing | Not established and not safe to infer | Verified Block 87 storey-30 plan and stack |
 
 ## System
@@ -99,15 +107,22 @@ external binary bundled in the Docker image.
 | --- | --- | --- |
 | `list_supported_homes` | Addresses and storey ranges this build covers | Read-only |
 | `create_apartment_study` | Open a study for an address and storey | Creates a study; nothing is confirmed |
-| `propose_unit_placement` | Stage wing, stack position, layout, mirroring | Staging only |
+| `propose_unit_placement` | Stage wing, stack position, layout, mirroring | Staging only; under a live delegation the reply is already confirmed with `confirmation.kind = delegated` |
 | `get_study_state` | Concise state and provenance summary | Read-only |
-| `run_solar_analysis` | Run the deterministic analysis; `grid_spacing_m` 0.1, 0.25 or 0.5 | Refused unless the current placement was confirmed by a click |
-| `show_analysis` | Switch study, date, hour, camera (precinct, tower, home, plan, north), massing and map in the visible page | Presentation only; every visible control except free orbit, pan and zoom has a tool equivalent |
+| `run_solar_analysis` | Run the deterministic analysis; `grid_spacing_m` 0.1, 0.25 or 0.5 | Refused unless the current placement is confirmed, by click or under a clicked delegation |
+| `show_analysis` | Switch study, date, hour, camera (precinct, tower, home, isometric, plan, north), massing, map and section cut in the visible page | Presentation only; every visible control except free orbit, pan and zoom has a tool equivalent |
 | `explain_evidence` | Return the provenance record for an item | Read-only, numbers unaltered |
 | `export_study` | Trigger downloads from the visible page: glb, obj, 3dm, evidence.json, cards.svg, png, pdf, zip | Adds nothing to the evidence |
 | `survey_unit` | Analyse a staged placement for an address, storey, facade, stack, layout without a click | Survey mode: every number labelled `survey_unconfirmed`; no study, no report; listed in the rail as unconfirmed |
 
-There is no confirmation tool. A `confirmed` argument is rejected with 422.
+There is no confirmation tool. A `confirmed` or `delegate` argument is rejected
+with 422. A delegation exists, but only the resident can grant it, by clicking
+"Let my agent confirm" (`POST /api/studies/{id}/delegation` with
+`X-User-Activation: trusted`); it is bound to the study and session, lasts ten
+minutes, allows at most five confirmations, and `DELETE` on the same path
+revokes it without a click. The analysis budget is unchanged. Every result
+confirmed this way says `resident_delegated` in its provenance and its digest,
+so a delegated study can never pass as a clicked one.
 Two modes share one rule: a **study** is confirmed by a person and is the only
 source of the report; a **survey** is agent exploration, labelled unconfirmed on
 every number, so several units can be compared before one is confirmed.

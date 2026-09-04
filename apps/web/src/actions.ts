@@ -1,5 +1,7 @@
 /** Actions used by BOTH the visible controls and the WebMCP tools. Confirmation is NOT here:
- *  it lives in confirmFromClick() and requires a real click (user activation) in the page. */
+ *  it lives in confirmFromClick() and requires a real click (user activation) in the page. So does the
+ *  delegation grant (delegateFromClick): the resident clicks once to let their agent confirm the next few
+ *  placements for ten minutes; afterwards proposePlacement() comes back already confirmed, labelled delegated. */
 import { Api, ApiError } from "./api";
 import { Action, Placement, State } from "./state";
 
@@ -39,7 +41,12 @@ export async function proposePlacement(ctx: Ctx, patch: Partial<Placement>) {
   return guard(ctx, "Staging placement", async () => {
     const r = await ctx.api.putPlacement(s.studyId!, placement);
     ctx.dispatch({ type: "placement_staged", revision: r.placement_revision, studyState: r.state });
-    return { state: r.state, placement_revision: r.placement_revision, placement, next_action: "Confirm with the visible button; a tool cannot confirm." };
+    if (r.confirmed_revision === r.placement_revision) {
+      ctx.dispatch({ type: "confirmed", revision: r.confirmed_revision, studyState: r.state, by: "delegated" });
+      ctx.dispatch({ type: "delegation_set", delegation: delegationOf(r.delegation) });
+      return { state: r.state, placement_revision: r.placement_revision, placement, confirmation: { kind: "delegated" }, delegation: r.delegation, next_action: "Confirmed under the resident's delegation; run the analysis. Results will be labelled resident_delegated." };
+    }
+    return { state: r.state, placement_revision: r.placement_revision, placement, next_action: "Confirm with the visible button; a tool cannot confirm. The resident may instead click 'Let my agent confirm' to delegate the next few confirmations." };
   });
 }
 
@@ -52,6 +59,32 @@ export async function surveyUnit(ctx: Ctx, input: { address: string; storey: num
   });
 }
 
+function delegationOf(d: any): State["delegation"] {
+  return d ? { grantedAt: d.granted_at, uses: d.uses, remaining: d.uses_remaining, expiresAt: Date.now() + d.expires_in_seconds * 1000 } : null;
+}
+
+/** Only called from the click handler of the visible 'Let my agent confirm' button. Grants a ten-minute,
+ *  few-use permission for placements in this study to be confirmed without another click. */
+export async function delegateFromClick(ctx: Ctx, activation: boolean, uses = 3) {
+  const s = ctx.getState();
+  if (!s.studyId) throw new Error("No study.");
+  return guard(ctx, "Granting your agent permission to confirm", async () => {
+    const r = await ctx.api.delegate(s.studyId!, uses, activation);
+    ctx.dispatch({ type: "delegation_set", delegation: delegationOf(r.delegation) });
+    if (r.confirmed_revision !== undefined) ctx.dispatch({ type: "confirmed", revision: r.confirmed_revision, studyState: r.state, by: "delegated" });
+    return r;
+  });
+}
+
+export async function revokeDelegation(ctx: Ctx) {
+  const s = ctx.getState();
+  if (!s.studyId) return;
+  return guard(ctx, "Revoking", async () => {
+    await ctx.api.revokeDelegation(s.studyId!);
+    ctx.dispatch({ type: "delegation_set", delegation: null });
+  });
+}
+
 /** Only called from the click handler of the visible confirm button. */
 export async function confirmFromClick(ctx: Ctx, activation: boolean) {
   const s = ctx.getState();
@@ -59,7 +92,7 @@ export async function confirmFromClick(ctx: Ctx, activation: boolean) {
   return guard(ctx, "Confirming", async () => {
     const ch = await ctx.api.challenge(s.studyId!, s.placementRevision, activation);
     const r = await ctx.api.confirm(s.studyId!, s.placementRevision, ch.challenge);
-    ctx.dispatch({ type: "confirmed", revision: r.confirmed_revision, studyState: r.state });
+    ctx.dispatch({ type: "confirmed", revision: r.confirmed_revision, studyState: r.state, by: "click" });
     return r;
   });
 }
@@ -68,7 +101,7 @@ export async function runAnalysis(ctx: Ctx, spacing: 0.1 | 0.25 | 0.5 = 0.25) {
   const s = ctx.getState();
   if (!s.studyId) throw new Error("No study.");
   if (s.confirmedRevision === null || s.confirmedRevision !== s.placementRevision) {
-    const msg = s.confirmedRevision === null ? "CONFIRMATION_REQUIRED: confirm the placement with the visible button first." : "STALE_CONFIRMATION: the placement changed after confirmation; confirm again.";
+    const msg = s.confirmedRevision === null ? "CONFIRMATION_REQUIRED: confirm the placement with the visible button first, or click 'Let my agent confirm' in the page to delegate the next few confirmations to the agent." : "STALE_CONFIRMATION: the placement changed after confirmation; confirm again.";
     ctx.dispatch({ type: "message", message: { kind: "error", text: msg } });
     return { refused: true, reason: msg };
   }

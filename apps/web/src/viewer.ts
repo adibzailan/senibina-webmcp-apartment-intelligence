@@ -33,6 +33,8 @@ export class Viewer {
   private ro: ResizeObserver;
   basemap: THREE.Mesh | null = null;
   massing = true;
+  section = false;
+  private sectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0); // keeps z <= constant
   private labels: THREE.Group | null = null;
   onFrame: ((azimuthDeg: number) => void) | null = null;
   private gizmo = new THREE.Scene();
@@ -43,6 +45,7 @@ export class Viewer {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true, logarithmicDepthBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setClearColor(0xfbfaf6, 1);
+    this.renderer.localClippingEnabled = true;
     el.appendChild(this.renderer.domElement);
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.5, 5000);
     this.camera.up.set(0, 0, 1);
@@ -171,8 +174,10 @@ export class Viewer {
       const alpha = OPACITY[token];
       o.material = new THREE.MeshLambertMaterial({ color: COLOURS[token], transparent: alpha < 1, opacity: alpha, depthWrite: alpha >= 1, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: token === "home" ? 0 : 1, polygonOffsetUnits: token === "home" ? 0 : 1 });
       o.renderOrder = alpha < 1 ? 1 : 2; o.userData.token = token;
+      if (token === "home" || token === "glass") { o.material.clippingPlanes = this.section ? [this.sectionPlane] : []; o.material.clipShadows = true; }
       const edges = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 30), new THREE.LineBasicMaterial({ color: token === "home" ? 0x18211d : 0x5f665f, transparent: true, opacity: token === "context" ? 0.18 : token === "tower" ? 0.4 : 0.9 }));
       edges.renderOrder = 3; o.add(edges);
+      if (token === "home" || token === "glass") (edges.material as any).clippingPlanes = this.section ? [this.sectionPlane] : [];
       const box = new THREE.Box3().setFromObject(o);
       this.precinct.union(box);
       if (token === "tower") this.tower.union(box);
@@ -180,6 +185,23 @@ export class Viewer {
     });
     if (!this.massing) this.setMassingVisible(false);
     this.scene.add(this.model);
+    this.setSectionCut(this.section);
+  }
+
+  /** Section cut: slice the apartment's walls, columns and glass 1.2 m above its floor, the way a plan is drawn,
+   *  so the floor colours read from any angle. Tower and context are untouched. */
+  setSectionCut(v: boolean, aboveFloorM = 1.2) {
+    this.section = v;
+    if (this.home.isEmpty()) return;
+    const floorZ = this.home.min.z + 0.2; // the recipe's slab sits 0.2 m below the finished floor
+    this.sectionPlane.constant = floorZ + aboveFloorM;
+    this.model?.traverse((o: any) => {
+      const t = o.userData?.token;
+      if (!o.isMesh || (t !== "home" && t !== "glass")) return;
+      o.material.clippingPlanes = v ? [this.sectionPlane] : [];
+      o.material.needsUpdate = true;
+      o.children.forEach((c: any) => { if (c.isLineSegments) { c.material.clippingPlanes = v ? [this.sectionPlane] : []; c.material.needsUpdate = true; } });
+    });
   }
 
   setHeat(result: any | null, mode: "radiation" | "solar_access" | "shadow", date: string, hour: number) {
@@ -255,10 +277,11 @@ export class Viewer {
     this.slots = g; this.scene.add(g);
   }
 
-  preset(name: "precinct" | "tower" | "home" | "plan" | "north" | "reset", focus: "home" | "tower" = "home") {
+  preset(name: "precinct" | "tower" | "home" | "plan" | "north" | "isometric" | "reset", focus: "home" | "tower" = "home") {
     const pick = (...boxes: THREE.Box3[]) => boxes.find((b) => !b.isEmpty());
     const homeFirst = focus === "home" ? [this.home, this.tower, this.precinct] : [this.tower, this.precinct];
     const box = name === "precinct" ? pick(this.precinct) : name === "tower" || name === "north" ? pick(this.tower, this.precinct) : pick(...homeFirst);
+    if (name === "isometric" && box === this.home && !this.home.isEmpty()) { this.isometric(); return; }
     if (!box) return;
     const c = box.getCenter(new THREE.Vector3()); const size = box.getSize(new THREE.Vector3());
     const radius = size.length() / 2;
@@ -272,6 +295,18 @@ export class Viewer {
     } else {
       this.camera.position.set(c.x - fit * 0.55, c.y + fit * 0.55, c.z + fit * 0.4); // from the north-west
     }
+    this.controls.target.copy(c); this.camera.near = 0.5; this.camera.far = Math.max(2000, fit * 10); this.camera.updateProjectionMatrix(); this.controls.update();
+  }
+
+  /** The apartment from the south-west, 45 deg in plan and a steep 50 deg up: a plan made three-dimensional, so with
+   *  the section cut every room's hot spots read at once. Framed tight so the heat fills the canvas; free orbit stays. */
+  private isometric() {
+    const box = this.home; const c = box.getCenter(new THREE.Vector3()); const size = box.getSize(new THREE.Vector3());
+    const radius = Math.hypot(size.x, size.y) / 2 * 0.92; // frame the plan extent, not the storey height
+    this.camera.fov = 22;
+    const fit = radius / Math.sin((this.camera.fov * Math.PI) / 360) * 1.02;
+    const el = (50 * Math.PI) / 180, az = -Math.PI * 0.75; // 50 deg elevation, from the south-west
+    this.camera.position.set(c.x + fit * Math.cos(el) * Math.cos(az), c.y + fit * Math.cos(el) * Math.sin(az), c.z + fit * Math.sin(el));
     this.controls.target.copy(c); this.camera.near = 0.5; this.camera.far = Math.max(2000, fit * 10); this.camera.updateProjectionMatrix(); this.controls.update();
   }
 
@@ -326,12 +361,13 @@ export class Viewer {
 
   /** Fixed report views rendered offscreen: an apartment isometric with massing off, and the tower in its precinct. The user's camera is restored. */
   captureReportViews(focus: "home" | "tower" = "home"): { apartment: string; tower: string } {
-    const pos = this.camera.position.clone(), tgt = this.controls.target.clone(), fov = this.camera.fov, massing = this.massing;
+    const pos = this.camera.position.clone(), tgt = this.controls.target.clone(), fov = this.camera.fov, massing = this.massing, section = this.section;
     const basemapVisible = this.basemap ? this.basemap.visible : true;
-    this.setMassingVisible(false);
+    this.setMassingVisible(false); this.setSectionCut(true);
     if (this.basemap) this.basemap.visible = false;
-    this.preset("home", focus);
+    this.preset("isometric", focus);
     const apartment = this.snapshot();
+    this.setSectionCut(section);
     this.setMassingVisible(true);
     if (this.basemap) this.basemap.visible = basemapVisible;
     this.preset("tower", focus);

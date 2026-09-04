@@ -14,7 +14,7 @@ Will this apartment get the sun a buyer expects? An architectural practice answe
 
 ## What it does
 
-The resident picks a real block and storey (SkyVille @ Dawson, Singapore, is covered), chooses the wing and layout they recognise on a 3D model of the tower, and confirms it with one click. The engine, Ladybug and Radiance, the same daylight tools an architectural practice runs inside Rhino and Grasshopper, its 3D modelling software, then computes sun path, shadow at sixteen instants, direct-sun hours on four key dates and annual radiation on a 0.1 to 0.5 m floor grid, room by room, and shows it on the apartment in 3D. The resident can export a report with the cover, the plans, a north arrow, room labels and the result digest on every page, or the model as GLB, OBJ or 3DM.
+The resident picks a real block and storey (SkyVille @ Dawson, Singapore, is covered), chooses the wing and layout they recognise on a 3D model of the tower, and confirms it with one click. The engine, Ladybug and Radiance, the same daylight tools an architectural practice runs inside Rhino and Grasshopper, its 3D modelling software, then computes sun path, shadow at sixteen instants, direct-sun hours on four key dates and annual radiation on a 0.1 to 0.5 m floor grid, room by room, and shows it on the apartment in 3D. A result opens as a steep isometric with the apartment's walls sliced 1.2 m above the floor, the way an architect draws a plan, so every room's hot spots read at once; both are ordinary buttons and both are driven by `show_analysis`. The resident can export a report with the cover, the plans, a north arrow, room labels and the result digest on every page, or the model as GLB, OBJ or 3DM.
 
 ## How WebMCP fits
 
@@ -27,6 +27,8 @@ Two modes, one rule.
 **Survey**: `survey_unit` lets an agent analyse any placement without a click and compare units in a row, with every number labelled `survey_unconfirmed`. Agents explore, people vouch.
 
 There is no confirmation tool. A `confirmed` argument is rejected. The click is exchanged for a ten-second single-use server challenge. This is the human-agent boundary made concrete: the agent does everything except the one thing only a person can vouch for.
+
+**Delegation**, added on the extended final day. Once the resident understands what a placement is, clicking confirm for each one the agent stages becomes the bottleneck. So there is a second button: "Let my agent confirm the next 3 placements". One click grants a permission bound to this study and this browser session, ten minutes long, five uses at most, revocable from the rail. Under it the agent's `propose_unit_placement` comes back already confirmed, and the result carries `resident_delegated` in its provenance and its digest, never `resident_confirmed`. The agent cannot grant this to itself; `delegate` is rejected like `confirmed`. It can only ask the person. The person stays in the loop as the one who opens the gate and can close it, not as a button pressed a dozen times, and the rate limits that protect the server are unchanged.
 
 ## How we built it
 
@@ -54,6 +56,7 @@ Backend: Python runs Ladybug and Radiance headless in one Docker container on Re
 - Test against the deployed URL. Two bugs lived only there.
 - The hard part was never the physics. It was taking a tool that lives inside a desktop CAD licence and making it a service. Once it was a service, both the consumer page and a practice could call it.
 - The same engine that answers one resident can answer a practice. That is the door this challenge opened for us.
+- How it was made is itself a lesson. For the two weeks before the deadline I could not type much, so this project was dictated: I spoke the briefs into Claude Code and Codex, the agents wrote the code, and I reviewed the outputs, every screen, every number, every export. I read less code and judged more results. I cannot vouch for every line the way I could for a hand-written codebase, and I say so; I can vouch for what it does. Trusting the agents to run the work while the person keeps the decisions is exactly what the product asks of its own users, and it is a different way of working that I would not have found without the constraint.
 
 ## What's next
 
@@ -70,4 +73,4 @@ Backend: Python runs Ladybug and Radiance headless in one Docker container on Re
 
 ## Testing instructions (private field)
 
-Open https://apartments.senibina.com.sg in the ChatGPT desktop app's built-in browser (GPT-5.6 Sol or Terra) or Chrome 152 with `chrome://flags/#enable-webmcp-testing`. No login. Try: "List the tools. Survey NE wing tip Type A storey 12, SE near the core Type B storey 30 and SW wing tip Type C storey 44 at 0.5 m and compare the averages. Create a study for the one you would confirm, stage it, and try run_solar_analysis." The refusal is expected; click the green confirm button, then ask it to run again and export the PDF. Limits: five confirmed analyses and thirty surveys per ten minutes per browser session.
+Open https://apartments.senibina.com.sg in the ChatGPT desktop app's built-in browser (GPT-5.6 Sol or Terra) or Chrome 152 with `chrome://flags/#enable-webmcp-testing`. No login. Try: "List the tools. Survey NE wing tip Type A storey 12, SE near the core Type B storey 30 and SW wing tip Type C storey 44 at 0.5 m and compare the averages. Create a study for the one you would confirm, stage it, and try run_solar_analysis." The refusal is expected; click the green confirm button, then ask it to run again and export the PDF. To see delegation, instead click "Let my agent confirm the next 3 placements" under the confirm button, then ask the agent to stage a different wing and run: no second click, and the method table says "confirmed by your agent under your delegation". Ask it to "show the result isometric with the section on" to see the sliced-wall view. Limits: five confirmed analyses and thirty surveys per ten minutes per browser session.

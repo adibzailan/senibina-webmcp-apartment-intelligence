@@ -23,7 +23,10 @@ def evidence(value, state, source_ref, method, confidence, limitation=None):
     return {"value": value, "state": state, "source_ref": source_ref, "method": method, "confidence": confidence, "limitation": limitation}
 
 
-def run_analysis(precinct: dict, plate: PlateRecipe, unit: UnitRecipe, placement: Placement, spacing_m: float = 0.25, epw_path: str | None = None, include_direct_sun: bool = True) -> dict:
+def run_analysis(precinct: dict, plate: PlateRecipe, unit: UnitRecipe, placement: Placement, spacing_m: float = 0.25, epw_path: str | None = None, include_direct_sun: bool = True, confirmation: str = "resident_confirmed") -> dict:
+    """`confirmation` is how the placement was vouched for: "resident_confirmed" (a visible click) or
+    "resident_delegated" (the resident clicked once to let their agent confirm; the agent then staged this placement).
+    It is part of the record and therefore of the digest."""
     t0 = time.time()
     scene = build_scene(precinct, plate, unit, placement)
     amesh = scene.analytical_mesh()
@@ -65,11 +68,12 @@ def run_analysis(precinct: dict, plate: PlateRecipe, unit: UnitRecipe, placement
         "radiation": {"sensor_kwh_m2": rad["total_kwh_m2"], "components": {"direct": rad["direct_kwh_m2"], "diffuse": rad["diffuse_kwh_m2"], "ground": rad["ground_kwh_m2"]}, "per_room": per_room, "min": round(float(total.min()), 3), "avg": round(float(total.mean()), 3), "max": round(float(total.max()), 3), "unit": "kWh/m2 per year", "limitations": limitations},
         "provenance": [
             evidence(wr["annual_ghi_kwh_m2"], "sourced", wr["source"], "Yearly sunlight on open ground at Changi, from the typical-year weather file", "high", "A typical year assembled from 2011-2025 records, not a forecast"),
-            evidence(placement.storey, "resident_confirmed", "resident selection", "Storey you chose in the page", "high", None),
+            evidence(placement.storey, confirmation, "resident selection" if confirmation == "resident_confirmed" else "resident delegation to agent", "Storey you chose in the page" if confirmation == "resident_confirmed" else "Storey staged by your agent under the delegation you granted in the page", "high", None if confirmation == "resident_confirmed" else "Confirmed by your agent, not by your own click; revoke the delegation in the page if that was not intended"),
             evidence(placement.facade, "assumed", plate.wings[0].source.document, "Wing you chose; which end of the wing is the 4-room flat is an assumption", "medium", "HDB has not published which end of each wing is the 4-room flat"),
             evidence(round(float(total.mean()), 3), "computed", METHOD_VERSION, "Average yearly sunlight across the sensor points, computed with Ladybug and Radiance", "medium", limitations[0]),
         ],
         "analytical_mesh": {"faces": int(len(amesh.faces)), "watertight": bool(amesh.is_watertight)},
+        "confirmation": {"kind": confirmation},
     }
     result["digest"] = result_digest(result)
     result["_timing_s"] = round(time.time() - t0, 3)  # stripped by the API before storage

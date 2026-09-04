@@ -22,6 +22,8 @@ export interface Api {
   putPlacement(id: string, placement: Json): Promise<Json>;
   challenge(id: string, revision: number, activation: boolean): Promise<Json>;
   confirm(id: string, revision: number, challenge: string): Promise<Json>;
+  delegate(id: string, uses: number, activation: boolean): Promise<Json>;
+  revokeDelegation(id: string): Promise<Json>;
   analyse(id: string, spacing: number): Promise<Json>;
   result(id: string): Promise<Json>;
 }
@@ -34,6 +36,8 @@ export const liveApi: Api = {
   putPlacement: (id, placement) => call("PUT", `/api/studies/${id}/placement`, placement),
   challenge: (id, revision, activation) => call("POST", `/api/studies/${id}/confirmation-challenge`, { placement_revision: revision }, activation ? { "X-User-Activation": "trusted" } : {}),
   confirm: (id, revision, challenge) => call("POST", `/api/studies/${id}/confirmation`, { placement_revision: revision, challenge }),
+  delegate: (id, uses, activation) => call("POST", `/api/studies/${id}/delegation`, { uses }, activation ? { "X-User-Activation": "trusted" } : {}),
+  revokeDelegation: (id) => call("DELETE", `/api/studies/${id}/delegation`),
   analyse: (id, spacing) => call("POST", `/api/studies/${id}/analysis`, { grid_spacing_m: spacing }),
   result: (id) => call("GET", `/api/studies/${id}/result`),
 };

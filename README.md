@@ -16,7 +16,7 @@ inside a reconstructed Block 87 plate, and Ladybug + Radiance produce
 deterministic sunpath, shadow, direct-sun and radiation evidence on a 0.1,
 0.25 or 0.5 m floor grid, with per-room readings.
 
-Status (3 September 2026): Version 0, built for the OpenAI WebMCP Challenge.
+Status (4 September 2026): Version 0, built for the OpenAI WebMCP Challenge.
 The v2 clean-room rebuild is on `main` and live at
 <https://apartment-intelligence.onrender.com> (Render, Singapore, built from
 `deploy/render.yaml` on every push). The earlier v1 Windows VM host is shut
@@ -34,10 +34,18 @@ down. See
    near the core), the published layout (Type A, B or C), a mirrored-plan
    toggle, and the assumed windows, balcony and railings in a folded list.
 3. **Confirm.** A green button and a plain sentence. A tool cannot do this.
+   Beneath it, a second button lets the resident delegate: for ten minutes, up
+   to five placements staged in this study (by them or by their agent) are
+   confirmed without another click. Every such result is labelled confirmed
+   under your delegation rather than confirmed by you, the rail shows the uses
+   and minutes left, and a Revoke button takes the permission back.
 4. **Analyse.** Choose a measuring grid (Fine 0.1 m, Medium 0.25 m, Coarse
    0.5 m) and run. Sunpath, shadow, solar access and radiation share one 3D
    scene with room names floating above each room, a three-dimensional compass,
-   an OpenStreetMap ground, and a Massing toggle that fades the tower away.
+   an OpenStreetMap ground, and a Massing toggle that fades the tower away. A
+   result opens in the Isometric camera (a steep view from the south-west) with
+   the Section toggle on, which slices the apartment's walls 1.2 m above the
+   floor so the floor colours read from any angle; both are ordinary buttons.
 5. **Keep the evidence.** Pick a PDF report, GLB, OBJ, 3DM, or the full ZIP,
    then one Export button. The PDF carries a paper cover, a fixed apartment
    isometric and tower view, one drawing card per block with north arrow and
@@ -80,6 +88,20 @@ the first case study, not a claim of official status or government endorsement.
   account, or LLM.
 - Results distinguish sourced, inferred, reconstructed, assumed, computed and
   human-confirmed information, and every export carries the same record.
+
+## How this was made
+
+Most of this repository was dictated, not typed. For the two weeks before the
+challenge closed the founder could not type much, so the briefs were spoken
+(Wispr Flow into Claude Code and Codex), the coding agents wrote the code, and
+the founder reviewed the outputs: every screen, every number, every export, and
+every claim in these documents. That is a different way of working. The person
+reads less code and judges more results; the agents run the work; the person
+keeps the decisions, the product boundary and the evidence rules. We cannot
+vouch for every line the way a hand-written codebase would let us, and we say
+so; we can vouch for what the application does, because that is what was
+reviewed. The same division of labour is what the product asks of its own
+users: agents explore, people vouch.
 
 ## Repository map
 
@@ -156,8 +178,20 @@ Nine tools register on `document.modelContext` (with the `navigator.modelContext
 fallback for Chrome before 152): `list_supported_homes`, `create_apartment_study`,
 `propose_unit_placement`, `get_study_state`, `run_solar_analysis`,
 `show_analysis`, `explain_evidence`, `export_study`, `survey_unit`. There is no
-confirmation tool; a `confirmed` argument is rejected, and confirmation is a
-visible click exchanged for a ten-second single-use server challenge.
+confirmation tool; a `confirmed` or `delegate` argument is rejected, and
+confirmation is a visible click exchanged for a ten-second single-use server
+challenge.
+
+The resident may also delegate. One visible click on "Let my agent confirm"
+grants a standing permission bound to the study and the session: ten minutes,
+up to five placements, revocable with a click. Under it, `propose_unit_placement`
+comes back already confirmed with `confirmation.kind = delegated`, and the
+result, its provenance table and its digest carry `resident_delegated` instead
+of `resident_confirmed`. The grant itself needs the click (`X-User-Activation:
+trusted`), so an agent cannot give itself the permission; it can only ask the
+resident for it. The five-analyses-per-ten-minutes budget is unchanged.
+`show_analysis` drives camera (`precinct`, `tower`, `home`, `isometric`, `plan`,
+`north`), massing, map and the `section` cut.
 
 Two modes, one rule. **Study**: the resident confirms the unit they will live in
 with a click; results are labelled human-confirmed and only this path produces

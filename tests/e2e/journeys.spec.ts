@@ -29,7 +29,7 @@ test("human journey: locate, place, confirm by click, analyse, export", async ({
   await page.locator("summary", { hasText: "Method, sources" }).click();
   await expect(page.getByText(/result digest [0-9a-f]{16}/)).toBeVisible();
   for (const preset of ["Sunpath", "Shadow", "Solar access", "Radiation"]) await page.getByRole("button", { name: preset, exact: true }).click();
-  for (const cam of ["Precinct", "Tower", "Apartment", "From above", "Face north", "Reset", "Map"]) await page.getByRole("button", { name: cam, exact: true }).click();
+  for (const cam of ["Precinct", "Tower", "Apartment", "Isometric", "From above", "Face north", "Reset", "Map", "Section", "Section"]) await page.getByRole("button", { name: cam, exact: true }).click();
   // orbit, pan, zoom on the live canvas must not throw
   const canvas = page.locator(".canvas canvas");
   const box = (await canvas.boundingBox())!;
@@ -87,4 +87,34 @@ test("WebMCP journey: nine tools, read-only hints, no confirm tool, refusal befo
   await call("show_analysis", { analysis: "shadow", date: "12-21", hour: 9, camera: "home" });
   await expect(page.getByText(/12-21 9:00/)).toBeVisible();
   await page.screenshot({ path: `test-results/webmcp-${test.info().project.name}.png`, fullPage: true });
+});
+
+test("delegated confirmation: one click lets the agent confirm the next placements, labelled and revocable", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForFunction(() => (window as any).__aiTools?.length === 9);
+  const call = (name: string, input: any) => page.evaluate(([n, i]) => (window as any).__aiTools.find((t: any) => t.name === n).execute(i), [name, input] as any);
+  const created: any = await call("create_apartment_study", { address: "87 Dawson Road", storey: 30 });
+  await call("propose_unit_placement", { study_id: created.study_id, facade: "NE" });
+  await expect(call("propose_unit_placement", { study_id: created.study_id, facade: "NE", delegate: true })).rejects.toThrow(/422/);
+  const refused: any = await call("run_solar_analysis", { study_id: created.study_id });
+  expect(refused.reason).toMatch(/Let my agent confirm/);
+  await page.getByTestId("delegate-button").click(); // the resident's one click
+  await expect(page.getByTestId("delegation-status")).toContainText(/2 more placements/);
+  await expect(page.getByRole("heading", { name: /Sun, shade and radiation/ })).toBeVisible();
+  // the agent re-stages: no click, yet confirmed, and the page says by whom
+  const staged: any = await call("propose_unit_placement", { study_id: created.study_id, facade: "SW", variant: "C" });
+  expect(staged.confirmation.kind).toBe("delegated");
+  await expect(page.getByTestId("delegation-status")).toContainText(/1 more placement\b/);
+  await expect(page.getByText(/by your agent, under your delegation/)).toBeVisible();
+  const ran: any = await call("run_solar_analysis", { study_id: created.study_id, grid_spacing_m: 0.5 });
+  expect(ran.digest).toMatch(/^[0-9a-f]{64}$/);
+  await call("show_analysis", { camera: "isometric", section: true, massing: false });
+  await expect(page.getByRole("button", { name: "Section", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.locator("summary", { hasText: "Method, sources" }).click();
+  await expect(page.getByText("confirmed by your agent under your delegation")).toBeVisible();
+  await page.screenshot({ path: `test-results/delegated-${test.info().project.name}.png`, fullPage: true });
+  await page.getByRole("button", { name: "Revoke", exact: true }).click();
+  await expect(page.getByTestId("delegation-status")).toHaveCount(0);
+  const st: any = await call("get_study_state", { study_id: created.study_id });
+  expect(st.confirmation.kind).toBe("delegated"); expect(st.delegation).toBeNull();
 });

@@ -115,3 +115,41 @@ def test_survey_is_labelled_and_never_confirms(client):
     # a survey leaves no study behind and rejects a confirmed flag like every other tool
     assert client.post("/api/survey", json={"address": "87 Dawson Road", "storey": 12, "facade": "NE", "confirmed": True}).status_code == 422
     assert client.post("/api/survey", json={"address": "1 Nowhere Road", "storey": 12, "facade": "NE"}).status_code == 404
+
+
+def test_delegation_needs_a_click_then_confirms_placements_within_scope(client):
+    """The resident clicks once to let their agent confirm; the grant is bounded, labelled and revocable."""
+    sid = _create(client)
+    rev = _place(client, sid).json()["placement_revision"]
+    # a tool cannot grant itself the delegation
+    assert client.post(f"/api/studies/{sid}/delegation", json={"uses": 2}).json()["error"] == "CONFIRMATION_REQUIRED"
+    assert client.post(f"/api/studies/{sid}/delegation", json={"uses": 2, "confirmed": True}, headers={"X-User-Activation": "trusted"}).status_code == 422
+    assert client.post(f"/api/studies/{sid}/delegation", json={"uses": 99}, headers={"X-User-Activation": "trusted"}).status_code == 422
+    # the click grants it, and the already-staged placement is confirmed under it (one use)
+    g = client.post(f"/api/studies/{sid}/delegation", json={"uses": 2}, headers={"X-User-Activation": "trusted"}).json()
+    assert g["state"] == "ready" and g["confirmed_revision"] == rev and g["confirmation"]["kind"] == "delegated"
+    assert g["delegation"]["uses_remaining"] == 1 and 0 < g["delegation"]["expires_in_seconds"] <= 600
+    # a new placement staged by the agent is confirmed without a click (second use), and the grant is then spent
+    r = _place(client, sid, facade="SE").json()
+    assert r["state"] == "ready" and r["confirmed_revision"] == rev + 1 and r["confirmation"]["kind"] == "delegated" and r["delegation"] is None
+    view = client.get(f"/api/studies/{sid}").json()
+    assert view["confirmation"] == {"kind": "delegated"} and view["delegation"] is None
+    # a third placement needs a click again
+    r3 = _place(client, sid, facade="SW").json()
+    assert r3["state"] == "needs_confirmation" and "confirmed_revision" not in r3
+    assert client.post(f"/api/studies/{sid}/analysis", json={"grid_spacing_m": 0.5}).json()["error"] == "STALE_CONFIRMATION"
+    # revoke works without a click; a fresh grant then confirms and the result is labelled delegated inside the digest
+    assert client.delete(f"/api/studies/{sid}/delegation").json()["delegation"] is None
+    client.post(f"/api/studies/{sid}/delegation", json={"uses": 1}, headers={"X-User-Activation": "trusted"})
+    a = client.post(f"/api/studies/{sid}/analysis", json={"grid_spacing_m": 0.5})
+    assert a.status_code == 200, a.text
+    res = client.get(f"/api/studies/{sid}/result").json()
+    assert res["confirmation"] == {"kind": "resident_delegated"}
+    assert any(p["state"] == "resident_delegated" for p in res["provenance"])
+    # the same placement confirmed by a click carries a different label and therefore a different digest
+    sid2 = _create(client)
+    rev2 = _place(client, sid2, facade="SW").json()["placement_revision"]
+    assert _confirm(client, sid2, rev2).status_code == 200
+    a2 = client.post(f"/api/studies/{sid2}/analysis", json={"grid_spacing_m": 0.5}).json()
+    res2 = client.get(f"/api/studies/{sid2}/result").json()
+    assert res2["confirmation"] == {"kind": "resident_confirmed"} and a2["digest"] != res["digest"]

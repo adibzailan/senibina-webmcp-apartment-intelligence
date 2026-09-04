@@ -1,19 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { Api } from "./api";
-import { createStudy, proposePlacement, runAnalysis, showAnalysis } from "./actions";
+import { createStudy, delegateFromClick, proposePlacement, runAnalysis, showAnalysis } from "./actions";
 import { initialState, reducer, State } from "./state";
 import { toolDefinitions } from "./webmcp";
 
 function fakeApi(): Api {
-  let rev = 0;
+  let rev = 0; let delegated = 0;
   return {
     context: async () => ({}),
     createStudy: async () => ({ study_id: "s1", state: "created" }),
     getStudy: async () => ({}),
-    putPlacement: async () => ({ state: "needs_confirmation", placement_revision: ++rev }),
+    putPlacement: async () => { ++rev; if (delegated > 0) { delegated -= 1; return { state: "ready", placement_revision: rev, confirmed_revision: rev, confirmation: { kind: "delegated" }, delegation: delegated ? { granted_at: "t", uses: 3, uses_remaining: delegated, expires_in_seconds: 500 } : null }; } return { state: "needs_confirmation", placement_revision: rev }; },
     survey: async () => ({ mode: "survey", address: "87 Dawson Road", storey: 12, placement: {}, radiation: { avg: 1, max: 2 }, digest: "x" }),
     challenge: async (_id, _r, activation) => { if (!activation) throw new Error("403"); return { challenge: "c" }; },
     confirm: async (_id, r) => ({ state: "ready", confirmed_revision: r }),
+    delegate: async (_id, uses, activation) => { if (!activation) throw new Error("403"); delegated = uses - 1; return { state: "ready", confirmed_revision: rev, confirmation: { kind: "delegated" }, delegation: { granted_at: "t", uses, uses_remaining: uses - 1, expires_in_seconds: 600 } }; },
+    revokeDelegation: async () => { delegated = 0; return { delegation: null }; },
     analyse: async () => ({ state: "analysed", digest: "abc", timing_s: 1 }),
     result: async () => ({ radiation: { min: 0, avg: 1, max: 2, unit: "kWh/m2", per_room: {} }, digest: "abc" }),
   };
@@ -60,6 +62,24 @@ describe("UI and WebMCP drive the same reducer", () => {
     const h = harness();
     const ro = toolDefinitions(h.ctx, [], async () => ({})).filter((d) => d.annotations?.readOnlyHint).map((d) => d.name).sort();
     expect(ro).toEqual(["explain_evidence", "get_study_state", "list_supported_homes", "show_analysis"]);
+  });
+
+  it("a delegation granted by a click lets the agent's next placement arrive confirmed, labelled delegated", async () => {
+    const h = harness();
+    const tools = Object.fromEntries(toolDefinitions(h.ctx, [], async () => ({})).map((t) => [t.name, t]));
+    await tools.create_apartment_study.execute({ address: "87 Dawson Road", storey: 30 });
+    await tools.propose_unit_placement.execute({ study_id: "s1", facade: "NE" });
+    await expect(tools.propose_unit_placement.execute({ study_id: "s1", facade: "NE", delegate: true })).rejects.toThrow(/422/);
+    await expect(delegateFromClick(h.ctx, false, 2)).rejects.toThrow(/403/); // no click, no grant
+    await delegateFromClick(h.ctx, true, 2);
+    expect(h.get().confirmedBy).toBe("delegated");
+    expect(h.get().delegation?.remaining).toBe(1);
+    const r: any = await tools.propose_unit_placement.execute({ study_id: "s1", facade: "SW" });
+    expect(r.confirmation.kind).toBe("delegated");
+    const st: any = await tools.get_study_state.execute({ study_id: "s1" });
+    expect(st.confirmed).toBe(true); expect(st.confirmation.kind).toBe("delegated"); expect(st.delegation).toBeNull();
+    const again: any = await tools.propose_unit_placement.execute({ study_id: "s1", facade: "SE" }); // grant spent
+    expect(again.confirmation).toBeUndefined(); expect(h.get().screen).toBe("confirm");
   });
 
   it("stale confirmation after re-placement refuses analysis", async () => {

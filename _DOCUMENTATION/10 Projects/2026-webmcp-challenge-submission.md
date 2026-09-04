@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: submitted, judging until 21 September 2026
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Keep https://apartments.senibina.com.sg free to test, unchanged in substance, until judging ends on 21 September 2026 (5:00 pm PT); winners announced around 23 September.
+next_action: Review the v2.1 branch (delegated confirmation, section cut and isometric camera, dictation note, film coda), push it so Render rebuilds, then refresh the Devpost text and video link before the extended close on 4 September 2026.
 ---
 
 # WebMCP Challenge submission
@@ -29,6 +29,20 @@ project description, required visual material, and demo video are submitted and
 the submitted URLs are read back successfully.
 
 ## Current state
+
+- 4 September 2026, morning: Adib reports the challenge close was extended (the
+  Devpost page showed about six hours left that morning; the official notice
+  was not read back here). Branch `v2.1/extended-submission`, local and
+  unpushed: delegated confirmation (one visible click lets the agent confirm up
+  to five placements for ten minutes, results labelled `resident_delegated`
+  inside the digest, revocable), a Section toggle that slices the apartment
+  walls 1.2 m above the floor, an Isometric camera that a fresh result opens
+  in, `show_analysis` gains `isometric` and `section`, a README section and a
+  Devpost lesson on building by dictation, and a 30-second film coda on the
+  same. Verified locally: 22 pytest, 5 vitest, 9 Playwright (three viewports,
+  including a new delegation journey). Coverage question answered: Block 87 has
+  160 three-room and 160 four-room flats; the three 4-room layouts are covered,
+  the 3-room plan and Blocks 86 and 88 (4- and 5-room) are not.
 
 - 3 September 2026: the v2 clean-room rebuild (real apartment walls, Ladybug +
   Radiance, 0.25 m grid, eight WebMCP tools, Docker image) is merged to `main`

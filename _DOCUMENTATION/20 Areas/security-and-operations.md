@@ -139,6 +139,13 @@ been created or that the current VM deployment has been retired.
   header, a replayed challenge, or a challenge for stale geometry. This is an
   application interaction boundary, not cryptographic proof of a physical
   person's identity against a compromised same-origin page.
+- A delegation (the resident letting their agent confirm placements) is granted
+  only by a trusted click, is bound to the study and the session, expires after
+  ten minutes or five uses, and is revocable at any time without a click. It
+  changes the confirmation label to `resident_delegated` inside the digested
+  record; it does not change the analysis budget, the single-worker lock, or
+  the survey budget. Tools cannot request or grant it; `delegate` and
+  `delegation` arguments are rejected like `confirmed`.
 - Exports must carry the same provenance and uncertainty shown in the page.
 
 ## Release gate

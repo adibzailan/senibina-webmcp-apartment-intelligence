@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 MAX_STUDIES = 100
 TTL_SECONDS = 1800
 CHALLENGE_TTL = 10
+DELEGATION_TTL = 600  # a resident's standing permission for their agent to confirm placements lasts ten minutes
+DELEGATION_USES_MAX = 5  # and at most five confirmations; the analysis budget below is unchanged
 ANALYSES_PER_SESSION_PER_10MIN = 5
 SURVEYS_PER_SESSION_PER_10MIN = 30  # surveys are cheaper, coarser and labelled unconfirmed; enough for one full plate of 24 slots
 
@@ -27,6 +29,8 @@ class Study:
     placement_revision: int = 0
     confirmed_revision: int | None = None
     challenge: tuple[str, float, int] | None = None  # (token, expires, revision)
+    confirmation_kind: str | None = None  # "click" (the resident) or "delegated" (their agent under a granted delegation)
+    delegation: dict | None = None  # {"expires": float, "remaining": int, "granted_at": str, "uses": int}, granted by a visible click
     result: dict | None = None
     scene_glb: bytes | None = None
     exports: dict = field(default_factory=dict)
