@@ -1,7 +1,7 @@
 ---
 title: Devpost write-up, Apartment Intelligence
 para: project
-status: ready to paste
+status: ready to paste (4 September 2026, extended close; supersedes the 3 September text)
 ---
 
 # Apartment Intelligence
@@ -38,16 +38,20 @@ Backend: Python runs Ladybug and Radiance headless in one Docker container on Re
 
 ## Challenges
 
-- Getting the practice capability out of Rhino at all. In practice these studies live inside Grasshopper on a licensed desktop, driven by hand. Our first attempt kept that shape: a Windows machine at home, a tunnel to the internet, a custom analysis loop that only imitated the real one. It worked once and taught us it could not be the product. The rebuild threw it away: Ladybug and Radiance run headless in one Docker container on Render, geometry is a coordinate recipe instead of a CAD file, and no Rhino, Grasshopper or Revit is in the runtime. That is what let a consumer page run a practice-grade study in ten seconds.
-- Choosing where it could live. Our web work normally ships on Vercel, and the first plan put the page there with the analysis somewhere else. It cannot work that way: Radiance is a native x86-64 binary that has to sit on disk next to Python, run for several seconds per study, and keep a warm sky matrix between requests. Vercel's static and serverless model has no place for that. Render runs the whole thing as one Docker web service in Singapore, page and engine from one origin, rebuilt from the repo on every push, for about US$25 a month (covered by a Render hackathon coupon). Radiance ships Linux x86-64 only, so the image is amd64 and the analysis has a 15-second budget on one CPU; the fine 0.1 m grid runs in 10.6 s live.
+- Getting the practice capability out of Rhino at all. In practice these studies live inside Grasshopper on a licensed desktop, driven by hand. Our first attempt kept that shape: a Windows machine at home, a tunnel to the internet, a custom analysis loop that only imitated the real one. It worked once and taught us it could not be the product. The rebuild threw it away as we went towards a backend of Ladybug and Radiance running headless in one Docker container on Render, geometry as a coordinate recipe instead of a CAD file, and no Rhino, Grasshopper or Revit in the runtime. That is what lets a consumer page run a practice-grade study in ten seconds.
+- Choosing where it could live. Our web work normally ships on Vercel, and the first plan put the page there with the analysis somewhere else. It cannot work that way we thought it could hahaha. Radiance is a native x86-64 binary that has to sit on disk next to Python, run for several seconds per study, and keep a warm sky matrix between requests. Vercel's static and serverless model has no place for that. Render runs the whole thing as one Docker web service in Singapore, page and engine from one origin, rebuilt from the repo on every push, for about US$25 a month (covered by a Render hackathon coupon, thanks Team Render!). Radiance ships Linux x86-64 only, so the image is amd64 and the analysis has a 15-second budget on one CPU; the fine 0.1 m grid runs in 10.6 s live.
 - Making a confirmation that a tool cannot fake without making the product tedious. The answer was two modes with different labels, not a switch.
 - A race that only showed on the live host: the page re-sent a placement an agent had staged, and on a slower network the re-send landed after the click and made the confirmation stale. Found by running the browser journeys against production, not localhost.
+- Seeing the result at all. The floor heat map sits inside real walls, so from most angles a wall hid the very room you wanted to read. The fix is what an architect does on paper: cut the walls 1.2 m above the floor and look down steeply. Section and Isometric are now the default view of a result, and an agent can ask for them through `show_analysis`.
+- Working with one hand. An accident left my wrist too painful to type with, so this was dictated. More under What we learned; the last forty seconds of the film are about it.
 
 ## Accomplishments
 
 - A real ChatGPT desktop agent discovered all nine tools, surveyed three units, chose one, staged it, was refused, waited for the click, then ran and explained the confirmed study.
 - A practitioner read the report and said it was what a sustainability consultant takes weeks to produce.
 - Every export is byte-stable and digest-bound; the same inputs give the same file.
+- Delegation shipped on the extended final day: one click by the resident, and the agent staged and analysed a new placement with no further click, the result labelled `resident_delegated` inside its digest, and a Revoke button in the rail the whole time. Covered by the API, unit and browser test suites.
+- The whole build was dictated, and the outputs were reviewed rather than the code. It still passes 22 API and geometry tests, 5 reducer tests and 9 browser journeys across three viewports.
 
 ## What we learned
 
@@ -61,7 +65,8 @@ Backend: Python runs Ladybug and Radiance headless in one Docker container on Re
 ## What's next
 
 - Proper base geometry. Today the tower and the apartments are coordinate recipes traced from published plans. The next step is to model the developments properly in Rhino or Revit once, keep provenance on every element, and feed that one model to everything: the 3D view, the analysis mesh, the plan cards and the exports. The engine stays headless; only the source of the geometry changes.
-- More covered developments, starting with the nine already drawn on the grid.
+- The rest of SkyVille @ Dawson first: Block 87 also has a published 3-room plan, and Blocks 86 and 88 add 4- and 5-room plans; then the nine developments already drawn on the grid.
+- Let the agent ask for a delegation in words the resident can accept with one click, with the scope written out in the page before the click.
 - A survey progress indicator ("2 of 24 surveyed") and separate badges for survey and confirmed evidence in chat, both suggested by the ChatGPT agent that tested it.
 - The practice-side version of the same engine.
 
@@ -74,3 +79,16 @@ Backend: Python runs Ladybug and Radiance headless in one Docker container on Re
 ## Testing instructions (private field)
 
 Open https://apartments.senibina.com.sg in the ChatGPT desktop app's built-in browser (GPT-5.6 Sol or Terra) or Chrome 152 with `chrome://flags/#enable-webmcp-testing`. No login. Try: "List the tools. Survey NE wing tip Type A storey 12, SE near the core Type B storey 30 and SW wing tip Type C storey 44 at 0.5 m and compare the averages. Create a study for the one you would confirm, stage it, and try run_solar_analysis." The refusal is expected; click the green confirm button, then ask it to run again and export the PDF. To see delegation, instead click "Let my agent confirm the next 3 placements" under the confirm button, then ask the agent to stage a different wing and run: no second click, and the method table says "confirmed by your agent under your delegation". Ask it to "show the result isometric with the section on" to see the sliced-wall view. Limits: five confirmed analyses and thirty surveys per ten minutes per browser session.
+
+## Gallery captions (paste-ready, in order)
+
+1. Step two: eight outlined 4-room slots on the tower, the chosen one in red. Which end of each wing is 4-room is not published, so both are offered and labelled assumed.
+2. Step four: annual radiation on the floor of the confirmed apartment, room by room, in the Isometric view with the walls cut 1.2 m above the floor so every room reads at once.
+3. The rail after an agent ran `survey_unit` twice. Each row is an unconfirmed survey: numbers an agent may compare, and no report can be made from them.
+4. The room-by-room table under the canvas: points measured, least, average and most, in kWh per square metre a year, with the method and digest beneath.
+5. From the film: a studio wall from architecture school, where this question is first answered with instruments rather than adjectives.
+6. From the film: the desk on the left, the page as the agent drives it on the right. The last forty seconds of the film are about how the whole project was dictated.
+
+## Contribution field (unchanged from 3 September unless you decide otherwise)
+
+Solo entry. I set the product direction, the human-agent boundary, the evidence rules and the design system, drew on my own practice and studio work for the film, and reviewed every screen and every number. The build was done with AI coding agents (Claude Code and Codex) working from my briefs and under my review; the analysis itself is Ladybug and Radiance, with no AI in the runtime.
