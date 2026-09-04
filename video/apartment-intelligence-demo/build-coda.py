@@ -50,8 +50,8 @@ SUBS = ["A last word on how this was made.", "Two weeks before the deadline an a
 CAPS = ["Dictated, not typed.", "", "An accident, a wrist too painful", "to type with, two weeks", "before the close.", "", "Briefs spoken into Codex.", "Codex wrote the code.", "",
         "I reviewed every screen,", "every number, every export,", "and sent back what was wrong.", "", "Letting go of the code.", "Keeping the decisions."]
 NL = alen(NARR); LEAD = 0.6                    # narration starts 0.6 s into the coda
-t_title = 3.2; t_close = 4.5  # whole film must stay under three minutes
-t_body = max(6.0, NL + LEAD + 0.8 - t_title)   # the pictures carry the rest of the narration
+t_title = 2.8; t_close = 3.6  # whole film must stay under three minutes
+t_body = max(6.0, NL + LEAD + 0.4 - t_title)   # the pictures carry the rest of the narration
 def still(out, f, sec, push=1.05):
     n = int(sec * FPS)
     vf = (f"scale={W*2}:{H*2}:force_original_aspect_ratio=increase,crop={W*2}:{H*2},"
