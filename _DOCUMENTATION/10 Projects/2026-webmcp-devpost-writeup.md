@@ -99,7 +99,7 @@ Will this apartment get the sun you expect?
 
 Listings say “bright and airy” or “afternoon sun”. Nobody measures it. Apartment Intelligence runs the sunlight study an architectural practice would run for a whole building, for one apartment, with the resident or their agent at the controls.
 
-Pick a real Singapore HDB block and storey (SkyVille @ Dawson, Block 87, is covered), choose the wing and layout you recognise on a 3D model of the tower, confirm it with one click, and Ladybug + Radiance compute sun path, shadow, direct-sun hours and annual radiation on your floor, room by room. Export a report, or the model as GLB, OBJ or 3DM.
+The resident picks a real Singapore HDB block and storey (SkyVille @ Dawson, Block 87, is covered), chooses the wing and layout they recognise on a 3D model of the tower, and confirms it with one click. Ladybug + Radiance then compute sun path, shadow, direct-sun hours and annual radiation on the apartment floor, room by room. The resident can export a report, or the model as GLB, OBJ or 3DM.
 
 Nine WebMCP tools let an agent in the browser do everything except the one thing only a person can vouch for. There is no confirmation tool. The resident confirms with a click, or clicks once to let the agent confirm the next few placements itself; every result says which.
 
