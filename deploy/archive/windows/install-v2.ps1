@@ -1,5 +1,5 @@
 # Apartment Intelligence v2 on the Windows VM (dev sprint host). Run from an elevated PowerShell:
-#   Set-ExecutionPolicy -Scope Process Bypass; .\deploy\windows\install-v2.ps1
+#   Set-ExecutionPolicy -Scope Process Bypass; .\deploy\archive\windows\install-v2.ps1
 # Installs Python deps, Radiance (pinned), builds the web bundle, and restarts the scheduled task.
 # Requires: CPython 3.13 x86-64 (py -3.13-64), Node 22, and the source at C:\ApartmentIntelligence\app
 # (a git checkout, or a main.zip extract placed by bootstrap-v2.ps1 when git is not installed).

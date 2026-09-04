@@ -4,7 +4,7 @@ $Root = "C:\ApartmentIntelligence"
 $App = Join-Path $Root "app"
 $Account = "ApartmentIntel"
 $TaskName = "Apartment Intelligence"
-$Runner = Join-Path $App "deploy\windows\run-apartment-intelligence.ps1"
+$Runner = Join-Path $App "deploy\archive\windows\run-apartment-intelligence.ps1"
 
 if (-not (Test-Path $Runner)) {
   throw "Deployment runner is missing: $Runner"

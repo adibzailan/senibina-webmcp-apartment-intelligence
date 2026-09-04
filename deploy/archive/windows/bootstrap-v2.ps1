@@ -1,5 +1,5 @@
 # Bootstrap v2 on a VM that has no git: download main.zip from GitHub, replace the app folder, run install-v2.ps1.
-#   iwr https://raw.githubusercontent.com/adibzailan/senibina-webmcp-apartment-intelligence/main/deploy/windows/bootstrap-v2.ps1 -OutFile $env:TEMP\b.ps1; powershell -ep bypass -f $env:TEMP\b.ps1
+#   iwr https://raw.githubusercontent.com/adibzailan/senibina-webmcp-apartment-intelligence/main/deploy/archive/windows/bootstrap-v2.ps1 -OutFile $env:TEMP\b.ps1; powershell -ep bypass -f $env:TEMP\b.ps1
 $ErrorActionPreference = "Stop"
 $Root = "C:\ApartmentIntelligence"
 $App = Join-Path $Root "app"
@@ -20,4 +20,4 @@ if (Test-Path $App) {
 Move-Item $Src.FullName $App
 Remove-Item $Stage -Recurse -Force
 Write-Host "Source in place at $App; running installer"
-& powershell -ExecutionPolicy Bypass -File (Join-Path $App "deploy\windows\install-v2.ps1") *>&1 | Tee-Object (Join-Path $Root "install-v2.log")
+& powershell -ExecutionPolicy Bypass -File (Join-Path $App "deploy\archive\windows\install-v2.ps1") *>&1 | Tee-Object (Join-Path $Root "install-v2.log")

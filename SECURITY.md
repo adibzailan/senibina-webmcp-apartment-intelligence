@@ -1,8 +1,7 @@
 # Security Policy
 
-Apartment Intelligence is a hackathon implementation. The v2 build on `main`
-passes its local release checks; the public v1 host predates it. Neither is a
-supported product release.
+Apartment Intelligence is a hackathon implementation. The build on `main`
+passes its local release checks. It is not a supported product release.
 
 ## Intended boundary
 

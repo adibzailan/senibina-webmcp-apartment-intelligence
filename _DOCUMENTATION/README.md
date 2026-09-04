@@ -9,7 +9,6 @@ Finite active outcomes with a defined completion condition and one next action.
 
 - [`WebMCP Challenge submission`](10%20Projects/2026-webmcp-challenge-submission.md)
 - [`Devpost write-up`](10%20Projects/2026-webmcp-devpost-writeup.md)
-- [`Clean-room reconstruction (v2)`](10%20Projects/2026-09-clean-room-reconstruction.md) (complete)
 
 ## 20 Areas
 
@@ -32,8 +31,11 @@ Reusable references that advise the active owners but do not govern them.
 
 Superseded directions, completed work, historical context, and proof material.
 
-- [`JourneyProof pivot`](40%20Archives/journeyproof-pivot.md)
+- [`Submission receipts, 1–3 September 2026`](40%20Archives/2026-09-submission-receipts.md)
+- [`Clean-room reconstruction (v2) handoff`](40%20Archives/2026-09-clean-room-reconstruction.md)
 - [`v1 runtime (Windows VM)`](40%20Archives/v1-windows-runtime.md)
+- [`v1 Windows deployment procedure`](40%20Archives/v1-windows-deployment.md)
+- [`JourneyProof pivot`](40%20Archives/journeyproof-pivot.md)
 
 ## Local-only material
 
