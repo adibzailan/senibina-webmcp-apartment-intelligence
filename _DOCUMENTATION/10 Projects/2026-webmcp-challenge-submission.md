@@ -3,7 +3,7 @@ title: WebMCP Challenge submission
 para: project
 status: submitted, judging until 21 September 2026
 deadline: 2026-09-04T04:00:00+08:00
-next_action: Upload the 2:57 film to YouTube, replace the Devpost video link and paste the 4 September write-up before the extended close; then leave `main` untouched through judging.
+next_action: Leave `main` and https://apartments.senibina.com.sg untouched through judging (ends 21 September 2026, 5:00 pm PT); the 4 September film, write-up and captions are live on Devpost.
 ---
 
 # WebMCP Challenge submission
