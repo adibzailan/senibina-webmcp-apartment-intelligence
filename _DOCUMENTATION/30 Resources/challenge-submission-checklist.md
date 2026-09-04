@@ -19,7 +19,7 @@ status: active-reference
 
 - [x] v2.1 pushed to `main` (742fef3, 4 Sep ~11:55 SGT); Render rebuilt; the live bundle carries the delegate button; three desktop Playwright journeys (human, WebMCP, delegated) pass against https://apartments.senibina.com.sg.
 - [ ] Devpost "About the project" refreshed from `10 Projects/2026-webmcp-devpost-writeup.md` (delegation paragraph, isometric and section sentence, dictation lesson, testing instructions).
-- [ ] Film with the delegation beat and the coda (2:57) uploaded to YouTube (a new upload gets a new id) and the Devpost video link replaced; anonymous playback checked. Master: `video/apartment-intelligence-demo/renders/apartment-intelligence-demo-v2-coda.mp4`.
+- [x] Film with the delegation beat and the coda (2:57) uploaded to YouTube by Adib, 4 Sep ~12:20 SGT, as "Apartment Intelligence | Environmental Analysis for All": https://youtu.be/yV9AWxKiGog. Still to do: replace the Devpost video link, paste the description with chapters, check anonymous playback. Master: `video/apartment-intelligence-demo/renders/apartment-intelligence-demo-v2-coda.mp4`.
 
 - [ ] Re-test the live URL from a clean, logged-out browser and confirm all nine tools are discoverable.
 - [ ] Check every submitted link (Devpost, YouTube, repository, live host) from a logged-out context.

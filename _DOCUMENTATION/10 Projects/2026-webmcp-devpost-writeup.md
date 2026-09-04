@@ -92,3 +92,32 @@ Open https://apartments.senibina.com.sg in the ChatGPT desktop app's built-in br
 ## Contribution field (unchanged from 3 September unless you decide otherwise)
 
 Solo entry. I set the product direction, the human-agent boundary, the evidence rules and the design system, drew on my own practice and studio work for the film, and reviewed every screen and every number. The build was done with AI coding agents (Claude Code and Codex) working from my briefs and under my review; the analysis itself is Ladybug and Radiance, with no AI in the runtime.
+
+## YouTube description (paste-ready; chapters need 00:00 first, three or more timestamps in ascending order, each at least 10 s)
+
+Will this apartment get the sun you expect?
+
+Listings say “bright and airy” or “afternoon sun”. Nobody measures it. Apartment Intelligence runs the sunlight study an architectural practice would run for a whole building, for one apartment, with the resident or their agent at the controls.
+
+Pick a real Singapore HDB block and storey (SkyVille @ Dawson, Block 87, is covered), choose the wing and layout you recognise on a 3D model of the tower, confirm it with one click, and Ladybug + Radiance compute sun path, shadow, direct-sun hours and annual radiation on your floor, room by room. Export a report, or the model as GLB, OBJ or 3DM.
+
+Nine WebMCP tools let an agent in the browser do everything except the one thing only a person can vouch for. There is no confirmation tool. The resident confirms with a click, or clicks once to let the agent confirm the next few placements itself; every result says which.
+
+Live: https://apartments.senibina.com.sg
+Code (AGPL-3.0): https://github.com/adibzailan/senibina-webmcp-apartment-intelligence
+Devpost: https://devpost.com/software/apartment-intelligence
+
+Chapters
+00:00 Will this apartment get the sun you expect? How architects answer it
+00:20 What a listing says instead
+00:32 Apartment Intelligence: a real block, a real storey
+00:48 An agent stages a placement, and is refused
+01:00 The click belongs to a person; the agent runs the analysis
+01:17 One click delegates: the agent confirms the rest, labelled
+01:32 Survey mode: three units, no click, every number unconfirmed
+01:42 Keep the evidence
+01:54 What practitioners said
+02:08 The same engines, now for the people who live there
+02:18 How this was made: dictated, not typed
+
+Version 0, built for the OpenAI WebMCP Challenge, September 2026. Not a valuation, compliance or daylight certification. Footprints and storey counts from HDB via data.gov.sg (Singapore Open Data Licence v1.0); no endorsement implied.
